@@ -1,12 +1,3 @@
-from typing import NamedTuple
+from lux.engine.lights.ray import Ray
 
-from pyglet.math import Vec2
-
-from lux.engine.colour import LuxColour
-
-
-class Ray(NamedTuple):
-    source: Vec2
-    direction: Vec2
-    length: float
-    colour: LuxColour
+__all__ = ("Ray",)
