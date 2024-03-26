@@ -1,7 +1,5 @@
 from pyglet.math import Vec2
 
-import arcade.geometry as geo
-
 
 def get_intersection(o1: Vec2, d1: Vec2, o2: Vec2, d2: Vec2) -> Vec2 | None:
     # If the two directions are parallel then just return None as they won't intersect

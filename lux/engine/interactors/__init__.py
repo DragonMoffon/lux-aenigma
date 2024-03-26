@@ -24,6 +24,9 @@ class RayInteractorEdge:
     def center(self):
         return (self._start + self._end) / 2.0
 
+    def __repr__(self) -> str:
+        return f"RayInteractorEdge(start = {self._start}, end = {self._end}, bi_dir = {self._bi_dir})"
+
 
 class RayInteractor:
 
@@ -36,7 +39,7 @@ class RayInteractor:
         self._bounds: tuple[RayInteractorEdge, ...] = bounds
 
     @property
-    def bound(self):
+    def bounds(self):
         return self._bounds
 
     def ray_hit(self, in_ray: Ray, in_edge: RayInteractorEdge, intersection_point: Vec2) -> Ray:
@@ -48,3 +51,6 @@ class RayInteractor:
         :return: the exiting ray
         """
         raise NotImplementedError()
+
+    def __repr__(self) -> str:
+        return f"RayInteractor(origin = {self.origin}, direction = {self.direction}, colour = {self.colour}, bounds = {self._bounds})"
