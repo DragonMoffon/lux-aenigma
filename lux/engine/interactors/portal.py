@@ -32,6 +32,7 @@ class PortalRayInteractor(RayInteractor):
             return
         sibling = self._sibling
         sibling_edge = sibling.edge
+        sibling_diff = sibling_edge.end - sibling_edge.start
 
         ray_direction = in_ray.direction
         sibling_normal = self._sibling.direction
@@ -39,10 +40,16 @@ class PortalRayInteractor(RayInteractor):
         if not in_edge.bi_dir and ray_direction.dot(sibling_normal) > 0.0:
             return None
 
-        edge_dir = in_edge.end - in_edge.start
+        edge_diff = in_edge.end - in_edge.start
+        edge_dir = in_edge.direction
 
         intersection_dir = intersection_point - in_edge.start
-        intersection_fraction = edge_dir.dot(intersection_dir) / edge_dir.mag
+        intersection_fraction = edge_dir.dot(intersection_dir) / edge_diff.mag
 
-        new_source = sibling_edge.start + intersection_fraction * (sibling_edge.end - sibling_edge.start)
+        new_source = sibling_edge.start + intersection_fraction * sibling_diff
+        new_direction = ray_direction
+        new_length = in_ray.length - (intersection_point - in_ray.source).mag
+        new_colour = in_ray.colour
 
+        new_ray = Ray(new_source, new_direction, new_length, new_colour)
+        return new_ray

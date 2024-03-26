@@ -8,6 +8,7 @@ class RayInteractorEdge:
     __slots__ = (
         "_start",
         "_end",
+        "_direction",
         "_normal",
         "_bi_dir"
     )
@@ -35,6 +36,10 @@ class RayInteractorEdge:
     @property
     def end(self):
         return self._end
+
+    @property
+    def direction(self):
+        return self.direction
 
     @property
     def normal(self):
