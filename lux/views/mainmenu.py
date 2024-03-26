@@ -13,7 +13,7 @@ class MenuView(LuxView):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.menu = DevMenu({
-            "Nothing": NothingView(back = self)
+            "Nothing": NothingView(back=self)
         })
 
     def on_key_press(self, symbol: int, modifiers: int):
