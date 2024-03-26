@@ -1,7 +1,7 @@
 from pyglet.math import Vec2
 
 from lux.engine.lights import Ray
-from lux.engine.color import LuxColour
+from lux.engine.colour import LuxColour
 
 
 class RayInteractorEdge:

@@ -2,7 +2,7 @@ from typing import NamedTuple
 
 from pyglet.math import Vec2
 
-from lux.engine.color import LuxColour
+from lux.engine.colour import LuxColour
 
 
 class Ray(NamedTuple):

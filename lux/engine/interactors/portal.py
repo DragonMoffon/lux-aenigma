@@ -2,7 +2,7 @@ from pyglet.math import Vec2
 
 from lux.engine.lights import Ray
 from lux.engine.interactors import RayInteractorEdge, RayInteractor
-from lux.engine.color import LuxColour
+from lux.engine.colour import LuxColour
 
 
 class PortalRayInteractor(RayInteractor):
