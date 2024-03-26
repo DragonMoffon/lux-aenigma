@@ -4,7 +4,6 @@ description="A short light based puzzle game built with Python Arcade"
 license = {text = "MIT License"}
 readme="README.md"
 version="26.03.2024a"
-dynamic=["version"]
 dependencies=[
     "arcade>=3.0.0.dev25",
     "imgui[pyglet]"

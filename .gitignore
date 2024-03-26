@@ -5,3 +5,7 @@
 # File types
 *.pyc
 */__pycache__
+/build
+
+# egg info
+/*.egg-info
