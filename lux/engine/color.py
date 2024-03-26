@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import NamedTuple
 from arcade.types import Color, RGBANormalized
 
@@ -17,6 +19,9 @@ class LuxColour(NamedTuple):
 
     def to_float_color(self) -> RGBANormalized:
         return self.to_int_color().normalized
+
+    def mask(self, other: LuxColour) -> LuxColour:
+        return LuxColour(self.red & other.red, self.green & other.green, self.blue & other.blue)
 
     def __repr__(self) -> str:
         colour = "MISSINGNO"
