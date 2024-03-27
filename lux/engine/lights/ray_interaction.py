@@ -2,11 +2,9 @@ import heapq
 
 from pyglet.math import Vec2
 
-from arcade.geometry import are_lines_intersecting
-
 from lux.engine.lights.ray import Ray
 from lux.engine.interactors import RayInteractor, RayInteractorEdge
-from lux.engine.maths import get_segment_intersection
+from lux.lib.maths import get_segment_intersection
 
 
 def calculate_ray_interaction(ray: Ray, interactors: tuple[RayInteractor, ...]) -> tuple[Vec2, RayInteractorEdge, RayInteractor] | None:
@@ -14,16 +12,14 @@ def calculate_ray_interaction(ray: Ray, interactors: tuple[RayInteractor, ...]) 
 
     ray_start = ray.source
     ray_end = ray_start + ray.direction * ray.length
-    ray_direction = ray.direction
 
     for interactor in interactors:
         position = interactor.origin
         heading = interactor.direction.heading
         for edge in interactor.bounds:
-            start, end, direction = (
+            start, end = (
                 position + edge.start.rotate(heading),
                 position + edge.end.rotate(heading),
-                edge.direction.rotate(heading)
             )
 
             interaction_point = get_segment_intersection(ray_start, ray_end, start, end)
