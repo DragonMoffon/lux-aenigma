@@ -66,7 +66,7 @@ def get_segment_intersection(p: Vec2, p_e: Vec2, q: Vec2, q_e: Vec2) -> Vec2 | N
     direction_interaction = cross_2d(r, s)
 
     if direction_interaction == 0.0:
-        logger.debug(f"segment<{p} - {p_e}> is parallel to segment<{q} - {q_e}>")
+        # logger.debug(f"segment<{p} - {p_e}> is parallel to segment<{q} - {q_e}>")
         return None
 
     # Find how the ratio of how far along each segment the interaction is
@@ -79,10 +79,10 @@ def get_segment_intersection(p: Vec2, p_e: Vec2, q: Vec2, q_e: Vec2) -> Vec2 | N
 
     # If t and u aren't between 0 and 1 then the intersection is outside the segments
     if not (0.0 <= u <= 1.0 and 0.0 <= t <= 1.0):
-        logger.debug(f"segment<{p} - {p_e}> misses segment<{q} - {q_e}>")
+        # logger.debug(f"segment<{p} - {p_e}> misses segment<{q} - {q_e}>")
         return None
 
-    logger.debug(f"segment<{p} - {p_e}> intersects segment<{q} - {q_e}> at {p + r * t}")
+    # logger.debug(f"segment<{p} - {p_e}> intersects segment<{q} - {q_e}> at {p + r * t}")
     return p + r * t
 
 
