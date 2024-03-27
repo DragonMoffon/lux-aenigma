@@ -77,8 +77,6 @@ def get_segment_intersection(p: Vec2, p_e: Vec2, q: Vec2, q_e: Vec2) -> Vec2 | N
     t = t_ratio / direction_interaction
     u = u_ratio / direction_interaction
 
-    logger.debug(f"t: {t}, u: {u}")
-
     # If t and u aren't between 0 and 1 then the intersection is outside the segments
     if not (0.0 <= u <= 1.0 and 0.0 <= t <= 1.0):
         logger.debug(f"segment<{p} - {p_e}> misses segment<{q} - {q_e}>")
