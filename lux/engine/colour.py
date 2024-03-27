@@ -23,8 +23,11 @@ class LuxColour(NamedTuple):
     def mask(self, other: LuxColour) -> LuxColour:
         return LuxColour(self.red & other.red, self.green & other.green, self.blue & other.blue)
 
+    def invert(self):
+        return LuxColour(not self.red, not self.blue, not self.green)
+
     def __repr__(self) -> str:
-        colour = "MISSINGNO"
+        colour = "MISSINGNO"  # Thanks DIGI
         match (self.red, self.green, self.blue):
             case (True, True, True):
                 colour = "WHITE"
