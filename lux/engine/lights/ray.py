@@ -25,5 +25,3 @@ class Ray(NamedTuple):
 
     def mask(self, mask_colour: LuxColour):
         return Ray(self.source, self.direction, self.length, self.colour.mask(mask_colour))
-
-

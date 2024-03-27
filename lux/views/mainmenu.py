@@ -4,7 +4,7 @@ from arcade import key
 
 from lux.lib.dev_menu import DevMenu
 from lux.lib.view import LuxView
-from lux.views.nothing import NothingView
+from lux.views.something import SomethingView
 
 logger = logging.getLogger("lux")
 
@@ -13,7 +13,7 @@ class MenuView(LuxView):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.menu = DevMenu({
-            "Nothing": NothingView(back=self)
+            "Something": SomethingView(back=self)
         })
 
     def on_key_press(self, symbol: int, modifiers: int):
