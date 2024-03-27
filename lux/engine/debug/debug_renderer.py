@@ -7,6 +7,9 @@ class DebugChildRenderer(Protocol):
     def draw(self):
         ...
 
+    def update_child(self, new_child: Any):
+        ...
+
 
 class DebugRenderer:
 
