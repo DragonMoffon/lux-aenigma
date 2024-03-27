@@ -1,5 +1,4 @@
 from pyglet.math import Vec2
-from arcade.geometry import are_lines_intersecting
 
 from lux.engine.colour import LuxColour
 from lux.engine.debug import DebugRenderer
