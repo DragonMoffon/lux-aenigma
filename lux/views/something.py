@@ -40,7 +40,6 @@ class SomethingView(LuxView):
 
         self.upscale_renderer = UpscaleBuffer(640, 360)
 
-        print(self.ray.direction)
         self.dir = True
 
     def on_update(self, delta_time: float):
