@@ -3,6 +3,10 @@ import math
 
 from pyglet.math import Vec2
 
+from logging import getLogger
+
+logger = getLogger("lux")
+
 
 class Direction(Vec2):
     def __init__(self, x: float = 0, y: float = 0):
@@ -47,59 +51,56 @@ class Direction(Vec2):
         return cls(-1, -1)
 
 
+def cross_2d(a: Vec2, b: Vec2):
+    return (a.x * b.y) - (a.y * b.x)
+
+
+def get_segment_intersection(p: Vec2, p_e: Vec2, q: Vec2, q_e: Vec2) -> Vec2 | None:
+    # https://stackoverflow.com/questions/563198/how-do-you-detect-where-two-line-segments-intersect
+
+    # Find the diff from start to end of each segment
+    r = (p_e - p)
+    s = (q_e - q)
+
+    # Find the angle between the two diffs if they are parallel then we don't consider it an interaction
+    direction_interaction = cross_2d(r, s)
+
+    if direction_interaction == 0.0:
+        logger.debug(f"segment<{p} - {p_e}> is parallel to segment<{q} - {q_e}>")
+        return None
+
+    # Find how the ratio of how far along each segment the interaction is
+    t_ratio = cross_2d((q - p), s)
+    u_ratio = cross_2d((q - p), r)
+
+    # Calculate the actual fraction distance along
+    t = t_ratio / direction_interaction
+    u = u_ratio / direction_interaction
+
+    logger.debug(f"t: {t}, u: {u}")
+
+    # If t and u aren't between 0 and 1 then the intersection is outside the segments
+    if not (0.0 <= u <= 1.0 and 0.0 <= t <= 1.0):
+        logger.debug(f"segment<{p} - {p_e}> misses segment<{q} - {q_e}>")
+        return None
+
+    logger.debug(f"segment<{p} - {p_e}> intersects segment<{q} - {q_e}> at {p + r * t}")
+    return p + r * t
+
+
 def get_intersection(o1: Vec2, d1: Vec2, o2: Vec2, d2: Vec2) -> Vec2 | None:
-    # If the two directions are parallel then just return None as they won't intersect
-    dot = d1.dot(d2)
-    if 1 <= dot or dot <= -1:
+    # Same logic as get segment intersection we just don't care if t and u go past 1.0
+
+    direction_interaction = cross_2d(d1, d2)
+
+    # Two lines are parallel
+    if direction_interaction == 0.0:
+        logger.debug(f"line<{o1} + t*{d1}> is parallel to line<{o2} + u*{d2}>")
         return None
 
-    # If the second vector has an x of 0 then we can simplify the entire equation down (t2 no longer matters)
-    if d2.x == 0.0:
-        t1 = (o2.x - o1.x) / d1.x
-    else:
-        ta = (o1.y - o2.y) - (o1.x - o2.x) * (d2.y / d2.x)
-        tb = d1.x * (d2.y / d2.x) - d1.y
+    # find of far along line one line two intersects
+    # because we don't care about if the segments interact we just need to find t
+    t = cross_2d(o2 - o1, d2) / direction_interaction
 
-        # protecting against precision errors not catching that two lines are parallel.
-        if tb == 0.0:
-            return None
-
-        t1 = ta / tb
-
-    return o1 + d1 * t1
-
-
-def get_segment_intersection(s1: Vec2, e1: Vec2, s2: Vec2, e2: Vec2, d1: Vec2 | None = None, d2: Vec2 | None = None):
-    d1 = d1 or (e1 - s1).normalize()
-    d2 = d2 or (e2 - s2).normalize()
-
-    dot = d1.dot(d2)
-    if 1.0 <= dot or dot <= -1.0:
-        return None
-
-    if d2.x == 0.0:
-        t1 = (s2.x - s1.x) / d1.x
-        t2 = ((s1.y - s2.y) + d1.y * t1) / d2.y
-    else:
-        ta = (s1.y - s2.y) - (s1.x - s2.x) * (d2.y / d2.x)
-        tb = d1.x * (d2.y / d2.x) - d1.y
-
-        # Precision errors kill me plz.
-        if tb == 0.0:
-            return None
-
-        t1 = ta / tb
-        t2 = ((s1.x - s2.x) + t1 * d1.x) / d2.x
-
-    # t1 and t2 must be greater than 0.0 for the two segments to intersect
-    if (t1 < 0.0) or (t2 < 0.0):
-        return None
-
-    v1 = e1 - s1
-    v2 = e2 - s2
-
-    # if t1 and t2 are greater than start to end of either segment then they aren't intersecting.
-    if (t1**2 > v1.dot(v1)) or (t2**2 > v2.dot(v2)):
-        return None
-
-    return s1 + d1 * t1
+    logger.debug(f"line<{o1} + t*{d1}> intersects line<{o2} + u*{d2}> at {o1 + d1 * t}")
+    return o1 + d1 * t
