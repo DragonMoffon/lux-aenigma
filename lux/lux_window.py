@@ -1,11 +1,35 @@
-from arcade import Window
+from collections import deque
+from arcade import Window, Text
 from lux.views.main_menu import MenuView
 
-FPS_CAP = 240
+FPS_CAP = 24000
+FPS_QUEUE = 10
+
+SCREEN_WIDTH = 1280
+SCREEN_HEIGHT = 720
 
 
 class LuxWindow(Window):
-
     def __init__(self):
-        super().__init__(1280, 720, update_rate = 1 / FPS_CAP, title = "Lux Aenigma")
+        super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, update_rate = 1 / FPS_CAP, title = "Lux Aenigma")
         self.show_view(MenuView())
+
+        self.fps_queue = deque(maxlen = FPS_QUEUE)
+        self.frame_count = 0
+
+        self.fps_text = Text("???.? FPS", SCREEN_WIDTH - 5, SCREEN_HEIGHT - 5,
+                             anchor_x = "right", anchor_y = "top",
+                             font_name = "GohuFont 11 Nerd Font Mono", font_size = 12)
+
+    def on_update(self, delta_time: float):
+        self.fps_queue.append(1 / delta_time)
+        if self.frame_count % FPS_QUEUE == 0:
+            avg = sum(self.fps_queue) / FPS_QUEUE
+            self.fps_text.text = f"{avg:.1f} FPS"
+        return super().on_update(delta_time)
+
+    def debug_draw(self):
+        self.fps_text.draw()
+
+    def on_draw(self):
+        self.debug_draw()
