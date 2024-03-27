@@ -4,6 +4,8 @@ import arcade
 from arcade.types import Color
 import pyglet.media as media
 
+from lux.engine.colour import LuxColour
+
 logger = logging.getLogger("lux")
 
 
@@ -79,14 +81,24 @@ class RGBMusicMixer:
         self.tracks[2].seek(self.time)
 
     @property
-    def color(self) -> Color:
+    def int_color(self) -> Color:
         return Color(255 if self._red else 0, 255 if self._green else 0, 255 if self._blue else 0)
 
-    @color.setter
-    def color(self, color: Color):
+    @int_color.setter
+    def int_color(self, color: Color):
         self.red = 255 if color.r > 127 else 0
         self.green = 255 if color.g > 127 else 0
         self.blue = 255 if color.b > 127 else 0
+
+    @property
+    def color(self) -> LuxColour:
+        return LuxColour(self._red, self._green, self._blue)
+
+    @color.setter
+    def color(self, color: LuxColour):
+        self.red = color.red
+        self.green = color.green
+        self.blue = color.blue
 
     @property
     def time(self) -> float:
