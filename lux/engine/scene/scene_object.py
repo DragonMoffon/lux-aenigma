@@ -9,5 +9,3 @@ class SceneObject(Protocol):
     colour: LuxColour
     Origin: Vec2
     Direction: Vec2
-
-

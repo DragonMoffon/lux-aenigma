@@ -4,7 +4,7 @@ from pyglet.math import Vec2
 
 from lux.engine.lights.ray import Ray
 from lux.engine.interactors import RayInteractor, RayInteractorEdge
-from lux.engine.math import get_intersection, get_segment_intersection
+from lux.engine.math import get_segment_intersection
 
 
 def calculate_ray_interaction(ray: Ray, interactors: tuple[RayInteractor, ...]) -> tuple[Vec2, RayInteractorEdge, RayInteractor] | None:
@@ -13,13 +13,12 @@ def calculate_ray_interaction(ray: Ray, interactors: tuple[RayInteractor, ...]) 
     ray_start = ray.source
     ray_end = ray_start + ray.direction * ray.length
     ray_direction = ray.direction
-    ray_colour = ray.colour
 
     for interactor in interactors:
         position = interactor.origin
         heading = interactor.direction.heading
         for edge in interactor.bounds:
-            start, end, center, normal, direction = (
+            start, end, direction = (
                 position + edge.start.rotate(heading),
                 position + edge.end.rotate(heading),
                 position + edge.center.rotate(heading),
@@ -41,5 +40,3 @@ def calculate_ray_interaction(ray: Ray, interactors: tuple[RayInteractor, ...]) 
     closest_edge = heapq.heappop(intersecting_edges)
 
     return closest_edge[2:]
-
-

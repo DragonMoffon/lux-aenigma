@@ -25,7 +25,7 @@ class MirrorRayInteractor(RayInteractor):
         return self._bounds[0]
 
     def ray_hit(self, in_ray: Ray, in_edge: RayInteractorEdge, intersection_point: Vec2) -> Ray | None:
-        assert in_edge is self.edge, "Portal edge not being used with portal"
+        assert in_edge is self.edge, "Mirror edge not being used with mirror"
 
         direction_heading = self.direction.heading
         edge_normal = in_edge.normal.rotate(direction_heading)

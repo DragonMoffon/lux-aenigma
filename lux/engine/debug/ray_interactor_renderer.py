@@ -1,6 +1,6 @@
 from arcade import draw_line, draw_point
 
-from lux.engine.interactors import RayInteractor, RayInteractorEdge
+from lux.engine.interactors import RayInteractor
 
 
 class RayInteractorRenderer:
