@@ -7,6 +7,7 @@ from lux.engine.debug.ray_interactor_renderer import RayInteractorRenderer
 from lux.engine.lights.ray import Ray
 from lux.engine.interactors.portal import PortalRayInteractor
 from lux.engine.math import Direction
+from lux.engine.lights.ray_interaction import calculate_ray_interaction
 from lux.engine.upscale_renderer import UpscaleBuffer
 from lux.lib.view import LuxView
 
@@ -15,22 +16,58 @@ class SomethingView(LuxView):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.ray = Ray(Vec2(100, 100), Direction.NORTHEAST(), 100.0, LuxColour.RED())
+        self.ray = Ray(Vec2(20, 45), Direction.EAST(), 1000000.0, LuxColour.RED())
+        self.child_ray = None
 
         self.renderer = DebugRenderer()
+
         self.ray_renderer = RayDebugRenderer(self.ray)
+        self.child_renderer = None
+
         self.renderer.append(self.ray_renderer)
 
-        self._portal_a = PortalRayInteractor(100.0, Vec2(300, 100), Direction.NORTH(), LuxColour.RED())
-        self._portal_b = PortalRayInteractor(100.0, Vec2(150, 50), Direction.NORTHEAST(), LuxColour.BLUE())
+        self._portal_a = PortalRayInteractor(100.0, Vec2(300, 150), Direction.SOUTHWEST(), LuxColour.YELLOW())
+        self._portal_b = PortalRayInteractor(100.0, Vec2(500, 250), Direction.NORTHEAST(), LuxColour.CYAN())
         self.renderer.append(RayInteractorRenderer(self._portal_a))
         self.renderer.append(RayInteractorRenderer(self._portal_b))
+
+        self.interactors = (self._portal_a, self._portal_b)
 
         self._portal_a.set_siblings(self._portal_b)
 
         self.upscale_renderer = UpscaleBuffer(640, 360)
 
         print(self.ray.direction)
+        self.dir = True
+
+    def on_update(self, delta_time: float):
+        if self.child_renderer is not None:
+            self.renderer.remove(self.child_renderer)
+            self.child_renderer = None
+
+        ray = Ray(self.ray.source, self.ray.direction.rotate((-1 if self.dir else 1) * delta_time * 3.14159 / 20.0), 1000000.0, self.ray.colour)
+
+        interaction = calculate_ray_interaction(ray, self.interactors)
+        if interaction is None:
+            self.ray = ray
+            self.ray_renderer.update_child(self.ray)
+            return
+        intersection, edge, interactor = interaction
+        base_ray = ray.change_length((intersection - ray.source).mag)
+        child_ray = interactor.ray_hit(ray, edge, intersection)
+
+        self.ray = base_ray
+        self.ray_renderer.update_child(self.ray)
+
+        if child_ray is None:
+            return
+
+        self.child_ray = child_ray
+        self.child_renderer = RayDebugRenderer(child_ray)
+        self.renderer.append(self.child_renderer)
+
+    def on_key_press(self, symbol: int, modifiers: int):
+        self.dir = not self.dir
 
     def on_draw(self):
         self.clear()

@@ -22,3 +22,6 @@ class DebugRenderer:
 
     def append(self, renderer: DebugChildRenderer):
         self._renderers.append(renderer)
+
+    def remove(self, renderer: DebugChildRenderer):
+        self._renderers.remove(renderer)

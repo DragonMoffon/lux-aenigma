@@ -4,7 +4,6 @@ from lux.engine.lights import Ray
 from lux.engine.interactors import RayInteractorEdge, RayInteractor
 from lux.engine.colour import LuxColour
 
-
 class PortalRayInteractor(RayInteractor):
 
     def __init__(self, height: float, origin: Vec2, direction: Vec2, colour: LuxColour):
@@ -30,23 +29,33 @@ class PortalRayInteractor(RayInteractor):
 
         if self._sibling is None:
             return
+
+        direction_heading = self.direction.heading
+
+        edge_normal = in_edge.normal.rotate(direction_heading)
+
+        edge_start = self.origin + in_edge.start.rotate(self.direction.heading)
+        edge_end = self.origin + in_edge.end.rotate(self.direction.heading)
+
+        if not in_edge.bi_dir and (in_ray.source - intersection_point).dot(edge_normal) < 0.0:
+            return
+
         sibling = self._sibling
         sibling_edge = sibling.edge
-        sibling_diff = sibling_edge.end - sibling_edge.start
+        sibling_start = sibling.origin + sibling_edge.start.rotate(sibling.direction.heading)
+        sibling_end = sibling.origin + sibling_edge.end.rotate(sibling.direction.heading)
+        sibling_diff = sibling_end - sibling_start
 
         ray_direction = in_ray.direction
-        sibling_normal = self._sibling.direction
 
-        if not in_edge.bi_dir and ray_direction.dot(sibling_normal) > 0.0:
-            return None
+        edge_diff = edge_end - edge_start
+        intersection_diff = intersection_point - edge_start
 
-        edge_diff = in_edge.end - in_edge.start
-        edge_dir = in_edge.direction
+        fraction = 1.0 - intersection_diff.mag / edge_diff.mag
 
-        intersection_dir = intersection_point - in_edge.start
-        intersection_fraction = edge_dir.dot(intersection_dir) / edge_diff.mag
+        print(fraction)
 
-        new_source = sibling_edge.start + intersection_fraction * sibling_diff
+        new_source = sibling_start + sibling_diff * fraction
         new_direction = ray_direction
         new_length = in_ray.length - (intersection_point - in_ray.source).mag
         new_colour = in_ray.colour

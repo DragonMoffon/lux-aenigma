@@ -39,7 +39,7 @@ class RayInteractorEdge:
 
     @property
     def direction(self):
-        return self.direction
+        return self._direction
 
     @property
     def normal(self):
