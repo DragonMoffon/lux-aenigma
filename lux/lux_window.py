@@ -1,5 +1,5 @@
 from arcade import Window
-from lux.views.mainmenu import MenuView
+from lux.views.main_menu import MenuView
 
 FPS_CAP = 240
 
