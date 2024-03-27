@@ -19,7 +19,7 @@ class LuxWindow(Window):
 
         self.fps_text = Text("???.? FPS", SCREEN_WIDTH - 5, SCREEN_HEIGHT - 5,
                              anchor_x = "right", anchor_y = "top",
-                             font_name = "GohuFont 11 Nerd Font Mono", font_size = 12)
+                             font_name = "GohuFont 11 Nerd Font Mono", font_size = 11)
 
     def on_update(self, delta_time: float):
         self.frame_count += 1
