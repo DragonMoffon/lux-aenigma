@@ -16,3 +16,5 @@ authors =  [
 maintainers = [
     {name = "DragonMoffon", email = "dumpy.spam.man@gmail.com"}
 ]
+[tool.setuptools]
+packages = ["lux"]
