@@ -6,6 +6,7 @@ from lux.engine.debug.ray_renderer import RayDebugRenderer
 from lux.engine.debug.ray_interactor_renderer import RayInteractorRenderer
 from lux.engine.lights.ray import Ray
 from lux.engine.interactors.portal import PortalRayInteractor
+from lux.engine.interactors.mirror import MirrorRayInteractor
 from lux.engine.math import Direction
 from lux.engine.lights.ray_interaction import calculate_ray_interaction
 from lux.engine.upscale_renderer import UpscaleBuffer
@@ -28,10 +29,12 @@ class SomethingView(LuxView):
 
         self._portal_a = PortalRayInteractor(100.0, Vec2(300, 150), Direction.SOUTHWEST(), LuxColour.YELLOW())
         self._portal_b = PortalRayInteractor(100.0, Vec2(400, 250), Direction.SOUTHWEST(), LuxColour.CYAN())
+        self._mirror_a = MirrorRayInteractor(100.0, Vec2(150, 75), Direction.SOUTHWEST(), LuxColour.MAGENTA())
         self.renderer.append(RayInteractorRenderer(self._portal_a))
         self.renderer.append(RayInteractorRenderer(self._portal_b))
+        self.renderer.append(RayInteractorRenderer(self._mirror_a))
 
-        self.interactors = (self._portal_a, self._portal_b)
+        self.interactors = (self._portal_a, self._portal_b, self._mirror_a)
 
         self._portal_a.set_siblings(self._portal_b)
 
