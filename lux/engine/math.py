@@ -1,4 +1,44 @@
+from __future__ import annotations
+
 from pyglet.math import Vec2
+
+
+class Direction(Vec2):
+    def __init__(self, x: float = 0, y: float = 0):
+        mag = (x**2.0 + y**2.0) ** 0.5
+        super().__init__(x / mag, y / mag)
+
+    @classmethod
+    def NORTH(cls) -> Direction:
+        return cls(0, 1)
+
+    @classmethod
+    def SOUTH(cls) -> Direction:
+        return cls(0, -1)
+
+    @classmethod
+    def EAST(cls) -> Direction:
+        return cls(1, 0)
+
+    @classmethod
+    def WEST(cls) -> Direction:
+        return cls(-1, 0)
+
+    @classmethod
+    def NORTHEAST(cls) -> Direction:
+        return cls(1, 1)
+
+    @classmethod
+    def SOUTHEAST(cls) -> Direction:
+        return cls(1, -1)
+
+    @classmethod
+    def NORTHWEST(cls) -> Direction:
+        return cls(1, -1)
+
+    @classmethod
+    def SOUTHWEST(cls) -> Direction:
+        return cls(-1, -1)
 
 
 def get_intersection(o1: Vec2, d1: Vec2, o2: Vec2, d2: Vec2) -> Vec2 | None:
