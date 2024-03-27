@@ -25,7 +25,8 @@ def calculate_ray_interaction(ray: Ray, interactors: tuple[RayInteractor, ...]) 
                 position + edge.end.rotate(heading),
                 edge.direction.rotate(heading)
             )
-            interaction_point = get_segment_intersection(ray_start, ray_end, start, end, ray_direction, direction)
+
+            interaction_point = get_segment_intersection(ray_start, ray_end, start, end)
             if interaction_point is None:
                 continue
 

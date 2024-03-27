@@ -29,7 +29,7 @@ class SomethingView(LuxView):
 
         self._portal_a = PortalRayInteractor(100.0, Vec2(125, 200), Direction.WEST(), LuxColour.YELLOW())
         self._portal_b = PortalRayInteractor(100.0, Vec2(400, 250), Direction.NORTHEAST(), LuxColour.CYAN())
-        self._mirror_a = MirrorRayInteractor(100.0, Vec2(150, 75), Direction.SOUTHWEST(), LuxColour.MAGENTA())
+        self._mirror_a = MirrorRayInteractor(100.0, Vec2(200, 125), Direction.SOUTHWEST(), LuxColour.MAGENTA())
         self.renderer.append(RayInteractorRenderer(self._portal_a))
         self.renderer.append(RayInteractorRenderer(self._portal_b))
         self.renderer.append(RayInteractorRenderer(self._mirror_a))
@@ -48,7 +48,7 @@ class SomethingView(LuxView):
             self.renderer.remove(self.child_renderer)
             self.child_renderer = None
 
-        ray = Ray(self.ray.source, self.ray.direction.rotate((-1 if self.dir else 1) * delta_time * 3.14159 / 20.0), 1000000.0, self.ray.colour)
+        ray = Ray(self.ray.source, self.ray.direction.rotate((-1 if self.dir else 1) * delta_time * 3.14159 / 20.0), 300, self.ray.colour)
 
         interaction = calculate_ray_interaction(ray, self.interactors)
         if interaction is None:
