@@ -2,8 +2,8 @@ import logging
 
 from arcade import key
 
-from lux.lib.dev_menu import DevMenu
-from lux.lib.view import LuxView
+from lux.util.dev_menu import DevMenu
+from lux.util.view import LuxView
 from lux.views.something import SomethingView
 from lux.views.scene import SceneView
 from lux.views.editor import SceneEditorView

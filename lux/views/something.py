@@ -9,8 +9,8 @@ from lux.engine.interactors.portal import PortalRayInteractor
 from lux.engine.interactors.mirror import MirrorRayInteractor
 from lux.engine.lights.ray_interaction import calculate_ray_interaction
 from lux.engine.upscale_renderer import UpscaleBuffer
-from lux.lib.maths import Direction
-from lux.lib.view import LuxView
+from lux.util.maths import Direction
+from lux.util.view import LuxView
 
 
 class SomethingView(LuxView):

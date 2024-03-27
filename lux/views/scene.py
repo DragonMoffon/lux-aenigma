@@ -1,4 +1,4 @@
-from lux.lib.view import LuxView
+from lux.util.view import LuxView
 
 
 class SceneView(LuxView):
