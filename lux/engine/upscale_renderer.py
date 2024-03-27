@@ -26,6 +26,26 @@ class UpscaleBuffer:
             color_attachments=[self._texture]
         )
 
+        self._draw_program = self._ctx.program(
+            vertex_shader=
+            "#version 330\n"
+            "in vec2 in_uv;\n"
+            "in vec2 in_vert;\n"
+            "out vec2 out_uv;\n"
+            "void main(){\n"
+            "out_uv = in_uv;\n"
+            "gl_Position = vec4(in_vert, 0.0, 1.0);\n"
+            "}",
+            fragment_shader=
+            "#version 330\n"
+            "uniform sampler2D texture0;\n"
+            "in vec2 out_uv;\n"
+            "out vec4 out_colour;\n"
+            "void main(){\n"
+            "out_colour = texture(texture0, out_uv);\n"
+            "}"
+        )
+
     @contextmanager
     def activate(self):
         prev_fbo = self._ctx.active_framebuffer
@@ -47,4 +67,4 @@ class UpscaleBuffer:
 
     def draw(self):
         self._texture.use()
-        UpscaleBuffer.quad_geometry.render(self._ctx.utility_textured_quad_program)
+        UpscaleBuffer.quad_geometry.render(self._draw_program)
