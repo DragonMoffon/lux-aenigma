@@ -16,3 +16,6 @@ class DebugRenderer:
     def draw(self):
         for renderer in self._renderers:
             renderer.draw()
+
+    def append(self, renderer: DebugChildRenderer):
+        self._renderers.append(renderer)

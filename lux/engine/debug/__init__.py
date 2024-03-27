@@ -1,6 +1,6 @@
-from lux.engine.debug.debug_renderer import DebugChildRenderer
+from lux.engine.debug.debug_renderer import DebugRenderer, DebugChildRenderer
 
 __all__ = (
-    ""
-    "DebugChildRenderer",
+    "DebugRenderer",
+    "DebugChildRenderer"
 )
