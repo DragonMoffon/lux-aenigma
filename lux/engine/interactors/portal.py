@@ -1,8 +1,11 @@
+from math import acos
+
 from pyglet.math import Vec2
 
 from lux.engine.lights import Ray
 from lux.engine.interactors import RayInteractorEdge, RayInteractor
 from lux.engine.colour import LuxColour
+
 
 class PortalRayInteractor(RayInteractor):
 
@@ -42,10 +45,12 @@ class PortalRayInteractor(RayInteractor):
 
         sibling = self._sibling
         sibling_edge = sibling.edge
+        sibling_normal = sibling_edge.normal.rotate(sibling.direction.heading)
         sibling_start = sibling.origin + sibling_edge.start.rotate(sibling.direction.heading)
         sibling_end = sibling.origin + sibling_edge.end.rotate(sibling.direction.heading)
         sibling_diff = sibling_end - sibling_start
 
+        portal_rotation = acos(edge_normal.dot(-sibling_normal))
         ray_direction = in_ray.direction
 
         edge_diff = edge_end - edge_start
@@ -53,10 +58,8 @@ class PortalRayInteractor(RayInteractor):
 
         fraction = 1.0 - intersection_diff.mag / edge_diff.mag
 
-        print(fraction)
-
         new_source = sibling_start + sibling_diff * fraction
-        new_direction = ray_direction
+        new_direction = ray_direction.rotate(portal_rotation)
         new_length = in_ray.length - (intersection_point - in_ray.source).mag
         new_colour = in_ray.colour
 
