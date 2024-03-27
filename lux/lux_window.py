@@ -22,6 +22,7 @@ class LuxWindow(Window):
                              font_name = "GohuFont 11 Nerd Font Mono", font_size = 12)
 
     def on_update(self, delta_time: float):
+        self.frame_count += 1
         self.fps_queue.append(1 / delta_time)
         if self.frame_count % FPS_QUEUE == 0:
             avg = sum(self.fps_queue) / FPS_QUEUE
