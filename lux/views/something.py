@@ -27,7 +27,7 @@ class SomethingView(LuxView):
         self.renderer.append(self.ray_renderer)
 
         self._portal_a = PortalRayInteractor(100.0, Vec2(300, 150), Direction.SOUTHWEST(), LuxColour.YELLOW())
-        self._portal_b = PortalRayInteractor(100.0, Vec2(500, 250), Direction.NORTHEAST(), LuxColour.CYAN())
+        self._portal_b = PortalRayInteractor(100.0, Vec2(400, 250), Direction.SOUTHWEST(), LuxColour.CYAN())
         self.renderer.append(RayInteractorRenderer(self._portal_a))
         self.renderer.append(RayInteractorRenderer(self._portal_b))
 

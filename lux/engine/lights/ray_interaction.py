@@ -33,13 +33,13 @@ def calculate_ray_interaction(ray: Ray, interactors: tuple[RayInteractor, ...]) 
             diff = (interaction_point - ray_start)
             dist = diff.dot(diff)
 
-            heapq.heappush(intersecting_edges, (dist, interaction_point, edge, interactor))
+            heapq.heappush(intersecting_edges, (dist, len(intersecting_edges), interaction_point, edge, interactor))
 
     if not intersecting_edges:
         return None
 
     closest_edge = heapq.heappop(intersecting_edges)
 
-    return closest_edge[1:]
+    return closest_edge[2:]
 
 
