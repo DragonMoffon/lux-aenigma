@@ -1,4 +1,5 @@
 from __future__ import annotations
+import math
 
 from pyglet.math import Vec2
 
@@ -7,6 +8,11 @@ class Direction(Vec2):
     def __init__(self, x: float = 0, y: float = 0):
         mag = (x**2.0 + y**2.0) ** 0.5
         super().__init__(x / mag, y / mag)
+
+    @classmethod
+    def degrees(cls, deg: float) -> Direction:
+        rad = deg * (math.pi / 180)
+        return Direction(math.cos(rad), math.sin(rad))
 
     @classmethod
     def NORTH(cls) -> Direction:
