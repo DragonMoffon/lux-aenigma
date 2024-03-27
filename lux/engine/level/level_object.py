@@ -5,7 +5,7 @@ from pyglet.math import Vec2
 from lux.engine.colour import LuxColour
 
 
-class SceneObject(Protocol):
+class LevelObject(Protocol):
     colour: LuxColour
     Origin: Vec2
     Direction: Vec2
