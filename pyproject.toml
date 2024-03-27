@@ -16,5 +16,11 @@ authors =  [
 maintainers = [
     {name = "DragonMoffon", email = "dumpy.spam.man@gmail.com"}
 ]
+
 [tool.setuptools]
 packages = ["lux"]
+
+# There are multiple things called lux that are CLI
+# applications, so we name the cli run script luxgame.
+[project.scripts]
+luxgame = "lux.lux:main"
