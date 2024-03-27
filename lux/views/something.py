@@ -1,3 +1,4 @@
+import arcade.key
 from pyglet.math import Vec2
 
 from lux.engine.colour import LuxColour
@@ -41,8 +42,12 @@ class SomethingView(LuxView):
         self.upscale_renderer = UpscaleBuffer(640, 360)
 
         self.dir = True
+        self.paused = False
 
     def on_update(self, delta_time: float):
+        if self.paused:
+            return
+
         if self.child_renderer is not None:
             self.renderer.remove(self.child_renderer)
             self.child_renderer = None
@@ -69,7 +74,11 @@ class SomethingView(LuxView):
         self.renderer.append(self.child_renderer)
 
     def on_key_press(self, symbol: int, modifiers: int):
-        self.dir = not self.dir
+        match symbol:
+            case arcade.key.ENTER:
+                self.dir = not self.dir
+            case arcade.key.SPACE:
+                self.paused = not self.paused
 
     def on_draw(self):
         self.clear()
