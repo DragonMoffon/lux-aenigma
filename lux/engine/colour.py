@@ -42,36 +42,36 @@ class LuxColour(NamedTuple):
                 colour = "BLUE"
             case (False, False, False):
                 colour = "BLACK"
-        return f"LuxColor({colour})"
+        return f"LuxColour({colour})"
 
     @classmethod
     def WHITE(cls) -> LuxColour:
-        return LuxColour(True, True, True)
+        return cls(True, True, True)
 
     @classmethod
     def RED(cls) -> LuxColour:
-        return LuxColour(True, False, False)
+        return cls(True, False, False)
 
     @classmethod
     def GREEN(cls) -> LuxColour:
-        return LuxColour(False, True, False)
+        return cls(False, True, False)
 
     @classmethod
     def BLUE(cls) -> LuxColour:
-        return LuxColour(False, False, True)
+        return cls(False, False, True)
 
     @classmethod
     def YELLOW(cls) -> LuxColour:
-        return LuxColour(True, True, False)
+        return cls(True, True, False)
 
     @classmethod
     def MAGENTA(cls) -> LuxColour:
-        return LuxColour(True, False, True)
+        return cls(True, False, True)
 
     @classmethod
     def CYAN(cls) -> LuxColour:
-        return LuxColour(False, True, True)
+        return cls(False, True, True)
 
     @classmethod
     def BLACK(cls) -> LuxColour:
-        return LuxColour(False, False, False)
+        return cls(False, False, False)
