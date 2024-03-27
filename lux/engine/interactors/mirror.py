@@ -1,11 +1,8 @@
-from math import acos
-
 from pyglet.math import Vec2
 
 from lux.engine.lights import Ray
 from lux.engine.interactors import RayInteractorEdge, RayInteractor
 from lux.engine.colour import LuxColour
-from lux.engine.math import Direction
 
 
 class MirrorRayInteractor(RayInteractor):
