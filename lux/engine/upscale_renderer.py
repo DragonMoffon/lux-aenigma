@@ -3,6 +3,23 @@ from contextlib import contextmanager
 import arcade.gl as gl
 from arcade import get_window, ArcadeContext
 
+v_shader = """#version 330
+in vec2 in_uv;
+in vec2 in_vert;
+out vec2 out_uv;
+void main(){
+out_uv = in_uv;
+gl_Position = vec4(in_vert, 0.0, 1.0);
+}
+"""
+f_shader = """#version 330
+uniform sampler2D texture0;
+in vec2 out_uv;
+out vec4 out_colour;
+void main(){
+out_colour = texture(texture0, out_uv);
+}"""
+
 
 class UpscaleBuffer:
     quad_geometry: gl.Geometry | None = None
@@ -27,23 +44,8 @@ class UpscaleBuffer:
         )
 
         self._draw_program = self._ctx.program(
-            vertex_shader=
-            "#version 330\n"
-            "in vec2 in_uv;\n"
-            "in vec2 in_vert;\n"
-            "out vec2 out_uv;\n"
-            "void main(){\n"
-            "out_uv = in_uv;\n"
-            "gl_Position = vec4(in_vert, 0.0, 1.0);\n"
-            "}",
-            fragment_shader=
-            "#version 330\n"
-            "uniform sampler2D texture0;\n"
-            "in vec2 out_uv;\n"
-            "out vec4 out_colour;\n"
-            "void main(){\n"
-            "out_colour = texture(texture0, out_uv);\n"
-            "}"
+            vertex_shader = v_shader,
+            fragment_shader = f_shader
         )
 
     @contextmanager
