@@ -2,6 +2,22 @@
 
 A short light-based puzzle game built with Python Arcade.
 
+## Playing
+
+TL;DR: This game is broken and in early development.
+
+### I really want to try!
+
+1. Have Python 3.11+
+2. Clone the repo
+3. Change directories into the repo
+4. `python -m venv .venv` to create a venv
+5. `pip install -I .` to install
+5. `luxgame` to run lux
+
+There a number of cli programs call `lux` so we call it `luxgame` to
+avoid conflicting with them.
+
 ## Development
 
 ### General
