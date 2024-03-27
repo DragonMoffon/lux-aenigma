@@ -1,4 +1,5 @@
 from pyglet.math import Vec2
+from arcade.geometry import are_lines_intersecting
 
 from lux.engine.colour import LuxColour
 from lux.engine.debug import DebugRenderer
@@ -7,7 +8,7 @@ from lux.engine.debug.ray_interactor_renderer import RayInteractorRenderer
 from lux.engine.lights.ray import Ray
 from lux.engine.interactors.portal import PortalRayInteractor
 from lux.engine.interactors.mirror import MirrorRayInteractor
-from lux.engine.math import Direction
+from lux.engine.maths import Direction
 from lux.engine.lights.ray_interaction import calculate_ray_interaction
 from lux.engine.upscale_renderer import UpscaleBuffer
 from lux.lib.view import LuxView
@@ -27,8 +28,8 @@ class SomethingView(LuxView):
 
         self.renderer.append(self.ray_renderer)
 
-        self._portal_a = PortalRayInteractor(100.0, Vec2(300, 150), Direction.SOUTHWEST(), LuxColour.YELLOW())
-        self._portal_b = PortalRayInteractor(100.0, Vec2(400, 250), Direction.SOUTHWEST(), LuxColour.CYAN())
+        self._portal_a = PortalRayInteractor(100.0, Vec2(125, 200), Direction.WEST(), LuxColour.YELLOW())
+        self._portal_b = PortalRayInteractor(100.0, Vec2(400, 250), Direction.NORTHEAST(), LuxColour.CYAN())
         self._mirror_a = MirrorRayInteractor(100.0, Vec2(150, 75), Direction.SOUTHWEST(), LuxColour.MAGENTA())
         self.renderer.append(RayInteractorRenderer(self._portal_a))
         self.renderer.append(RayInteractorRenderer(self._portal_b))
