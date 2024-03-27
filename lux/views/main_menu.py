@@ -5,6 +5,9 @@ from arcade import key
 from lux.lib.dev_menu import DevMenu
 from lux.lib.view import LuxView
 from lux.views.something import SomethingView
+from lux.views.scene import SceneView
+from lux.views.editor import SceneEditorView
+from lux.views.scene_select import SceneSelectView
 
 logger = logging.getLogger("lux")
 
@@ -13,7 +16,10 @@ class MenuView(LuxView):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.menu = DevMenu({
-            "Something": SomethingView(back=self)
+            "Something": SomethingView(back=self),
+            "Editor": SceneEditorView(self),
+            "Scene Select": SceneSelectView(self),
+            "Start": SceneView(self)
         })
 
     def on_key_press(self, symbol: int, modifiers: int):
