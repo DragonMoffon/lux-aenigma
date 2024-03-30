@@ -96,7 +96,7 @@ def get_intersection(o1: Vec2, d1: Vec2, o2: Vec2, d2: Vec2) -> Vec2 | None:
         logger.debug(f"line<{o1} + t*{d1}> is parallel to line<{o2} + u*{d2}>")
         return None
 
-    # find of far along line one line two intersects
+    # find how far along line one line two intersects
     # because we don't care about if the segments interact we just need to find t
     t = cross_2d(o2 - o1, d2) / direction_interaction
 
