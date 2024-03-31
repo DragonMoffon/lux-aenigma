@@ -13,7 +13,7 @@ TL;DR: This game is broken and in early development.
 3. Change directories into the repo
 4. `python -m venv .venv` to create a venv
 5. `pip install -I .` to install
-5. `luxgame` to run lux
+6. `luxgame` to run lux
 
 There a number of cli programs call `lux` so we call it `luxgame` to
 avoid conflicting with them.
@@ -22,7 +22,9 @@ avoid conflicting with them.
 
 ### General
 
-Make sure you have Python 3.11+, but use 3.11 compat features if your editor has them.
+1. Make sure you have Python 3.11+
+2. If your IDE has version feature checks, be sure to enable 3.11-only compatibility features
+
 
 ### Setup
 
