@@ -31,7 +31,7 @@ class RayInteractorEdge:
         return f"{self._start=}, {self._end=}, {self._bi_dir=}"
 
     def __repr__(self) -> str:
-        return f"RayInteractorEdge<{self._start}>"
+        return f"RayInteractorEdge<({self._start.x}, {self._start.y})>"
 
     @property
     def center(self):

@@ -37,7 +37,10 @@ class Ray(NamedTuple):
         return Ray(self.source, self.direction, new_length, self.strength)
 
     def change_strength(self, new_strength: float):
-        return Ray(self.source, self.direction, self.length, self.strength)
+        return Ray(self.source, self.direction, self.length, new_strength)
+
+    def __str__(self) -> str:
+        return f"Ray<({round(self.source.x, 3)}, {round(self.source.y, 3)}), dir ({round(self.direction.x, 3)}, {round(self.direction.y, 3)}), len {self.length}, str {self.strength}>"
 
 
 class LightRay:

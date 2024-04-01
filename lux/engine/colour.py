@@ -29,7 +29,8 @@ class LuxColour(NamedTuple):
     def invert(self):
         return LuxColour(not self.red, not self.blue, not self.green)
 
-    def __repr__(self) -> str:
+    @property
+    def name(self) -> str:
         colour = "MISSINGNO"  # Thanks DIGI
         match (self.red, self.green, self.blue):
             case (True, True, True):
@@ -48,7 +49,10 @@ class LuxColour(NamedTuple):
                 colour = "BLUE"
             case (False, False, False):
                 colour = "BLACK"
-        return f"LuxColour({colour})"
+        return colour
+
+    def __repr__(self) -> str:
+        return f"LuxColour({self.name})"
 
     @classmethod
     def WHITE(cls) -> LuxColour:

@@ -32,7 +32,7 @@ class BeamLightRay(LightRay):
         self.normal = normal
 
     def __str__(self):
-        return f"BeamLightRay<{self.origin=}, {self.left=}, {self.right=}>"
+        return f"BeamLightRay<({self.origin.x}, {self.origin.y}): {self.colour}>"
 
     def _kill(self):
         self.left = None
@@ -129,7 +129,7 @@ class BeamLightRay(LightRay):
         collecting_rays: bool = points_sorted[0][0] == right_sink
 
         for end, start, edge in points_sorted[1:]:
-            logger.debug(f"{self}: checking: {end=}, {start=}, {edge=}")
+            logger.debug(f"{self}: checking: ({round(end.x, 3)}, {round(end.y, 3)})")
 
             if end == right_sink:
                 collecting_rays = True
