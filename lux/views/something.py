@@ -26,19 +26,10 @@ class SomethingView(LuxView):
             Ray(Vec2(w, h - 150.0), Direction.EAST(), 2500.0, 2500.0)
         )
 
-    def rerender(self):
-        w, h = self.window.center
-
-        self.renderer.clear()
         self.filter_red = FilterRayInteractor(Vec2(w+125, h+50), Direction.WEST(), LuxColour.RED(), (RayInteractorEdge(Vec2(0.0, -50.0), Vec2(0.0, 50.0), True),))
         self.filter_green = FilterRayInteractor(Vec2(w+400, h+25), Direction.NORTHEAST(), LuxColour.GREEN(), (RayInteractorEdge(Vec2(0.0, -50.0), Vec2(0.0, 50.0), True),))
         self.filter_blue = FilterRayInteractor(Vec2(w+200, h-75), Direction.SOUTHWEST(), LuxColour.BLUE(), (RayInteractorEdge(Vec2(0.0, -50.0), Vec2(0.0, 50.0), True),))
         self.filter_cyan = FilterRayInteractor(Vec2(w+200, h-100), Direction.SOUTHWEST(), LuxColour.CYAN(), (RayInteractorEdge(Vec2(0.0, -50.0), Vec2(0.0, 50.0), False),))
-
-        self.renderer.append(RayInteractorRenderer(self.filter_red))
-        self.renderer.append(RayInteractorRenderer(self.filter_green))
-        self.renderer.append(RayInteractorRenderer(self.filter_blue))
-        self.renderer.append(RayInteractorRenderer(self.filter_cyan))
 
         self.edge_map = {
             self.filter_red.bounds[0].adjust(self.filter_red.origin, self.filter_red.direction.heading): self.filter_red,
@@ -46,6 +37,14 @@ class SomethingView(LuxView):
             self.filter_blue.bounds[0].adjust(self.filter_blue.origin, self.filter_blue.direction.heading): self.filter_blue,
             self.filter_cyan.bounds[0].adjust(self.filter_cyan.origin, self.filter_cyan.direction.heading): self.filter_cyan,
         }
+
+    def rerender(self):
+        self.renderer.clear()
+
+        self.renderer.append(RayInteractorRenderer(self.filter_red))
+        self.renderer.append(RayInteractorRenderer(self.filter_green))
+        self.renderer.append(RayInteractorRenderer(self.filter_blue))
+        self.renderer.append(RayInteractorRenderer(self.filter_cyan))
 
         def make_beam_renderers(beam):
             self.renderer.append(BeamDebugRenderer(beam))
