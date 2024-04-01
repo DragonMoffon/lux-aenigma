@@ -1,4 +1,5 @@
 from __future__ import annotations
+from logging import getLogger
 from typing import NamedTuple, TYPE_CHECKING
 
 from pyglet.math import Vec2
@@ -7,6 +8,8 @@ from lux.engine.colour import LuxColour
 if TYPE_CHECKING:
     from lux.engine.interactors.interactor_edge import RayInteractorEdge
     from lux.engine.interactors.ray_interactor import RayInteractor
+
+logger = getLogger("lux")
 
 
 class Ray(NamedTuple):
@@ -84,6 +87,7 @@ class LightRay:
         raise NotImplementedError()
 
     def propagate_ray(self, edge_to_interactor_map: dict[RayInteractorEdge, RayInteractor]) -> tuple[LightRay, ...]:
+        logger.debug(f"{self}: Propogating!")
         self.propagate_kill()
         children = self._propagate(edge_to_interactor_map)
         for child, edge, left_intersection, right_intersection in children:
