@@ -1,15 +1,18 @@
 from __future__ import annotations
+from logging import getLogger
 from typing import TYPE_CHECKING, Generator
 
 from pyglet.math import Vec2
 
 from lux.engine.lights.ray import Ray, LightRay
 from lux.engine.colour import LuxColour
-from lux.util.maths import get_intersection, get_segment_intersection, get_intersection_fraction
+from lux.util.maths import get_intersection, get_intersection_fraction
 from lux.engine.interactors.interactor_edge import RayInteractorEdge
 
 if TYPE_CHECKING:
     from lux.engine.interactors.ray_interactor import RayInteractor
+
+logger = getLogger("lux")
 
 
 class BeamLightRay(LightRay):
@@ -40,7 +43,6 @@ class BeamLightRay(LightRay):
         right_source = self.right.source
         beam_dir = self.left.direction
         beam_normal = Vec2(self.left.direction.y, -self.left.direction.x)
-        base_normal = self.normal
 
         right_sink = right_source + beam_dir * self.right.length
         left_sink = left_source + beam_dir * self.left.length
@@ -50,25 +52,25 @@ class BeamLightRay(LightRay):
             end_point = edge.end
 
             if (start_point - left_source).dot(beam_dir) < 0.0 and (end_point - left_source).dot(beam_dir) < 0.0:
-                print("Behind Beam")
+                logger.debug(f"{self}: behind beam")
                 continue
 
             if (start_point - left_sink).dot(beam_dir) > 0.0 and (end_point - left_sink).dot(beam_dir) < 0.0:
-                print("Ahead Beam")
+                logger.debug(f"{self}: ahead beam")
                 continue
 
             in_beam = False
 
             if ((start_point - left_source).dot(beam_normal) > 0.0) == ((start_point - right_source).dot(beam_normal) < 0.0):
-                print("Start in beam")
+                logger.debug(f"{self}: start in beam")
                 in_beam = True
 
             if ((end_point - left_source).dot(beam_normal) > 0.0) == ((end_point - right_source).dot(beam_normal) < 0.0):
-                print("End in beam")
+                logger.debug(f"{self}: end in beam")
                 in_beam = True
 
             if ((start_point - left_source).dot(beam_normal) > 0.0) == ((end_point - left_source).dot(beam_normal) < 0.0):
-                print("Edge crossed beam")
+                logger.debug(f"{self}: edge crossed beam")
                 in_beam = True
 
             if not in_beam:
@@ -107,12 +109,12 @@ class BeamLightRay(LightRay):
         )
 
         finalised_beams: list[tuple[LightRay, RayInteractorEdge, Vec2, Vec2]] = list()
-        
+
         end_fraction = get_intersection_fraction(
             right_sink, end_normal,
             points_sorted[0][1], beam_dir
         )
-        
+
         right_ray: Ray = Ray(
             points_sorted[0][1],
             beam_dir,
@@ -127,11 +129,7 @@ class BeamLightRay(LightRay):
         collecting_rays: bool = points_sorted[0][0] == right_sink
 
         for end, start, edge in points_sorted[1:]:
-            print("===")
-            # print("start:", start, "end:", end)
-            # print("current: ", current_edge)
-            # print("active: \n| - ", end="")
-            # print("\n| - ".join(str(e) for e in active_edges))
+            logger.debug(f"{self}: checking: {end=}, {start=}, {edge=}")
 
             if end == right_sink:
                 collecting_rays = True
