@@ -20,15 +20,14 @@ class FilterRayInteractor(RayInteractor):
         if new_colour == LuxColour.BLACK():
             return ()
 
-        new_direction = in_ray.direction
-        new_right_length = in_ray.left.length - (left_intersection - in_ray.left.source).mag
-        new_right_strength = in_ray.left.strength - in_ray.left.length
-        new_left_length = in_ray.right.length - (right_intersection - in_ray.right.source).mag
-        new_left_strength = in_ray.right.strength - in_ray.right.strength
+        new_left_length = in_ray.left.length - (left_intersection - in_ray.left.source).mag
+        new_left_strength = in_ray.left.strength - in_ray.left.length
+        new_right_length = in_ray.right.length - (right_intersection - in_ray.right.source).mag
+        new_right_strength = in_ray.right.strength - in_ray.right.strength
 
         return (BeamLightRay(new_colour,
-                             Ray(right_intersection, new_direction, new_left_length, new_left_strength),
-                             Ray(left_intersection, new_direction, new_right_length, new_right_strength)),)
+                             Ray(left_intersection, in_ray.left.direction, in_ray.left.length, in_ray.left.strength),
+                             Ray(right_intersection, in_ray.right.direction, in_ray.right.length, in_ray.right.strength)),)
 
 
 class PolygonFilterRayInteractor(FilterRayInteractor):

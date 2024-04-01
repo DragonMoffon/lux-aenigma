@@ -1,5 +1,5 @@
 from pyglet.math import Vec2
-from arcade import draw_line, draw_point
+from arcade import draw_line, draw_point, draw_polygon_filled
 
 from lux.engine.lights import Ray
 from lux.engine.lights.beam_light_ray import BeamLightRay
@@ -45,6 +45,12 @@ class BeamDebugRenderer:
         self.child = new_child
 
     def draw(self):
+        draw_polygon_filled(
+            (self.child.left.source, self.child.left.source + self.child.left.direction * self.child.left.length,
+            self.child.right.source + self.child.right.direction * self.child.right.length, self.child.right.source),
+            self.child.colour.to_int_color()
+        )
+
         draw_ray(self.child.left, self.child.colour.to_int_color())
         draw_ray(self.child.right, self.child.colour.to_int_color())
         draw_line(*self.child.left.source, *self.child.right.source, self.child.colour.to_int_color(), _LINE_WIDTH)

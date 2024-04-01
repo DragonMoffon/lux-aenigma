@@ -44,9 +44,14 @@ class SomethingView(LuxView):
             self.filter_cyan.bounds[0].adjust(self.filter_cyan.origin, self.filter_cyan.direction.heading): self.filter_cyan,
         }
 
+        def make_beam_renderers(beam):
+            self.renderer.append(BeamDebugRenderer(beam))
+            for child in beam.children:
+                make_beam_renderers(child)
+
         beams = beam.propagate_ray(self.edge_map)
         for beam in beams:
-            self.renderer.append(BeamDebugRenderer(beam))
+            make_beam_renderers(beam)
 
     def on_draw(self):
         self.clear()

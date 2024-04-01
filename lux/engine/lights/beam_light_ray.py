@@ -136,6 +136,7 @@ class BeamLightRay(LightRay):
 
             left_ray = None
             next_right_ray = None
+            next_current_edge = None
 
             # Get the end fraction and strength
             end_fraction = get_intersection_fraction(
@@ -186,7 +187,7 @@ class BeamLightRay(LightRay):
                     self.right.strength + end_fraction * (self.left.strength - self.right.strength)
                 )
 
-                current_edge = edge
+                next_current_edge = edge
             else:
                 # We are ending an edge. This will always be the active edge.
                 left_ray = Ray(
@@ -211,7 +212,7 @@ class BeamLightRay(LightRay):
                             closest_dist = intersection_dist
 
                     assert next_edge is not None, "AHHHH There should always be at least one edge in active edges."
-                    current_edge = next_edge
+                    next_current_edge = next_edge
                     next_right_ray = Ray(
                         start,
                         beam_dir,
