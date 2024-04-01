@@ -13,8 +13,35 @@ class Direction(Vec2):
         mag = (x**2.0 + y**2.0) ** 0.5
         super().__init__(x / mag, y / mag)
 
+    @property
+    def degrees(self) -> float:
+        return (self.heading / (math.pi / 180)) % 360
+
+    @property
+    def name(self) -> str:
+        closest_dir = ""
+        if 0 <= self.degrees < 22.5 or 337.5 <= self.degrees < 360:
+            closest_dir = "NORTH"
+        elif 22.5 <= self.degrees < 67.5:
+            closest_dir = "NORTHEAST"
+        elif 67.5 <= self.degrees < 112.5:
+            closest_dir = "EAST"
+        elif 112.5 <= self.degrees < 157.5:
+            closest_dir = "SOUTHEAST"
+        elif 157.5 <= self.degrees < 202.5:
+            closest_dir = "SOUTH"
+        elif 202.5 <= self.degrees < 247.5:
+            closest_dir = "SOUTHWEST"
+        elif 247.5 <= self.degrees < 292.5:
+            closest_dir = "WEST"
+        elif 292.5 <= self.degrees < 337.5:
+            closest_dir = "NORTHWEST"
+        if self.degrees not in [0.0, 45.0, 90.0, 135.0, 180.0, 225.0, 270.0, 315.0, 360.0]:
+            closest_dir = "~" + closest_dir
+        return closest_dir
+
     @classmethod
-    def degrees(cls, deg: float) -> Direction:
+    def from_degrees(cls, deg: float) -> Direction:
         rad = deg * (math.pi / 180)
         return Direction(math.cos(rad), math.sin(rad))
 
@@ -52,6 +79,13 @@ class Direction(Vec2):
     @classmethod
     def SOUTHWEST(cls) -> Direction:
         return cls(-1, -1)
+
+    def __str__(self) -> str:
+        out_name = self.name if "~" not in self.name else f"{self.name} ({round(self.degrees, 3)}deg)"
+        return f"Direction({out_name})"
+
+    def __repr__(self) -> str:
+        return self.__str__()
 
 
 def cross_2d(a: Vec2, b: Vec2):
