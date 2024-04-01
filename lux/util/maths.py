@@ -18,6 +18,9 @@ class Direction(Vec2):
         rad = deg * (math.pi / 180)
         return Direction(math.cos(rad), math.sin(rad))
 
+    def to_normal(self) -> Direction:
+        return Direction(self.y, -self.x)
+
     @classmethod
     def NORTH(cls) -> Direction:
         return cls(0, 1)

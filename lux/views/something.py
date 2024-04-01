@@ -6,8 +6,10 @@ from lux.engine.debug import DebugRenderer
 from lux.engine.debug.ray_renderer import RayDebugRenderer
 from lux.engine.debug.ray_interactor_renderer import RayInteractorRenderer
 from lux.engine.lights.ray import Ray
+from lux.engine.interactors import RayInteractorEdge
 from lux.engine.interactors.portal import PortalRayInteractor
 from lux.engine.interactors.mirror import MirrorRayInteractor
+from lux.engine.interactors.filter import FilterRayInteractor
 from lux.engine.lights.ray_interaction import calculate_ray_interaction
 from lux.engine.upscale_renderer import UpscaleBuffer
 from lux.util.maths import Direction
@@ -18,7 +20,7 @@ class SomethingView(LuxView):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.ray = Ray(Vec2(20, 45), Direction.EAST(), 1000000.0, LuxColour.RED())
+        self.ray = Ray(Vec2(20, 45), Direction.EAST(), 1000000.0, LuxColour.WHITE())
         self.child_ray = None
 
         self.renderer = DebugRenderer()
@@ -28,16 +30,26 @@ class SomethingView(LuxView):
 
         self.renderer.append(self.ray_renderer)
 
-        self._portal_a = PortalRayInteractor(100.0, Vec2(125, 200), Direction.WEST(), LuxColour.YELLOW())
-        self._portal_b = PortalRayInteractor(100.0, Vec2(400, 250), Direction.NORTHEAST(), LuxColour.CYAN())
-        self._mirror_a = MirrorRayInteractor(100.0, Vec2(200, 125), Direction.SOUTHWEST(), LuxColour.MAGENTA())
-        self.renderer.append(RayInteractorRenderer(self._portal_a))
-        self.renderer.append(RayInteractorRenderer(self._portal_b))
-        self.renderer.append(RayInteractorRenderer(self._mirror_a))
+        #self._portal_a = PortalRayInteractor(100.0, Vec2(125, 200), Direction.WEST(), LuxColour.YELLOW())
+        #self._portal_b = PortalRayInteractor(100.0, Vec2(400, 250), Direction.NORTHEAST(), LuxColour.CYAN())
+        #self._portal_a.set_siblings(self._portal_b)
+        #self._mirror_a = MirrorRayInteractor(100.0, Vec2(200, 125), Direction.SOUTHWEST(), LuxColour.MAGENTA())
+        #self.renderer.append(RayInteractorRenderer(self._portal_a))
+        #self.renderer.append(RayInteractorRenderer(self._portal_b))
+        #self.renderer.append(RayInteractorRenderer(self._mirror_a))
+        #self.interactors = (self._portal_a, self._portal_b, self._mirror_a)
 
-        self.interactors = (self._portal_a, self._portal_b, self._mirror_a)
+        self.filter_red = FilterRayInteractor(Vec2(125, 200), Direction.WEST(), LuxColour.RED(), (RayInteractorEdge(Vec2(0.0, -50.0), Vec2(0.0, 50.0), True),))
+        self.filter_green = FilterRayInteractor(Vec2(400, 250), Direction.NORTHEAST(), LuxColour.GREEN(), (RayInteractorEdge(Vec2(0.0, -50.0), Vec2(0.0, 50.0), True),))
+        self.filter_blue = FilterRayInteractor(Vec2(200, 125), Direction.SOUTHWEST(), LuxColour.BLUE(), (RayInteractorEdge(Vec2(0.0, -50.0), Vec2(0.0, 50.0), True),))
+        self.filter_cyan = FilterRayInteractor(Vec2(200, 225), Direction.SOUTHWEST(), LuxColour.CYAN(), (RayInteractorEdge(Vec2(0.0, -50.0), Vec2(0.0, 50.0), False),))
 
-        self._portal_a.set_siblings(self._portal_b)
+        self.renderer.append(RayInteractorRenderer(self.filter_red))
+        self.renderer.append(RayInteractorRenderer(self.filter_green))
+        self.renderer.append(RayInteractorRenderer(self.filter_blue))
+        self.renderer.append(RayInteractorRenderer(self.filter_cyan))
+
+        self.interactors = (self.filter_red, self.filter_green, self.filter_blue, self.filter_cyan)
 
         self.upscale_renderer = UpscaleBuffer(640, 360)
 

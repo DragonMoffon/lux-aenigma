@@ -34,9 +34,21 @@ any unassigned namespace referenced by a Notification. This second behaviour is 
 disabled. In which case unassigned namespaces will raise errors. An important configuration for Notifiers
 is their emit mode. In `immediate` mode they will release an emitted Notification to callbacks instantly,
 in `gate` mode the notifications will be stored in a stack and then the Notifier must be told when to release
-them. This mode allows you to call all notifications at the start of on_update for example. `Async` mode
+them. For example this mode allows you to call all notifications at the start of on_update. `Async` mode
 forces emitted Notifications into a thread safe queue to be called atomically. [Note I don't know how possible this is]
 """
+from typing import TypedDict
+from weakref import WeakSet
+
+
+class _NotificationSignature:
+    pass
+
+    def __hash__(self):
+        pass
+
+    def __eq__(self, other):
+        pass
 
 
 class Notifier:

@@ -9,6 +9,9 @@ class LuxColour(NamedTuple):
     green: bool
     blue: bool
 
+    def __eq__(self, other: LuxColour):
+        return self.red == other.red and self.green == other.green and self.blue == other.blue
+
     def to_int_color(self) -> Color:
         return Color(
             self.red * 255,
@@ -21,7 +24,7 @@ class LuxColour(NamedTuple):
         return self.to_int_color().normalized
 
     def mask(self, other: LuxColour) -> LuxColour:
-        return LuxColour(self.red & other.red, self.green & other.green, self.blue & other.blue)
+        return LuxColour(self.red and other.red, self.green and other.green, self.blue and other.blue)
 
     def invert(self):
         return LuxColour(not self.red, not self.blue, not self.green)

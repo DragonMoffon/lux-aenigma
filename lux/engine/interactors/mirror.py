@@ -3,11 +3,12 @@ from pyglet.math import Vec2
 from lux.engine.lights import Ray
 from lux.engine.interactors import RayInteractorEdge, RayInteractor
 from lux.engine.colour import LuxColour
+from lux.util.maths import Direction
 
 
 class MirrorRayInteractor(RayInteractor):
 
-    def __init__(self, height: float, origin: Vec2, direction: Vec2, colour: LuxColour):
+    def __init__(self, height: float, origin: Vec2, direction: Direction, colour: LuxColour):
         bounds = (
             RayInteractorEdge(
                 Vec2(0.0, -height/2.0),
