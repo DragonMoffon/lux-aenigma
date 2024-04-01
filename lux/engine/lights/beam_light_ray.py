@@ -32,7 +32,7 @@ class BeamLightRay(LightRay):
         self.normal = normal
 
     def __str__(self):
-        return f"BeamLightRay<({self.origin.x}, {self.origin.y}): {self.colour}>"
+        return f"BeamLightRay<({round(self.origin.x, 3)}, {round(self.origin.y, 3)}): {self.colour.name}>"
 
     def _kill(self):
         self.left = None

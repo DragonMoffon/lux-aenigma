@@ -4,7 +4,6 @@ from typing import NamedTuple, TYPE_CHECKING
 from pyglet.math import Vec2
 
 from lux.engine.colour import LuxColour
-from lux.util.maths import Direction
 if TYPE_CHECKING:
     from lux.engine.interactors.interactor_edge import RayInteractorEdge
     from lux.engine.interactors.ray_interactor import RayInteractor
@@ -104,6 +103,3 @@ class LightRay:
 
 class ConeLightRay(LightRay):
     pass
-
-
-
