@@ -14,28 +14,41 @@ class Ray(NamedTuple):
     source: Vec2
     direction: Vec2
     length: float
-    colour: LuxColour
+    strength: float
 
     def __eq__(self, other: Ray):
-        return self.source == other.source and self.direction == other.direction and self.length == other.colour
+        return (
+                self.source == other.source
+                and
+                self.direction == other.direction
+                and
+                self.length == other.length
+                and
+                self.strength == other.strength
+        )
 
     def change_source(self, new_source: Vec2):
-        return Ray(new_source, self.direction, self.length, self.colour)
+        return Ray(new_source, self.direction, self.length, self.strength)
 
     def change_direction(self, new_dir: Vec2):
-        return Ray(self.source, new_dir, self.length, self.colour)
+        return Ray(self.source, new_dir, self.length, self.strength)
 
     def change_length(self, new_length: float):
-        return Ray(self.source, self.direction, new_length, self.colour)
+        return Ray(self.source, self.direction, new_length, self.strength)
+
+    def change_strength(self, new_strength: float):
+        return Ray(self.source, self.direction, self.length, self.strength)
 
 
 class LightRay:
 
-    def __init__(self, origin: Vec2, direction: Direction, strength: float, colour: LuxColour):
+    def __init__(self, origin: Vec2, direction: Vec2, colour: LuxColour, left: Ray, right: Ray):
         self.origin: Vec2 = origin
-        self.direction: Direction = direction
-        self.strength: float = strength
+        self.direction: Vec2 = direction
         self.colour: LuxColour = colour
+
+        self.left: Ray = left
+        self.right: Ray = right
 
         self.children: set[LightRay] = set()
 
@@ -47,6 +60,9 @@ class LightRay:
 
     def add_child(self, new_child: LightRay):
         self.children.add(new_child)
+
+    def add_children(self, children: tuple[LightRay, ...]):
+        self.children.update(children)
 
     def remove_child(self, child: LightRay):
         self.children.remove(child)
@@ -67,14 +83,19 @@ class LightRay:
 
     def propagate_ray(self, edge_to_interactor_map: dict[RayInteractorEdge, RayInteractor]) -> tuple[LightRay, ...]:
         self.propagate_kill()
-        subdivided_ray = self._propagate(edge_to_interactor_map)
-        children = ()
-        for child in subdivided_ray:
-            children += child.propagate_ray(edge_to_interactor_map)
+        children = self._propagate(edge_to_interactor_map)
+        for child, edge, left_intersection, right_intersection in children:
+            interactor = edge_to_interactor_map.get(edge)
+            if interactor is None:
+                continue
 
-        return children
+            sub_children = interactor.ray_hit(child, edge, left_intersection, right_intersection)
+            for sub_child in sub_children:
+                child.add_children(sub_child.propagate_ray(edge_to_interactor_map))
 
-    def _propagate(self, edge_to_interactor_map: dict[RayInteractorEdge, RayInteractor]) -> tuple[LightRay, ...]:
+        return tuple(child[0] for child in children)
+
+    def _propagate(self, edge_to_interactor_map: dict[RayInteractorEdge, RayInteractor]) -> tuple[tuple[LightRay, RayInteractorEdge, Vec2, Vec2], ...]:
         raise NotImplementedError()
 
 

@@ -5,6 +5,8 @@ from lux.engine.interactors import RayInteractorEdge, RayInteractor
 from lux.engine.colour import LuxColour
 from lux.util.maths import Direction
 
+from lux.engine.lights.beam_light_ray import LightRay
+
 
 class MirrorRayInteractor(RayInteractor):
 
@@ -22,7 +24,8 @@ class MirrorRayInteractor(RayInteractor):
     def edge(self):
         return self._bounds[0]
 
-    def ray_hit(self, in_ray: Ray, in_edge: RayInteractorEdge, intersection_point: Vec2) -> Ray | None:
+    def ray_hit(self, in_ray: LightRay, in_edge: RayInteractorEdge,
+                left_intersection: Vec2, right_intersection: Vec2) -> tuple[LightRay, ...]:
         assert in_edge is self.edge, "Mirror edge not being used with mirror"
 
         direction_heading = self.direction.heading

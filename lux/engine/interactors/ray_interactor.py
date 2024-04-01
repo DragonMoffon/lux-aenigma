@@ -2,7 +2,8 @@ from __future__ import annotations
 
 from pyglet.math import Vec2
 
-from lux.engine.lights import Ray
+from lux.engine.lights.ray import LightRay
+
 from lux.engine.colour import LuxColour
 from lux.engine.interactors.interactor_edge import RayInteractorEdge
 
@@ -21,7 +22,8 @@ class RayInteractor:
     def bounds(self):
         return self._bounds
 
-    def ray_hit(self, in_ray: Ray, in_edge: RayInteractorEdge, intersection_point: Vec2) -> Ray | None:
+    def ray_hit(self, in_ray: LightRay, in_edge: RayInteractorEdge,
+                left_intersection: Vec2, right_intersection: Vec2) -> tuple[LightRay, ...]:
         """
         Take in a ray, and calculate where the ray will exit
 

@@ -12,7 +12,7 @@ from lux.engine.interactors.mirror import MirrorRayInteractor
 from lux.engine.interactors.filter import FilterRayInteractor
 from lux.engine.lights.ray_interaction import calculate_ray_interaction
 from lux.engine.upscale_renderer import UpscaleBuffer
-from lux.util.maths import Direction
+from lux.util.maths import Direction, get_segment_intersection
 from lux.util.view import LuxView
 
 
@@ -57,33 +57,7 @@ class SomethingView(LuxView):
         self.paused = False
 
     def on_update(self, delta_time: float):
-        if self.paused:
-            return
-
-        if self.child_renderer is not None:
-            self.renderer.remove(self.child_renderer)
-            self.child_renderer = None
-
-        ray = Ray(self.ray.source, self.ray.direction.rotate((-1 if self.dir else 1) * delta_time * 3.14159 / 20.0), 300, self.ray.colour)
-
-        interaction = calculate_ray_interaction(ray, self.interactors)
-        if interaction is None:
-            self.ray = ray
-            self.ray_renderer.update_child(self.ray)
-            return
-        intersection, edge, interactor = interaction
-        base_ray = ray.change_length((intersection - ray.source).mag)
-        child_ray = interactor.ray_hit(ray, edge, intersection)
-
-        self.ray = base_ray
-        self.ray_renderer.update_child(self.ray)
-
-        if child_ray is None:
-            return
-
-        self.child_ray = child_ray
-        self.child_renderer = RayDebugRenderer(child_ray)
-        self.renderer.append(self.child_renderer)
+        pass
 
     def on_key_press(self, symbol: int, modifiers: int):
         match symbol:

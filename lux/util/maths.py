@@ -96,12 +96,29 @@ def get_intersection(o1: Vec2, d1: Vec2, o2: Vec2, d2: Vec2) -> Vec2 | None:
 
     # Two lines are parallel
     if direction_interaction == 0.0:
-        logger.debug(f"line<{o1} + t*{d1}> is parallel to line<{o2} + u*{d2}>")
+        # logger.debug(f"line<{o1} + t*{d1}> is parallel to line<{o2} + u*{d2}>")
         return None
 
     # find how far along line one line two intersects
     # because we don't care about if the segments interact we just need to find t
     t = cross_2d(o2 - o1, d2) / direction_interaction
 
-    logger.debug(f"line<{o1} + t*{d1}> intersects line<{o2} + u*{d2}> at {o1 + d1 * t}")
+    # logger.debug(f"line<{o1} + t*{d1}> intersects line<{o2} + u*{d2}> at {o1 + d1 * t}")
     return o1 + d1 * t
+
+
+def get_intersection_fraction(o1: Vec2, d1: Vec2, o2: Vec2, d2: Vec2) -> float | None:
+    # Same logic as the segment intersection but we want the fraction t
+
+    direction_interaction = cross_2d(d1, d2)
+
+    # Two lines are parallel
+    if direction_interaction == 0.0:
+        # logger.debug(f"line<{o1} + t*{d1}> is parallel to line<{o2} + u*{d2}>")
+        return None
+
+    # find how far along line one line two intersects
+    # because we don't care about if the segments interact we just need to find t
+    t = cross_2d(o2 - o1, d2) / direction_interaction
+
+    return t
