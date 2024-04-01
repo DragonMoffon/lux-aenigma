@@ -26,21 +26,23 @@ class MirrorRayInteractor(RayInteractor):
 
     def ray_hit(self, in_ray: LightRay, in_edge: RayInteractorEdge,
                 left_intersection: Vec2, right_intersection: Vec2) -> tuple[LightRay, ...]:
-        assert in_edge is self.edge, "Mirror edge not being used with mirror"
+        new_rays = []
+        for intersection_point in [left_intersection, right_intersection]:
+            assert in_edge is self.edge, "Mirror edge not being used with mirror"
 
-        direction_heading = self.direction.heading
-        edge_normal = in_edge.normal.rotate(direction_heading)
-        edge_dir = in_edge.direction.rotate(direction_heading)
+            direction_heading = self.direction.heading
+            edge_normal = in_edge.normal.rotate(direction_heading)
+            edge_dir = in_edge.direction.rotate(direction_heading)
 
-        if not in_edge.bi_dir and (in_ray.source - intersection_point).dot(edge_normal) < 0.0:
-            return
+            if not in_edge.bi_dir and (in_ray.source - intersection_point).dot(edge_normal) < 0.0:
+                return
 
-        parallel_component = in_ray.direction.dot(edge_normal)
-        mirror_component = in_ray.direction.dot(edge_dir)
+            parallel_component = in_ray.direction.dot(edge_normal)
+            mirror_component = in_ray.direction.dot(edge_dir)
 
-        new_direction = - edge_normal * parallel_component + edge_dir * mirror_component
-        new_length = in_ray.length - (intersection_point - in_ray.source).mag
-        new_colour = self.colour.mask(in_ray.colour)
+            new_direction = - edge_normal * parallel_component + edge_dir * mirror_component
+            new_length = in_ray.length - (intersection_point - in_ray.source).mag
+            new_colour = self.colour.mask(in_ray.colour)
 
-        new_ray = Ray(intersection_point, new_direction, new_length, new_colour)
-        return new_ray
+            new_rays.append(Ray(intersection_point, new_direction, new_length, new_colour))
+        return tuple(new_rays)
