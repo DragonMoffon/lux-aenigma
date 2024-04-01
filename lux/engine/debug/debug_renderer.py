@@ -25,3 +25,6 @@ class DebugRenderer:
 
     def remove(self, renderer: DebugChildRenderer):
         self._renderers.remove(renderer)
+
+    def clear(self):
+        self._renderers = []

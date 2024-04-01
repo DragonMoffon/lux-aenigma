@@ -16,17 +16,20 @@ class SomethingView(LuxView):
 
     def __init__(self, back: LuxView):
         super().__init__(back=back)
-
-        w, h = self.window.width / 2, self.window.height / 2
+        w, h = self.window.center
 
         self.renderer = DebugRenderer()
 
-        beam = BeamLightRay(
+        self.beam = BeamLightRay(
             LuxColour.WHITE(),
             Ray(Vec2(w, h + 150.0), Direction.EAST(), 2500.0, 2500.0),
             Ray(Vec2(w, h - 150.0), Direction.EAST(), 2500.0, 2500.0)
         )
 
+    def rerender(self):
+        w, h = self.window.center
+
+        self.renderer.clear()
         self.filter_red = FilterRayInteractor(Vec2(w+125, h+50), Direction.WEST(), LuxColour.RED(), (RayInteractorEdge(Vec2(0.0, -50.0), Vec2(0.0, 50.0), True),))
         self.filter_green = FilterRayInteractor(Vec2(w+400, h+25), Direction.NORTHEAST(), LuxColour.GREEN(), (RayInteractorEdge(Vec2(0.0, -50.0), Vec2(0.0, 50.0), True),))
         self.filter_blue = FilterRayInteractor(Vec2(w+200, h-75), Direction.SOUTHWEST(), LuxColour.BLUE(), (RayInteractorEdge(Vec2(0.0, -50.0), Vec2(0.0, 50.0), True),))
@@ -49,7 +52,7 @@ class SomethingView(LuxView):
             for child in beam.children:
                 make_beam_renderers(child)
 
-        beams = beam.propagate_ray(self.edge_map)
+        beams = self.beam.propagate_ray(self.edge_map)
         for beam in beams:
             make_beam_renderers(beam)
 

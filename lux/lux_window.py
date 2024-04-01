@@ -21,6 +21,10 @@ class LuxWindow(Window):
                              anchor_x = "right", anchor_y = "top",
                              font_name = "GohuFont 11 Nerd Font Mono", font_size = 11)
 
+    @property
+    def center(self) -> tuple[float, float]:
+        return self.width / 2, self.height / 2
+
     def on_update(self, delta_time: float):
         self.frame_count += 1
         self.fps_queue.append(1 / delta_time)
