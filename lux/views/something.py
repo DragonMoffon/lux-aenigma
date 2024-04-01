@@ -1,74 +1,53 @@
-import arcade.key
 from pyglet.math import Vec2
 
-from lux.engine.colour import LuxColour
-from lux.engine.debug import DebugRenderer
-from lux.engine.debug.ray_renderer import RayDebugRenderer
-from lux.engine.debug.ray_interactor_renderer import RayInteractorRenderer
-from lux.engine.lights.ray import Ray
-from lux.engine.interactors import RayInteractorEdge
-from lux.engine.interactors.portal import PortalRayInteractor
-from lux.engine.interactors.mirror import MirrorRayInteractor
-from lux.engine.interactors.filter import FilterRayInteractor
-from lux.engine.lights.ray_interaction import calculate_ray_interaction
-from lux.engine.upscale_renderer import UpscaleBuffer
-from lux.util.maths import Direction, get_segment_intersection
+from lux.engine.debug.ray_renderer import BeamDebugRenderer
 from lux.util.view import LuxView
+from lux.util.maths import Direction
+from lux.engine.colour import LuxColour
+from lux.engine.lights.ray import Ray
+from lux.engine.lights.beam_light_ray import BeamLightRay
+from lux.engine.interactors.interactor_edge import RayInteractorEdge
+from lux.engine.interactors.filter import FilterRayInteractor
+from lux.engine.debug import DebugRenderer
+from lux.engine.debug.ray_interactor_renderer import RayInteractorRenderer
 
 
 class SomethingView(LuxView):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
 
-        self.ray = Ray(Vec2(20, 45), Direction.EAST(), 1000000.0, LuxColour.WHITE())
-        self.child_ray = None
+    def __init__(self, back: LuxView):
+        super().__init__(back=back)
+
+        w, h = self.window.width / 2, self.window.height / 2
 
         self.renderer = DebugRenderer()
 
-        self.ray_renderer = RayDebugRenderer(self.ray)
-        self.child_renderer = None
+        beam = BeamLightRay(
+            LuxColour.WHITE(),
+            Ray(Vec2(w, h + 150.0), Direction.EAST(), 2500.0, 2500.0),
+            Ray(Vec2(w, h - 150.0), Direction.EAST(), 2500.0, 2500.0)
+        )
 
-        self.renderer.append(self.ray_renderer)
-
-        #self._portal_a = PortalRayInteractor(100.0, Vec2(125, 200), Direction.WEST(), LuxColour.YELLOW())
-        #self._portal_b = PortalRayInteractor(100.0, Vec2(400, 250), Direction.NORTHEAST(), LuxColour.CYAN())
-        #self._portal_a.set_siblings(self._portal_b)
-        #self._mirror_a = MirrorRayInteractor(100.0, Vec2(200, 125), Direction.SOUTHWEST(), LuxColour.MAGENTA())
-        #self.renderer.append(RayInteractorRenderer(self._portal_a))
-        #self.renderer.append(RayInteractorRenderer(self._portal_b))
-        #self.renderer.append(RayInteractorRenderer(self._mirror_a))
-        #self.interactors = (self._portal_a, self._portal_b, self._mirror_a)
-
-        self.filter_red = FilterRayInteractor(Vec2(125, 200), Direction.WEST(), LuxColour.RED(), (RayInteractorEdge(Vec2(0.0, -50.0), Vec2(0.0, 50.0), True),))
-        self.filter_green = FilterRayInteractor(Vec2(400, 250), Direction.NORTHEAST(), LuxColour.GREEN(), (RayInteractorEdge(Vec2(0.0, -50.0), Vec2(0.0, 50.0), True),))
-        self.filter_blue = FilterRayInteractor(Vec2(200, 125), Direction.SOUTHWEST(), LuxColour.BLUE(), (RayInteractorEdge(Vec2(0.0, -50.0), Vec2(0.0, 50.0), True),))
-        self.filter_cyan = FilterRayInteractor(Vec2(200, 225), Direction.SOUTHWEST(), LuxColour.CYAN(), (RayInteractorEdge(Vec2(0.0, -50.0), Vec2(0.0, 50.0), False),))
+        self.filter_red = FilterRayInteractor(Vec2(w+125, h+50), Direction.WEST(), LuxColour.RED(), (RayInteractorEdge(Vec2(0.0, -50.0), Vec2(0.0, 50.0), True),))
+        self.filter_green = FilterRayInteractor(Vec2(w+400, h+25), Direction.NORTHEAST(), LuxColour.GREEN(), (RayInteractorEdge(Vec2(0.0, -50.0), Vec2(0.0, 50.0), True),))
+        self.filter_blue = FilterRayInteractor(Vec2(w+200, h-75), Direction.SOUTHWEST(), LuxColour.BLUE(), (RayInteractorEdge(Vec2(0.0, -50.0), Vec2(0.0, 50.0), True),))
+        self.filter_cyan = FilterRayInteractor(Vec2(w+200, h-100), Direction.SOUTHWEST(), LuxColour.CYAN(), (RayInteractorEdge(Vec2(0.0, -50.0), Vec2(0.0, 50.0), False),))
 
         self.renderer.append(RayInteractorRenderer(self.filter_red))
         self.renderer.append(RayInteractorRenderer(self.filter_green))
         self.renderer.append(RayInteractorRenderer(self.filter_blue))
         self.renderer.append(RayInteractorRenderer(self.filter_cyan))
 
-        self.interactors = (self.filter_red, self.filter_green, self.filter_blue, self.filter_cyan)
+        self.edge_map = {
+            self.filter_red.bounds[0].adjust(self.filter_red.origin, self.filter_red.direction.heading): self.filter_red,
+            self.filter_green.bounds[0].adjust(self.filter_green.origin, self.filter_green.direction.heading): self.filter_green,
+            self.filter_blue.bounds[0].adjust(self.filter_blue.origin, self.filter_blue.direction.heading): self.filter_blue,
+            self.filter_cyan.bounds[0].adjust(self.filter_cyan.origin, self.filter_cyan.direction.heading): self.filter_cyan,
+        }
 
-        self.upscale_renderer = UpscaleBuffer(640, 360)
-
-        self.dir = True
-        self.paused = False
-
-    def on_update(self, delta_time: float):
-        pass
-
-    def on_key_press(self, symbol: int, modifiers: int):
-        match symbol:
-            case arcade.key.ENTER:
-                self.dir = not self.dir
-            case arcade.key.SPACE:
-                self.paused = not self.paused
+        beams = beam.propagate_ray(self.edge_map)
+        for beam in beams:
+            self.renderer.append(BeamDebugRenderer(beam))
 
     def on_draw(self):
         self.clear()
-        with self.upscale_renderer.activate() as ur:
-            ur.clear()
-            self.renderer.draw()
-        self.upscale_renderer.draw()
+        self.renderer.draw()
