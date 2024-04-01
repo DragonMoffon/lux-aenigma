@@ -47,8 +47,8 @@ class BeamDebugRenderer:
     def draw(self):
         draw_polygon_filled(
             (self.child.left.source, self.child.left.source + self.child.left.direction * self.child.left.length,
-            self.child.right.source + self.child.right.direction * self.child.right.length, self.child.right.source),
-            self.child.colour.to_int_color()
+             self.child.right.source + self.child.right.direction * self.child.right.length, self.child.right.source),
+             self.child.colour.to_int_color(127)
         )
 
         draw_ray(self.child.left, self.child.colour.to_int_color())

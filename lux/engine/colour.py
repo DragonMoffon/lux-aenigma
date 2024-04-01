@@ -12,16 +12,17 @@ class LuxColour(NamedTuple):
     def __eq__(self, other: LuxColour):
         return self.red == other.red and self.green == other.green and self.blue == other.blue
 
-    def to_int_color(self) -> Color:
+    def to_int_color(self, alpha = 255) -> Color:
         return Color(
             self.red * 255,
             self.green * 255,
             self.blue * 255,
-            255
+            alpha
         )
 
-    def to_float_color(self) -> RGBANormalized:
-        return self.to_int_color().normalized
+    def to_float_color(self, alpha = 1.0) -> RGBANormalized:
+        c = self.to_int_color().normalized
+        return (c[0], c[1], c[2], alpha)
 
     def mask(self, other: LuxColour) -> LuxColour:
         return LuxColour(self.red and other.red, self.green and other.green, self.blue and other.blue)
