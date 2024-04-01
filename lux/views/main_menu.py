@@ -17,9 +17,9 @@ class MenuView(LuxView):
         super().__init__(*args, **kwargs)
         self.menu = DevMenu({
             "Something": SomethingView(back=self),
+            "Scene": SceneView(self),
             "Editor": SceneEditorView(self),
-            "Scene Select": SceneSelectView(self),
-            "Start": SceneView(self)
+            "Scene Select": SceneSelectView(self)
         })
 
     def on_key_press(self, symbol: int, modifiers: int):

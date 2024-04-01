@@ -57,6 +57,10 @@ class RayInteractorEdge:
     def bi_dir(self):
         return self._bi_dir
 
+    @property
+    def diff(self):
+        return self._end - self._start
+
     def adjust(self, origin: Vec2, heading: float):
         return RayInteractorEdge(
             origin + self._start.rotate(heading),
