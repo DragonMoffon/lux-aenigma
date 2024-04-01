@@ -1,6 +1,7 @@
 
 from pyglet.math import Vec2
 
+from lux.engine.debug.ray_renderer import BeamDebugRenderer
 from lux.util.view import LuxView
 from lux.util.maths import Direction
 from lux.engine.colour import LuxColour
@@ -39,6 +40,7 @@ class SceneView(LuxView):
         self.renderer.append(RayInteractorRenderer(self.filter_green))
         self.renderer.append(RayInteractorRenderer(self.filter_blue))
         self.renderer.append(RayInteractorRenderer(self.filter_cyan))
+        self.renderer.append(BeamDebugRenderer(self.beam))
 
         self.edge_map = {
             self.filter_red.bounds[0].adjust(self.filter_red.origin, self.filter_red.direction.heading): self.filter_red,
