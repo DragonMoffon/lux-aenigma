@@ -34,4 +34,4 @@ class RayInteractor:
         raise NotImplementedError()
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}(origin = {self.origin}, direction = {self.direction}, colour = {self.colour}, bounds = {self._bounds})"
+        return f"{self.__class__.__name__}<{self.origin=}, {self.direction=}, {self.colour=}, bounds={self._bounds}>"

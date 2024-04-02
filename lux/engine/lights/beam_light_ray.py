@@ -51,29 +51,30 @@ class BeamLightRay(LightRay):
             start_point = edge.start
             end_point = edge.end
 
-            if (start_point - left_source).dot(beam_dir) < 0.0 and (end_point - left_source).dot(beam_dir) < 0.0:
-                logger.debug(f"{self}: behind beam")
+            if (start_point - left_source).dot(beam_dir) <= 0.0 and (end_point - left_source).dot(beam_dir) <= 0.0:
+                logger.info(f"{self}: behind beam")
                 continue
 
-            if (start_point - left_sink).dot(beam_dir) > 0.0 and (end_point - left_sink).dot(beam_dir) < 0.0:
-                logger.debug(f"{self}: ahead beam")
+            if (start_point - left_sink).dot(beam_dir) >= 0.0 and (end_point - left_sink).dot(beam_dir) >= 0.0:
+                logger.info(f"{self}: ahead beam")
                 continue
 
             in_beam = False
 
             if ((start_point - left_source).dot(beam_normal) > 0.0) == ((start_point - right_source).dot(beam_normal) < 0.0):
-                logger.debug(f"{self}: start in beam")
+                logger.info(f"{self}: start in beam")
                 in_beam = True
 
             if ((end_point - left_source).dot(beam_normal) > 0.0) == ((end_point - right_source).dot(beam_normal) < 0.0):
-                logger.debug(f"{self}: end in beam")
+                logger.info(f"{self}: end in beam")
                 in_beam = True
 
-            if ((start_point - left_source).dot(beam_normal) > 0.0) == ((end_point - left_source).dot(beam_normal) < 0.0):
-                logger.debug(f"{self}: edge crossed beam")
+            if ((start_point - left_source).dot(beam_normal) > 0.0) != ((end_point - left_source).dot(beam_normal) > 0.0):
+                logger.info(f"{self}: edge crossed beam")
                 in_beam = True
 
             if not in_beam:
+                logger.info(f"{self}: edge not in beam")
                 continue
 
             start_intersection = get_intersection(left_source, self.normal, start_point, beam_dir)
@@ -97,8 +98,9 @@ class BeamLightRay(LightRay):
         right_source = self.right.source
         left_source = self.left.source
         beam_dir = self.right.direction
-        beam_normal = self.normal
+        beam_normal = Vec2(-beam_dir.y, beam_dir.x)
         end_normal = (self.left.source - self.right.source).normalize()
+        logger.debug(f"{self.left.source}, {self.right.source}")
 
         right_sink = right_source + beam_dir * self.right.length
         left_sink = left_source + beam_dir * self.left.length
@@ -123,26 +125,34 @@ class BeamLightRay(LightRay):
         )
 
         current_edge: RayInteractorEdge = points_sorted[0][2]
-        next_current_edge: RayInteractorEdge | None = None
 
         active_edges: set[RayInteractorEdge] = {current_edge}
         collecting_rays: bool = points_sorted[0][0] == right_sink
 
         for end, start, edge in points_sorted[1:]:
             logger.debug(f"{self}: checking: ({round(end.x, 3)}, {round(end.y, 3)})")
-
-            if end == right_sink:
-                collecting_rays = True
+            logger.info(edge_to_interactor_map.get(edge))
 
             left_ray = None
             next_right_ray = None
             next_current_edge = None
+
+            if edge in active_edges:
+                # This edge is ending, so we want to make a new beam
+                active_edges.discard(edge)
+                starting = False
+            else:
+                # The edge is starting, so we want to see if it is in front of or behind the current edge
+                active_edges.add(edge)
+                starting = True
 
             # Get the end fraction and strength
             end_fraction = get_intersection_fraction(
                 right_sink, end_normal,
                 start, beam_dir
             )
+
+            end_strength = self.right.strength + end_fraction * (self.left.strength - self.right.strength)
 
             # Get the distance from the start of the ray to the end
             edge_dist = (start - end).mag
@@ -154,19 +164,36 @@ class BeamLightRay(LightRay):
                 start, beam_dir
             )
             current_intersection_depth = (current_intersection - start).mag
-            # current_intersection_depth = float('inf')
 
-            if edge in active_edges:
-                # This edge is ending, so we want to make a new beam
-                active_edges.discard(edge)
+            if end == right_sink:
+                if edge_dist > current_intersection_depth:
+                    edge_dist = current_intersection_depth
+                else:
+                    current_edge = edge
+
+                collecting_rays = True
+                right_ray = Ray(
+                    start,
+                    beam_dir,
+                    edge_dist,
+                    self.right.strength
+                )
+                continue
+            elif end == left_sink:
+                if edge_dist > current_intersection_depth:
+                    edge_dist = current_intersection_depth
+
+                left_ray = Ray(
+                    start,
+                    beam_dir,
+                    edge_dist,
+                    self.left.strength
+                )
+
                 starting = False
-            else:
-                # The edge is starting, so we want to see if it is in front of or behind the current edge
-                active_edges.add(edge)
-                starting = True
 
             # If the edge is behind the current edge we can just skip it for now
-            if edge_dist > current_intersection_depth:
+            elif edge_dist > current_intersection_depth:
                 continue
 
             if starting:
@@ -177,14 +204,14 @@ class BeamLightRay(LightRay):
                     start,
                     beam_dir,
                     current_intersection_depth,
-                    self.right.strength + end_fraction * (self.left.strength - self.right.strength)
+                    end_strength
                 )
 
                 next_right_ray = Ray(
                     start,
                     beam_dir,
                     edge_dist,
-                    self.right.strength + end_fraction * (self.left.strength - self.right.strength)
+                    end_strength
                 )
 
                 next_current_edge = edge
@@ -194,7 +221,7 @@ class BeamLightRay(LightRay):
                     start,
                     beam_dir,
                     edge_dist,
-                    self.right.strength + end_fraction * (self.left.strength - self.right.strength)
+                    end_strength
                 )
 
                 if end != left_sink:
@@ -217,10 +244,18 @@ class BeamLightRay(LightRay):
                         start,
                         beam_dir,
                         closest_dist,
-                        self.right.strength + end_fraction * (self.left.strength - self.right.strength)
+                        end_strength
                     )
 
             # Create a beam using the left and right rays, as well as the current edge.
+            if right_ray == left_ray:
+                if next_right_ray is not None:
+                    right_ray = next_right_ray
+
+                if next_current_edge is not None:
+                    current_edge = next_current_edge
+
+                continue
             if collecting_rays and left_ray is not None:
                 new_beam = BeamLightRay(
                     self.colour,
@@ -232,13 +267,13 @@ class BeamLightRay(LightRay):
 
                 finalised_beams.append((new_beam, current_edge, left_intersection, right_intersection))
 
+                if next_right_ray is not None:
+                    right_ray = next_right_ray
+
+                if next_current_edge is not None:
+                    current_edge = next_current_edge
+
             if end == left_sink:
                 break
-
-            if next_right_ray is not None:
-                right_ray = next_right_ray
-
-            if next_current_edge is not None:
-                current_edge = next_current_edge
 
         return tuple(finalised_beams)

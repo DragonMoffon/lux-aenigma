@@ -46,7 +46,7 @@ class Direction(Vec2):
         return Direction(math.cos(rad), math.sin(rad))
 
     def to_normal(self) -> Direction:
-        return Direction(self.y, -self.x)
+        return Direction(-self.y, self.x)
 
     @classmethod
     def NORTH(cls) -> Direction:
@@ -74,7 +74,7 @@ class Direction(Vec2):
 
     @classmethod
     def NORTHWEST(cls) -> Direction:
-        return cls(1, -1)
+        return cls(-1, 1)
 
     @classmethod
     def SOUTHWEST(cls) -> Direction:
@@ -94,6 +94,21 @@ def cross_2d(a: Vec2, b: Vec2):
 
 def get_segment_intersection(p: Vec2, p_e: Vec2, q: Vec2, q_e: Vec2) -> Vec2 | None:
     # https://stackoverflow.com/questions/563198/how-do-you-detect-where-two-line-segments-intersect
+
+    # Find the diff from start to end of the first segment
+    r = (p_e - p)
+
+    t = get_segment_intersection_fraction(p, p_e, q, q_e)
+    if t is None:
+        return None
+
+    # Use the fraction along with p and r to find the intersection point
+    return p + r * t
+
+
+def get_segment_intersection_fraction(p: Vec2, p_e: Vec2, q: Vec2, q_e: Vec2) -> float | None:
+    # https://stackoverflow.com/questions/563198/how-do-you-detect-where-two-line-segments-intersect
+    # Same logic as segment intersection, but we don't do the final conversion to a Vec2.
 
     # Find the diff from start to end of each segment
     r = (p_e - p)
@@ -120,35 +135,26 @@ def get_segment_intersection(p: Vec2, p_e: Vec2, q: Vec2, q_e: Vec2) -> Vec2 | N
         return None
 
     # logger.debug(f"segment<{p} - {p_e}> intersects segment<{q} - {q_e}> at {p + r * t}")
-    return p + r * t
+    return t
 
 
 def get_intersection(o1: Vec2, d1: Vec2, o2: Vec2, d2: Vec2) -> Vec2 | None:
-    # Same logic as get segment intersection we just don't care if t and u go past 1.0
-
-    direction_interaction = cross_2d(d1, d2)
-
-    # Two lines are parallel
-    if direction_interaction == 0.0:
-        # logger.debug(f"line<{o1} + t*{d1}> is parallel to line<{o2} + u*{d2}>")
+    # https://stackoverflow.com/questions/563198/how-do-you-detect-where-two-line-segments-intersect
+    t = get_intersection_fraction(o1, d1, o2, d2)
+    if t is None:
         return None
 
-    # find how far along line one line two intersects
-    # because we don't care about if the segments interact we just need to find t
-    t = cross_2d(o2 - o1, d2) / direction_interaction
-
-    # logger.debug(f"line<{o1} + t*{d1}> intersects line<{o2} + u*{d2}> at {o1 + d1 * t}")
     return o1 + d1 * t
 
 
 def get_intersection_fraction(o1: Vec2, d1: Vec2, o2: Vec2, d2: Vec2) -> float | None:
-    # Same logic as the segment intersection but we want the fraction t
+    # https://stackoverflow.com/questions/563198/how-do-you-detect-where-two-line-segments-intersect
+    # Same logic as the segment intersection but we don't care if t or u are outside the 0-1 range.
 
     direction_interaction = cross_2d(d1, d2)
 
     # Two lines are parallel
     if direction_interaction == 0.0:
-        # logger.debug(f"line<{o1} + t*{d1}> is parallel to line<{o2} + u*{d2}>")
         return None
 
     # find how far along line one line two intersects

@@ -16,7 +16,7 @@ def draw_ray(ray: Ray, colour):
     source, direction, length = ray.source, ray.direction, ray.length
     end = source + direction * length
 
-    normal = Vec2(direction.y, -direction.x)
+    normal = Vec2(-direction.y, direction.x)
     normal_end = source + normal * _NORMAL_RAY_DIST
 
     draw_line(source.x, source.y, end.x, end.y, colour, _LINE_WIDTH)

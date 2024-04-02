@@ -8,6 +8,7 @@ from lux.views.something import SomethingView
 from lux.views.scene import SceneView
 from lux.views.editor import SceneEditorView
 from lux.views.scene_select import SceneSelectView
+from lux.views.fast_test import FastTestView
 
 logger = logging.getLogger("lux")
 
@@ -16,6 +17,7 @@ class MenuView(LuxView):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.menu = DevMenu({
+            "test": FastTestView(self),
             "Something": SomethingView(back=self),
             "Scene": SceneView(self),
             "Editor": SceneEditorView(self),
