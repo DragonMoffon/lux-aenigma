@@ -471,6 +471,8 @@ class FastTestView(LuxView):
                     self.shift_beam(1/60)
             case arcade.key.NUM_MULTIPLY:
                 self.turbo = True
+            case arcade.key.NUM_0 | arcade.key.KEY_0:
+                self.t = 0
 
     def on_key_release(self, symbol: int, modifiers: int):
         match symbol:
