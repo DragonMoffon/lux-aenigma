@@ -252,13 +252,19 @@ def find_intersections(interactors: tuple[RayInteractor, ...], beam: BeamLightRa
 
         # Since the current edge is unlikely to be perpendicular to the beam
         # We need to find the distance from the current edge to do comparisons
-        current_intersection = get_intersection(
-            current_edge.start, current_edge.direction,
-            start, beam_dir
-        )
-        current_diff = (start - current_intersection)
+        print(current_edge, edge, back_edge)
 
-        if current_diff.dot(current_diff) < length_sqr and edge != current_edge and current_edge != back_edge:
+        if edge != current_edge:
+            current_intersection = get_intersection(
+                current_edge.start, current_edge.direction,
+                start, beam_dir
+            )
+            current_diff = (start - current_intersection)
+        else:
+            current_intersection = end
+            current_diff = (start - end)
+
+        if current_diff.dot(current_diff) < length_sqr and current_edge != back_edge:
             continue
 
         # Get the end fraction and strength
@@ -377,11 +383,11 @@ class FastTestView(LuxView):
 
         self.filter_red = FilterRayInteractor(Vec2(w+125, h+75), Direction.NORTHWEST(), LuxColour.RED(), (RayInteractorEdge(Vec2(0.0, -250.0), Vec2(0.0, 250.0), True),))
         self.filter_green = MirrorRayInteractor(400, Vec2(w+400, h+25), Direction.SOUTHWEST(), LuxColour.GREEN())
-        self.filter_blue = FilterRayInteractor(Vec2(w+200, h-75), Direction.WEST(), LuxColour.BLUE(), (RayInteractorEdge(Vec2(0.0, -50.0), Vec2(0.0, 50.0), True),))
+        self.filter_blue = MirrorRayInteractor(100, Vec2(w+200, h-75), Direction.WEST(), LuxColour.BLUE())
         self.filter_cyan_a = FilterRayInteractor(Vec2(w+100, h-35), Direction.NORTHWEST(), LuxColour.CYAN(), (RayInteractorEdge(Vec2(0.0, -25.0), Vec2(0.0, 25.0), False),))
-        self.filter_cyan_b = FilterRayInteractor(Vec2(w+150, h-125), Direction.WEST(), LuxColour.CYAN(), (RayInteractorEdge(Vec2(0.0, -50.0), Vec2(0.0, 50.0), False),))
+        self.filter_cyan_b = FilterRayInteractor(Vec2(w+150, h-125), Direction.EAST(), LuxColour.CYAN(), (RayInteractorEdge(Vec2(0.0, -50.0), Vec2(0.0, 50.0), False),))
 
-        self.interactors = (self.filter_red, self.filter_green, self.filter_blue, self.filter_cyan_a, self.filter_cyan_b)
+        self.interactors = (self.filter_red, self.filter_green, self.filter_blue, self.filter_cyan_b,)
 
         self.points = ()
 
@@ -401,7 +407,7 @@ class FastTestView(LuxView):
 
         for interactor in self.interactors:
             self.renderer.append(RayInteractorRenderer(interactor))
-        # self.renderer.append(BeamDebugRenderer(self.beam))
+        self.renderer.append(RayInteractorRenderer(self.filter_cyan_a))
 
         left_source = self.beam.left.source
         right_source = self.beam.right.source
