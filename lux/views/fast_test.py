@@ -1,5 +1,3 @@
-from timeit import timeit
-
 import arcade
 from pyglet.math import Vec2
 
@@ -259,7 +257,7 @@ def find_intersections(interactors: tuple[RayInteractor, ...], beam: BeamLightRa
 
     active_edges: set[RayInteractorEdge] = {current_edge}
     incomplete_edges: set[RayInteractorEdge] = set(edge_to_interactor_map.keys())
-    finalised_beams: list[tuple[BeamLightRay, RayInteractorEdge, Vec2, Vec2], ...] = []
+    finalised_beams: list[tuple[BeamLightRay, RayInteractorEdge, Vec2, Vec2]] = []
 
     """test_dict = dict()
     for end, length_sqr, start, edge in sorted_points:
@@ -390,6 +388,9 @@ def find_intersections(interactors: tuple[RayInteractor, ...], beam: BeamLightRa
     return finalised_beams
 
 
+ONE_FRAME = 1/600
+
+
 class FastTestView(LuxView):
 
     def __init__(self, back: LuxView):
@@ -423,6 +424,10 @@ class FastTestView(LuxView):
         # print(1 / t / 60)
 
         self.rev = False
+        self.paused = False
+
+        self.speed = 0.01
+        self.turbo = False
 
     def rerender(self):
         self.renderer.clear()
@@ -453,13 +458,14 @@ class FastTestView(LuxView):
 
         beams = find_intersections(self.interactors, self.beam)
         for beam in beams:
-           self.renderer.append(BeamDebugRenderer(beam[0]))
+            self.renderer.append(BeamDebugRenderer(beam[0]))
 
     def on_update(self, delta_time: float):
         # return
-        self.t += delta_time * 0.1 * (-1 if self.rev else 1.0)
-        angle = (self.t % 1.0) * 2.0 * 3.1415926
+        if not self.paused:
+            self.t += delta_time * self.speed * (-1 if self.rev else 1.0) * (10 if self.turbo else 1)
 
+        angle = (self.t % 1.0) * 2.0 * 3.1415926
         self.beam = BeamLightRay(
             LuxColour.WHITE(),
             Ray(self.cen + self.offset.rotate(angle), Direction.EAST().rotate(angle), 500.0, 500.0),
@@ -469,7 +475,22 @@ class FastTestView(LuxView):
         self.rerender()
 
     def on_key_press(self, symbol: int, modifiers: int):
-        self.rev = not self.rev
+        match symbol:
+            case arcade.key.ENTER:
+                self.rev = not self.rev
+            case arcade.key.SPACE:
+                self.paused = not self.paused
+            case arcade.key.UP:
+                self.t += ONE_FRAME
+            case arcade.key.DOWN:
+                self.t -= ONE_FRAME
+            case arcade.key.NUM_MULTIPLY:
+                self.turbo = True
+
+    def on_key_release(self, symbol: int, modifiers: int):
+        match symbol:
+            case arcade.key.NUM_MULTIPLY:
+                self.turbo = False
 
     def on_draw(self):
         self.clear()
@@ -481,6 +502,3 @@ class FastTestView(LuxView):
                 self.beam.colour.to_int_color(),
                 10
             )
-
-
-
