@@ -16,7 +16,7 @@ class FilterRayInteractor(RayInteractor):
 
         edge_normal = in_edge.normal
 
-        if not in_edge.bi_dir and ((in_ray.origin - right_intersection).dot(edge_normal) <= 0.0 or (in_ray.origin - left_intersection).dot(edge_normal) <= 0.0):
+        if not in_edge.bi_dir and ((right_intersection - in_ray.origin).dot(edge_normal) >= 0.0 or (left_intersection - in_ray.origin).dot(edge_normal) >= 0.0):
             return ()
 
         new_left_length = in_ray.left.strength - in_ray.left.length
