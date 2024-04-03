@@ -129,6 +129,9 @@ def find_beam_edge_map(interactors, parent,
                     start_final = start_point + edge_diff * start_fraction
                     end_final = start_point + edge_diff * end_fraction
 
+                if start_final == end_final:
+                    continue
+
                 # Make an edge out of the final start and end points
                 edge_final = RayInteractorEdge(start_final, end_final, original_edge.bi_dir)
                 edge_to_interactor_map[edge_final] = interactor
@@ -202,33 +205,6 @@ def find_intersections(interactors: tuple[RayInteractor, ...], beam: BeamLightRa
     incomplete_edges: set[RayInteractorEdge] = set(edge_to_interactor_map.keys())
     finalised_beams: list[tuple[BeamLightRay, RayInteractorEdge, Vec2, Vec2]] = []
 
-    """test_dict = dict()
-    for end, length_sqr, start, edge in sorted_points:
-        edge_values = test_dict.get(edge, [])
-        edge_values.append((length_sqr, start, end))
-        test_dict[edge] = edge_values
-
-    for edge, values in test_dict.items():
-        print(edge, values)
-        right_len, right_start, right_end = values[0]
-        left_len, left_start, left_end = values[-1]
-
-        right_ray = Ray(
-            right_start,
-            beam_dir,
-            right_len**0.5,
-            right_len**0.5
-        )
-
-        left_ray = Ray(
-            left_start,
-            beam_dir,
-            left_len**0.5,
-            left_len**0.5
-        )
-
-        finalised_beams.append((BeamLightRay(beam_colour, left_ray, right_ray), edge, left_end, right_end))"""
-
     for end, length_sqr, start, edge in sorted_points[1:]:
         logger.info(f"Next Point: {start} : {end}")
         left_ray = None
@@ -252,8 +228,6 @@ def find_intersections(interactors: tuple[RayInteractor, ...], beam: BeamLightRa
 
         # Since the current edge is unlikely to be perpendicular to the beam
         # We need to find the distance from the current edge to do comparisons
-        print(current_edge, edge, back_edge)
-
         if edge != current_edge:
             current_intersection = get_intersection(
                 current_edge.start, current_edge.direction,
@@ -372,7 +346,7 @@ class FastTestView(LuxView):
 
         self.renderer = DebugRenderer()
 
-        self.offset = Vec2(0.0, 150.0)
+        self.offset = Vec2(0.0, 15.0)
         self.cen = Vec2(w, h)
         self.beam = BeamLightRay(
             LuxColour.WHITE(),
@@ -381,13 +355,14 @@ class FastTestView(LuxView):
         )
         self.t = 0.0
 
-        self.filter_red = FilterRayInteractor(Vec2(w+125, h+75), Direction.NORTHWEST(), LuxColour.RED(), (RayInteractorEdge(Vec2(0.0, -250.0), Vec2(0.0, 250.0), True),))
+        self.filter_red = FilterRayInteractor(Vec2(w+125, h+75), Direction.NORTHWEST(), LuxColour.RED(), (RayInteractorEdge(Vec2(0.0, -50.0), Vec2(0.0, 50.0), True),))
         self.filter_green = MirrorRayInteractor(400, Vec2(w+400, h+25), Direction.SOUTHWEST(), LuxColour.GREEN())
+
         self.filter_blue = MirrorRayInteractor(100, Vec2(w+200, h-75), Direction.WEST(), LuxColour.BLUE())
         self.filter_cyan_a = FilterRayInteractor(Vec2(w+100, h-35), Direction.NORTHWEST(), LuxColour.CYAN(), (RayInteractorEdge(Vec2(0.0, -25.0), Vec2(0.0, 25.0), False),))
         self.filter_cyan_b = FilterRayInteractor(Vec2(w+150, h-125), Direction.EAST(), LuxColour.CYAN(), (RayInteractorEdge(Vec2(0.0, -50.0), Vec2(0.0, 50.0), False),))
 
-        self.interactors = (self.filter_red, self.filter_green, self.filter_blue, self.filter_cyan_b,)
+        self.interactors = (self.filter_red, self.filter_green, self.filter_blue, self.filter_cyan_a, self.filter_cyan_b)
 
         self.points = ()
 
@@ -473,6 +448,8 @@ class FastTestView(LuxView):
                 self.turbo = True
             case arcade.key.NUM_0 | arcade.key.KEY_0:
                 self.t = 0
+                if self.paused:
+                    self.shift_beam(0.0)
 
     def on_key_release(self, symbol: int, modifiers: int):
         match symbol:
