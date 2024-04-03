@@ -12,6 +12,7 @@ from lux.engine.lights.beam_light_ray import BeamLightRay
 from lux.engine.interactors.interactor_edge import RayInteractorEdge
 from lux.engine.interactors.ray_interactor import RayInteractor
 from lux.engine.interactors.filter import FilterRayInteractor
+from lux.engine.interactors.mirror import MirrorRayInteractor
 from lux.util.maths import get_segment_intersection, get_intersection, get_segment_intersection_fraction, get_intersection_fraction
 from lux.engine.debug import DebugRenderer
 from lux.engine.debug.ray_interactor_renderer import RayInteractorRenderer
@@ -369,13 +370,13 @@ class FastTestView(LuxView):
         self.cen = Vec2(w, h)
         self.beam = BeamLightRay(
             LuxColour.WHITE(),
-            Ray(self.cen + self.offset.rotate(0.0), Direction.EAST().rotate(0.0), 500.0, 500.0),
-            Ray(self.cen - self.offset.rotate(0.0), Direction.EAST().rotate(0.0), 500.0, 500.0)
+            Ray(self.cen + self.offset.rotate(0.0), Direction.EAST().rotate(0.0), 3500.0, 3500.0),
+            Ray(self.cen - self.offset.rotate(0.0), Direction.EAST().rotate(0.0), 3500.0, 3500.0)
         )
         self.t = 0.0
 
         self.filter_red = FilterRayInteractor(Vec2(w+125, h+75), Direction.NORTHWEST(), LuxColour.RED(), (RayInteractorEdge(Vec2(0.0, -250.0), Vec2(0.0, 250.0), True),))
-        self.filter_green = FilterRayInteractor(Vec2(w+400, h+25), Direction.SOUTHWEST(), LuxColour.GREEN(), (RayInteractorEdge(Vec2(0.0, -150.0), Vec2(0.0, 150.0), True),))
+        self.filter_green = MirrorRayInteractor(400, Vec2(w+400, h+25), Direction.SOUTHWEST(), LuxColour.GREEN())
         self.filter_blue = FilterRayInteractor(Vec2(w+200, h-75), Direction.WEST(), LuxColour.BLUE(), (RayInteractorEdge(Vec2(0.0, -50.0), Vec2(0.0, 50.0), True),))
         self.filter_cyan_a = FilterRayInteractor(Vec2(w+100, h-35), Direction.NORTHWEST(), LuxColour.CYAN(), (RayInteractorEdge(Vec2(0.0, -25.0), Vec2(0.0, 25.0), False),))
         self.filter_cyan_b = FilterRayInteractor(Vec2(w+150, h-125), Direction.WEST(), LuxColour.CYAN(), (RayInteractorEdge(Vec2(0.0, -50.0), Vec2(0.0, 50.0), False),))
@@ -433,8 +434,8 @@ class FastTestView(LuxView):
         angle = (self.t % 1.0) * 2.0 * 3.1415926
         self.beam = BeamLightRay(
             LuxColour.WHITE(),
-            Ray(self.cen + self.offset.rotate(angle), Direction.EAST().rotate(angle), 500.0, 500.0),
-            Ray(self.cen - self.offset.rotate(angle), Direction.EAST().rotate(angle), 500.0, 500.0)
+            Ray(self.cen + self.offset.rotate(angle), Direction.EAST().rotate(angle), 3500.0, 3500.0),
+            Ray(self.cen - self.offset.rotate(angle), Direction.EAST().rotate(angle), 3500.0, 3500.0)
         )
 
         self.rerender()
