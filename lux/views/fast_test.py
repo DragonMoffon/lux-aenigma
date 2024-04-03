@@ -1,3 +1,5 @@
+from logging import getLogger
+
 import arcade
 from pyglet.math import Vec2
 
@@ -13,6 +15,8 @@ from lux.util.maths import get_segment_intersection, get_intersection, get_segme
 from lux.engine.debug import DebugRenderer
 from lux.engine.debug.ray_interactor_renderer import RayInteractorRenderer
 from lux.engine.debug.ray_renderer import BeamDebugRenderer
+
+logger = getLogger("lux")
 
 
 def find_intersections_old(edges: tuple[RayInteractorEdge, ...], beam: BeamLightRay) -> tuple[Vec2, ...]:
@@ -87,6 +91,7 @@ def find_beam_edge_map(interactors,
                        right_source, right_sink,
                        beam_dir, beam_normal,
                        origin_dir, origin_normal) -> tuple[dict[RayInteractorEdge, RayInteractor], list[tuple[Vec2, float, Vec2, RayInteractorEdge]]]:
+    logger.info("Starting to find edge map")
     edge_to_interactor_map = dict()
     edge_points = []
 
@@ -203,11 +208,12 @@ def find_beam_edge_map(interactors,
 
             edge_points.append((start_final, start_diff.dot(start_diff), start_intersection_point, edge_final))
             edge_points.append((end_final, end_diff.dot(end_diff), end_intersection_point, edge_final))
-
+    logger.info("Finished finding the edge to interactor map")
     return edge_to_interactor_map, edge_points
 
 
 def find_intersections(interactors: tuple[RayInteractor, ...], beam: BeamLightRay):
+    logger.info("Getting intersections")
     beam_colour = beam.colour
 
     left_source = beam.left.source
@@ -235,12 +241,14 @@ def find_intersections(interactors: tuple[RayInteractor, ...], beam: BeamLightRa
     edge_points.append((left_sink, beam.left.length**2, left_source, back_edge))
 
     if len(edge_points) == 2:
+        logger.warning("No interactors in beam returning beam")
         return [(beam, back_edge, right_sink, left_sink)]
 
     # Sort every point from left to right, breaking ties by depth
     sorted_points = sorted(edge_points, key=lambda p: ((right_source - p[2]).dot(beam_normal), p[1]))
     # print("\n\n\n")
-    # print("\n".join(f"{(right_source - p[2]).dot(beam_normal)}: {p}" for p in sorted_points))
+
+    logger.info("\n".join(f"{(right_source - p[2]).dot(beam_normal)}: {p}" for p in sorted_points))
 
     end_fraction = get_intersection_fraction(
         right_sink, end_normal,
@@ -287,9 +295,11 @@ def find_intersections(interactors: tuple[RayInteractor, ...], beam: BeamLightRa
         finalised_beams.append((BeamLightRay(beam_colour, left_ray, right_ray), edge, left_end, right_end))"""
 
     for end, length_sqr, start, edge in sorted_points[1:]:
+        logger.info(f"Next Point: {start} : {end}")
         left_ray = None
         next_right_ray = None
         next_current_edge = None
+
         if edge in active_edges:
             # This edge is ending
             active_edges.discard(edge)
@@ -301,6 +311,9 @@ def find_intersections(interactors: tuple[RayInteractor, ...], beam: BeamLightRa
             active_edges.add(edge)
             starting = True
 
+        logger.debug(f"{edge}")
+        logger.debug(f"{active_edges}")
+
         # Since the current edge is unlikely to be perpendicular to the beam
         # We need to find the distance from the current edge to do comparisons
         current_intersection = get_intersection(
@@ -310,6 +323,7 @@ def find_intersections(interactors: tuple[RayInteractor, ...], beam: BeamLightRa
         current_diff = (start - current_intersection)
 
         if current_diff.dot(current_diff) < length_sqr:
+            logger.warning("Edge is behind current edge")
             continue
 
         # Get the end fraction and strength
@@ -456,14 +470,13 @@ class FastTestView(LuxView):
             origin_dir, origin_normal
         )
 
+        print("\n\n\n\n")
         beams = find_intersections(self.interactors, self.beam)
         for beam in beams:
             self.renderer.append(BeamDebugRenderer(beam[0]))
 
-    def on_update(self, delta_time: float):
-        # return
-        if not self.paused:
-            self.t += delta_time * self.speed * (-1 if self.rev else 1.0) * (10 if self.turbo else 1)
+    def shift_beam(self, delta_time: float):
+        self.t += delta_time * self.speed * (-1 if self.rev else 1.0) * (10 if self.turbo else 1)
 
         angle = (self.t % 1.0) * 2.0 * 3.1415926
         self.beam = BeamLightRay(
@@ -474,16 +487,29 @@ class FastTestView(LuxView):
 
         self.rerender()
 
+    def on_update(self, delta_time: float):
+        # return
+        if self.paused:
+            return
+
+        self.shift_beam(delta_time)
+
     def on_key_press(self, symbol: int, modifiers: int):
         match symbol:
             case arcade.key.ENTER:
                 self.rev = not self.rev
             case arcade.key.SPACE:
                 self.paused = not self.paused
+                if self.paused:
+                    self.rerender()
             case arcade.key.UP:
                 self.t += ONE_FRAME
+                if self.paused:
+                    self.shift_beam(1/60)
             case arcade.key.DOWN:
                 self.t -= ONE_FRAME
+                if self.paused:
+                    self.shift_beam(1/60)
             case arcade.key.NUM_MULTIPLY:
                 self.turbo = True
 

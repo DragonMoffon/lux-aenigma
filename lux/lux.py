@@ -19,7 +19,7 @@ def setup_logging():
     dfhandlersource = digilogger.DigiFormatterHandler(showsource=True)
 
     logger = logging.getLogger("lux")
-    logger.setLevel(logging.WARN)
+    logger.setLevel(logging.DEBUG)
     logger.handlers = []
     logger.propagate = False
     logger.addHandler(dfhandler)
