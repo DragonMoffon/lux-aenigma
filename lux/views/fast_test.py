@@ -15,7 +15,7 @@ from lux.engine.interactors.interactor_edge import RayInteractorEdge
 from lux.engine.interactors.mirror import MirrorRayInteractor
 from lux.engine.debug import DebugRenderer
 from lux.engine.debug.ray_interactor_renderer import RayInteractorRenderer
-from lux.engine.debug.ray_renderer import BeamDebugRenderer
+from lux.engine.debug.light_renderer import BeamDebugRenderer
 
 logger = getLogger("lux")
 

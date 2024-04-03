@@ -11,6 +11,8 @@ from lux.util.maths import get_intersection, get_intersection_fraction, get_segm
 logger = getLogger("lux")
 
 
+# TODO: OMG Dragon plz write a docstring for this what the heck does it do
+# There's too many parameters and it returns too much stuff and I want to explode
 def find_beam_edge_map(interactors, parent,
                        left_source, left_sink,
                        right_source, right_sink,

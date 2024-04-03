@@ -25,7 +25,6 @@ def draw_ray(ray: Ray, colour):
 
 
 class RayDebugRenderer:
-
     def __init__(self, child: Ray):
         self.child: Ray = child
 
@@ -37,7 +36,6 @@ class RayDebugRenderer:
 
 
 class BeamDebugRenderer:
-
     def __init__(self, child: BeamLightRay):
         self.child: BeamLightRay = child
 
