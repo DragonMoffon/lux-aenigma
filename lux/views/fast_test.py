@@ -257,7 +257,7 @@ def find_intersections(interactors: tuple[RayInteractor, ...], beam: BeamLightRa
         )
         current_diff = (start - current_intersection)
 
-        if current_diff.dot(current_diff) < length_sqr and edge != current_edge:
+        if current_diff.dot(current_diff) < length_sqr and edge != current_edge and current_edge != back_edge:
             continue
 
         # Get the end fraction and strength
@@ -375,7 +375,7 @@ class FastTestView(LuxView):
         self.t = 0.0
 
         self.filter_red = FilterRayInteractor(Vec2(w+125, h+75), Direction.NORTHWEST(), LuxColour.RED(), (RayInteractorEdge(Vec2(0.0, -250.0), Vec2(0.0, 250.0), True),))
-        self.filter_green = FilterRayInteractor(Vec2(w+400, h+25), Direction.WEST(), LuxColour.GREEN(), (RayInteractorEdge(Vec2(0.0, -50.0), Vec2(0.0, 50.0), True),))
+        self.filter_green = FilterRayInteractor(Vec2(w+400, h+25), Direction.SOUTHWEST(), LuxColour.GREEN(), (RayInteractorEdge(Vec2(0.0, -150.0), Vec2(0.0, 150.0), True),))
         self.filter_blue = FilterRayInteractor(Vec2(w+200, h-75), Direction.WEST(), LuxColour.BLUE(), (RayInteractorEdge(Vec2(0.0, -50.0), Vec2(0.0, 50.0), True),))
         self.filter_cyan_a = FilterRayInteractor(Vec2(w+100, h-35), Direction.NORTHWEST(), LuxColour.CYAN(), (RayInteractorEdge(Vec2(0.0, -25.0), Vec2(0.0, 25.0), False),))
         self.filter_cyan_b = FilterRayInteractor(Vec2(w+150, h-125), Direction.WEST(), LuxColour.CYAN(), (RayInteractorEdge(Vec2(0.0, -50.0), Vec2(0.0, 50.0), False),))
