@@ -124,57 +124,86 @@ def find_beam_edge_map(interactors,
             is_start_in_beam = ((start_right.dot(origin_dir) > 0.0) and (start_left.dot(beam_dir) < 0.0) and
                                 (start_left.dot(beam_normal) > 0.0) == (start_right.dot(beam_normal) < 0.0))
 
-            # Fourth find if the edge intersects the right edge of the beam.
-            right_intersection = get_segment_intersection_fraction(start_point, end_point, right_source, right_sink)
+            is_end_in_beam = ((end_right.dot(origin_dir) > 0.0) and (end_left.dot(beam_dir) < 0.0) and
+                              (end_left.dot(beam_normal) > 0.0) == (end_right.dot(beam_normal) < 0.0))
 
-            # Fifth find if the edge intersects the right edge of the beam.
-            left_intersection = get_segment_intersection_fraction(start_point, end_point, left_source, left_sink)
-
-            # Sixth find if the edge intersects the base of the beam.
-            start_intersection = get_segment_intersection_fraction(start_point, end_point, right_source, left_source)
-
-            # Seventh find if the edge intersects the end of the beam.
-            end_intersection = get_segment_intersection_fraction(start_point, end_point, right_sink, left_sink)
-
-            intersections = sorted(filter(lambda i: i is not None, (right_intersection, left_intersection, start_intersection, end_intersection)))
-            # Finally if the edge doesn't intersect any edge then it must either be
-            # completely inside or completely outside the beam.
-            if not intersections:
-                # If the two beams agree then the point cannot be inbetween the two and is therefore outside the beam.
-                if ((start_point - left_source).dot(beam_normal) > 0.0) == (
-                        (start_point - right_source).dot(beam_normal) > 0.0):
-                    continue
-
+            # Both the start and end are in the beam so we can skip all the intersection checks.
+            if is_start_in_beam and is_end_in_beam:
                 start_final = start_point
                 end_final = end_point
-            elif len(intersections) == 1:
-                # There is one intersection
-                if is_start_in_beam:
-                    start_final = start_point
-                    end_final = start_point + edge_diff * intersections[0]
-                else:
-                    start_final = start_point + edge_diff * intersections[0]
-                    end_final = end_point
+
+                start_intersection_point = get_intersection(start_final, beam_dir, right_source, origin_normal)
+                end_intersection_point = get_intersection(end_final, beam_dir, right_source, origin_normal)
+
+                start_diff = start_final - start_intersection_point
+                end_diff = end_final - end_intersection_point
+
+                edge_final = RayInteractorEdge(start_point, end_point, original_edge.bi_dir)
+                edge_to_interactor_map[edge_final] = interactor
             else:
-                # There are two or more intersections.
-                # In fact there are exactly two intersections.
-                # If there are more than two, that means the edge hits a corner.
-                # In this case multiple intersections will be equal, and it does not matter.
+                # Fourth find if the edge intersects the right edge of the beam.
+                right_intersection = get_segment_intersection_fraction(start_point, end_point, right_source, right_sink)
+                right_start = right_source
 
-                start_final = start_point + edge_diff * intersections[0]
-                end_final = start_point + edge_diff * intersections[-1]
+                # Fifth find if the edge intersects the right edge of the beam.
+                left_intersection = get_segment_intersection_fraction(start_point, end_point, left_source, left_sink)
+                left_start = left_source
 
-            # Make an edge out of the final start and end points
-            edge_final = RayInteractorEdge(start_final, end_final, original_edge.bi_dir)
-            edge_to_interactor_map[edge_final] = interactor
+                # Sixth find if the edge intersects the base of the beam.
+                start_intersection = get_segment_intersection_fraction(start_point, end_point, right_source, left_source)
+                start_start = None if start_intersection is None else start_point + edge_diff * start_intersection
 
-            # Find the intersection with the front of the beam, and the distance from that point
-            start_intersection_point = get_intersection(right_source, origin_normal, start_final, beam_dir)
-            start_diff = start_final - start_intersection_point
+                # Seventh find if the edge intersects the end of the beam.
+                end_intersection = get_segment_intersection_fraction(start_point, end_point, right_sink, left_sink)
+                end_start = None
+
+                intersections = sorted(filter(lambda i: i[0] is not None, ((right_intersection, right_start), (left_intersection, left_start), (start_intersection, start_start), (end_intersection, None))))
+
+                if not intersections:
+                    # Because there are no intersections the edge is outside the beam
+                    continue
+                elif len(intersections) == 1:
+                    # There is one intersection
+                    if is_start_in_beam:
+                        start_final = start_point
+                        start_intersection_point = None
+
+                        intersection_fraction, end_intersection_point = intersections[0]
+
+                        end_final = start_point + edge_diff * intersection_fraction
+                    else:
+                        end_final = end_point
+                        end_intersection_point = None
+
+                        intersection_fraction, start_intersection_point = intersections[0]
+                        start_final = start_point + edge_diff * intersection_fraction
+                else:
+                    # There are two or more intersections.
+                    # In fact there are exactly two intersections.
+                    # If there are more than two, that means the edge hits a corner.
+                    # In this case multiple intersections will be equal, and it does not matter.
+
+                    start_fraction, start_intersection_point = intersections[0]
+                    end_fraction, end_intersection_point = intersections[-1]
+
+                    start_final = start_point + edge_diff * start_fraction
+                    end_final = start_point + edge_diff * end_fraction
+
+                # Make an edge out of the final start and end points
+                edge_final = RayInteractorEdge(start_final, end_final, original_edge.bi_dir)
+                edge_to_interactor_map[edge_final] = interactor
+
+                # Find the intersection with the front of the beam, and the distance from that point
+                if start_intersection_point is None:
+                    start_intersection_point = get_intersection(right_source, origin_normal, start_final, beam_dir)
+
+                if end_intersection_point is None:
+                    end_intersection_point = get_intersection(right_source, origin_normal, end_final, beam_dir)
+
+                start_diff = start_final - start_intersection_point
+                end_diff = end_final - end_intersection_point
+
             edge_points.append((start_final, start_diff.dot(start_diff), start_intersection_point, edge_final))
-
-            end_intersection_point = get_intersection(right_source, origin_normal, end_final, beam_dir)
-            end_diff = end_final - end_intersection_point
             edge_points.append((end_final, end_diff.dot(end_diff), end_intersection_point, edge_final))
 
     return edge_to_interactor_map, edge_points
@@ -207,10 +236,13 @@ def find_intersections(interactors: tuple[RayInteractor, ...], beam: BeamLightRa
     edge_points.append((right_sink, beam.right.length**2, right_source, back_edge))
     edge_points.append((left_sink, beam.left.length**2, left_source, back_edge))
 
+    if len(edge_points) == 2:
+        return [(beam, back_edge, right_sink, left_sink)]
+
     # Sort every point from left to right, breaking ties by depth
-    sorted_points = sorted(edge_points, key=lambda p: ((right_source - p[0]).dot(beam_normal), p[1]))
-    print("\n\n\n")
-    print("\n".join(f"{(right_source - p[2]).dot(beam_normal)}: {p}" for p in sorted_points))
+    sorted_points = sorted(edge_points, key=lambda p: ((right_source - p[2]).dot(beam_normal), p[1]))
+    # print("\n\n\n")
+    # print("\n".join(f"{(right_source - p[2]).dot(beam_normal)}: {p}" for p in sorted_points))
 
     end_fraction = get_intersection_fraction(
         right_sink, end_normal,
@@ -226,28 +258,50 @@ def find_intersections(interactors: tuple[RayInteractor, ...], beam: BeamLightRa
     )
 
     active_edges: set[RayInteractorEdge] = {current_edge}
+    incomplete_edges: set[RayInteractorEdge] = set(edge_to_interactor_map.keys())
     finalised_beams: list[tuple[BeamLightRay, RayInteractorEdge, Vec2, Vec2], ...] = []
 
-    print("")
+    """test_dict = dict()
+    for end, length_sqr, start, edge in sorted_points:
+        edge_values = test_dict.get(edge, [])
+        edge_values.append((length_sqr, start, end))
+        test_dict[edge] = edge_values
+
+    for edge, values in test_dict.items():
+        print(edge, values)
+        right_len, right_start, right_end = values[0]
+        left_len, left_start, left_end = values[-1]
+
+        right_ray = Ray(
+            right_start,
+            beam_dir,
+            right_len**0.5,
+            right_len**0.5
+        )
+
+        left_ray = Ray(
+            left_start,
+            beam_dir,
+            left_len**0.5,
+            left_len**0.5
+        )
+
+        finalised_beams.append((BeamLightRay(beam_colour, left_ray, right_ray), edge, left_end, right_end))"""
+
     for end, length_sqr, start, edge in sorted_points[1:]:
         left_ray = None
         next_right_ray = None
         next_current_edge = None
-        print(active_edges)
         if edge in active_edges:
-            # This edge is ending, so we want to make a new beam
+            # This edge is ending
             active_edges.discard(edge)
             starting = False
+
+            incomplete_edges.discard(edge)
         else:
-            # The edge is starting, so we want to see if it is in front of or behind the current edge
+            # The edge is starting
             active_edges.add(edge)
             starting = True
-        print(active_edges)
-
-        # Given that we know the closest point will always be first we can ignore any point that starts
-        # At the same point as the current right ray, as they will be behind the right ray.
-        if right_ray.source == start:
-            continue
 
         # Since the current edge is unlikely to be perpendicular to the beam
         # We need to find the distance from the current edge to do comparisons
@@ -301,6 +355,7 @@ def find_intersections(interactors: tuple[RayInteractor, ...], beam: BeamLightRa
                         edge_.start, edge_.direction,
                         start, beam_dir
                     )
+
                     intersection_dist = (intersection - start).mag
                     if intersection_dist < closest_dist:
                         next_edge = edge_
@@ -326,7 +381,6 @@ def find_intersections(interactors: tuple[RayInteractor, ...], beam: BeamLightRa
 
             finalised_beams.append((new_beam, current_edge, left_intersection, right_intersection))
 
-            print(next_right_ray)
             right_ray = next_right_ray
             current_edge = next_current_edge
 
@@ -368,6 +422,8 @@ class FastTestView(LuxView):
         # print(1 / t)
         # print(1 / t / 60)
 
+        self.rev = False
+
     def rerender(self):
         self.renderer.clear()
 
@@ -376,7 +432,7 @@ class FastTestView(LuxView):
         self.renderer.append(RayInteractorRenderer(self.filter_blue))
         self.renderer.append(RayInteractorRenderer(self.filter_cyan_a))
         self.renderer.append(RayInteractorRenderer(self.filter_cyan_b))
-        self.renderer.append(BeamDebugRenderer(self.beam))
+        # self.renderer.append(BeamDebugRenderer(self.beam))
 
         left_source = self.beam.left.source
         right_source = self.beam.right.source
@@ -387,21 +443,21 @@ class FastTestView(LuxView):
         right_sink: Vec2 = right_source + beam_dir * self.beam.right.length
         left_sink: Vec2 = left_source + beam_dir * self.beam.left.length
 
-        # _, self.points = find_beam_edge_map(
-        #     self.interactors,
-        #     left_source, left_sink,
-        #     right_source, right_sink,
-        #     beam_dir, beam_normal,
-        #     origin_dir, origin_normal
-        # )
+        _, self.points = find_beam_edge_map(
+            self.interactors,
+            left_source, left_sink,
+            right_source, right_sink,
+            beam_dir, beam_normal,
+            origin_dir, origin_normal
+        )
 
         beams = find_intersections(self.interactors, self.beam)
         for beam in beams:
-            self.renderer.append(BeamDebugRenderer(beam[0]))
+           self.renderer.append(BeamDebugRenderer(beam[0]))
 
     def on_update(self, delta_time: float):
-        pass
-        self.t += delta_time * 0.05
+        # return
+        self.t += delta_time * 0.1 * (-1 if self.rev else 1.0)
         angle = (self.t % 1.0) * 2.0 * 3.1415926
 
         self.beam = BeamLightRay(
@@ -411,6 +467,9 @@ class FastTestView(LuxView):
         )
 
         self.rerender()
+
+    def on_key_press(self, symbol: int, modifiers: int):
+        self.rev = not self.rev
 
     def on_draw(self):
         self.clear()
