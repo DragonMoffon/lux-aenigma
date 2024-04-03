@@ -1,10 +1,10 @@
-from math import acos
-
 from pyglet.math import Vec2
 
 from lux.engine.lights import Ray
 from lux.engine.interactors import RayInteractorEdge, RayInteractor
 from lux.engine.colour import LuxColour
+
+from lux.engine.lights.beam_light_ray import LightRay, BeamLightRay
 
 
 class PortalRayInteractor(RayInteractor):
@@ -19,6 +19,7 @@ class PortalRayInteractor(RayInteractor):
         )
         super().__init__(origin, direction, colour, bounds)
         self._sibling: PortalRayInteractor = None
+        self._sibling_ratio: float = 0.0
 
     @property
     def edge(self):
@@ -26,42 +27,70 @@ class PortalRayInteractor(RayInteractor):
 
     def set_siblings(self, sibling):
         self._sibling, sibling._sibling = sibling, self
+        self._sibling_ratio = self._sibling.edge.diff.mag / self.edge.diff.mag
+        sibling._sibling_ratio = self.edge.diff.mag / self._sibling.edge.diff.mag
+        print(self._sibling_ratio)
 
-    def ray_hit(self, in_ray: Ray, in_edge: RayInteractorEdge, intersection_point: Vec2) -> Ray | None:
-        assert in_edge is self.edge, "Portal edge not being used with portal"
-
+    def ray_hit(self, in_ray: LightRay, in_edge: RayInteractorEdge,
+                left_intersection: Vec2, right_intersection: Vec2) -> tuple[LightRay, ...]:
         if self._sibling is None:
-            return
+            return ()
 
-        direction_heading = self.direction.heading
+        new_colour = self.colour.mask(in_ray.colour)
+        if new_colour == LuxColour.BLACK():
+            return ()
 
-        edge_normal = in_edge.normal.rotate(direction_heading)
+        edge_normal = in_edge.normal
+        edge_direction = in_edge.direction
 
-        edge_start = self.origin + in_edge.start.rotate(self.direction.heading)
-        edge_end = self.origin + in_edge.end.rotate(self.direction.heading)
+        if not in_edge.bi_dir and ((right_intersection - in_ray.origin).dot(edge_normal) >= 0.0 or (left_intersection - in_ray.origin).dot(edge_normal) >= 0.0):
+            return ()
 
-        if not in_edge.bi_dir and (in_ray.source - intersection_point).dot(edge_normal) < 0.0:
-            return
+        edge_start = self.origin + self.edge.start.rotate(self.direction.heading)
+        edge_end = self.origin + self.edge.end.rotate(self.direction.heading)
+        edge_diff = (edge_end - edge_start)
+        edge_len_sqr = edge_diff.dot(edge_diff)
+
+        new_left_length = in_ray.left.strength - in_ray.left.length
+        new_right_length = in_ray.right.strength - in_ray.right.length
 
         sibling = self._sibling
         sibling_edge = sibling.edge
-        sibling_normal = sibling_edge.normal.rotate(sibling.direction.heading)
-        sibling_start = sibling.origin + sibling_edge.start.rotate(sibling.direction.heading)
-        sibling_end = sibling.origin + sibling_edge.end.rotate(sibling.direction.heading)
+        sibling_origin = sibling.origin
+        sibling_heading = sibling.direction.heading
+
+        sibling_normal = sibling_edge.normal.rotate(sibling_heading)
+        sibling_direction = sibling_edge.direction.rotate(sibling_heading)
+
+        sibling_start = sibling_origin + sibling_edge.start.rotate(sibling_heading)
+        sibling_end = sibling_origin + sibling_edge.end.rotate(sibling_heading)
         sibling_diff = sibling_end - sibling_start
 
-        portal_rotation = acos(edge_normal.dot(-sibling_normal))
-        ray_direction = in_ray.direction
+        # Figure the output edge direction. We mirror it in the normal direction because we want it to come
+        # out of the portal edge rather than go into it.
+        left_parallel_component = in_ray.left.direction.dot(edge_normal)
+        left_mirror_component = in_ray.left.direction.dot(edge_direction)
+        new_left_direction = - sibling_normal * left_parallel_component - sibling_direction * left_mirror_component
 
-        edge_diff = edge_end - edge_start
-        intersection_diff = intersection_point - edge_start
+        right_parallel_component = in_ray.right.direction.dot(edge_normal)
+        right_mirror_component = in_ray.right.direction.dot(edge_direction)
+        new_right_direction = - sibling_normal * right_parallel_component - sibling_direction * right_mirror_component
 
-        fraction = 1.0 - intersection_diff.mag / edge_diff.mag
+        new_left_source = sibling_end + (left_intersection - edge_start) * self._sibling_ratio
+        new_right_source = sibling_end + (right_intersection - edge_start) * self._sibling_ratio
 
-        new_source = sibling_start + sibling_diff * fraction
-        new_direction = ray_direction.rotate(portal_rotation)
-        new_length = in_ray.length - (intersection_point - in_ray.source).mag
-        new_colour = in_ray.colour
+        left_ray = Ray(
+            new_left_source,
+            new_left_direction,
+            new_left_length,
+            new_left_length
+        )
 
-        new_ray = Ray(new_source, new_direction, new_length, new_colour)
-        return new_ray
+        right_ray = Ray(
+            new_right_source,
+            new_right_direction,
+            new_right_length,
+            new_right_length
+        )
+
+        return BeamLightRay(new_colour, left_ray, right_ray),

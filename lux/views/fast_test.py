@@ -13,6 +13,7 @@ from lux.engine.interactors.interactor_edge import RayInteractorEdge
 from lux.engine.interactors.ray_interactor import RayInteractor
 from lux.engine.interactors.filter import FilterRayInteractor
 from lux.engine.interactors.mirror import MirrorRayInteractor
+from lux.engine.interactors.portal import PortalRayInteractor
 from lux.util.maths import get_segment_intersection, get_intersection, get_segment_intersection_fraction, get_intersection_fraction
 from lux.engine.debug import DebugRenderer
 from lux.engine.debug.ray_interactor_renderer import RayInteractorRenderer
@@ -32,8 +33,8 @@ def find_beam_edge_map(interactors, parent,
     # Start by generating the adjusted edge, and clamping it to the bounds of the beam.
     # Then for the start and end
     for interactor in interactors:
-        if interactor == parent:
-            continue
+        # if interactor == parent:
+        #     continue
 
         origin = interactor.origin
         heading = interactor.direction.heading
@@ -54,7 +55,7 @@ def find_beam_edge_map(interactors, parent,
                 continue
 
             # Secondly check if the edge is behind the beam. In this case we can ignore it
-            if start_right.dot(origin_dir) <= 0.0 and end_right.dot(origin_dir) <= 0.0:
+            if start_right.dot(origin_dir) <= 0.00001 and end_right.dot(origin_dir) <= 0.00001:
                 continue
 
             # Third check if the edge is ahead of the beam. In this case we can ignore it.
@@ -97,7 +98,7 @@ def find_beam_edge_map(interactors, parent,
                 end_intersection = get_segment_intersection_fraction(start_point, end_point, right_sink, left_sink)
                 end_start = None
 
-                intersections = sorted(filter(lambda i: i[0] is not None, ((right_intersection, right_start), (left_intersection, left_start), (start_intersection, start_start), (end_intersection, None))))
+                intersections = sorted(filter(lambda i: i[0] is not None, ((right_intersection, 0, right_start), (left_intersection, 1, left_start), (start_intersection, 2, start_start), (end_intersection, 3, None))))
 
                 if not intersections:
                     # Because there are no intersections the edge is outside the beam
@@ -108,14 +109,14 @@ def find_beam_edge_map(interactors, parent,
                         start_final = start_point
                         start_intersection_point = None
 
-                        intersection_fraction, end_intersection_point = intersections[0]
+                        intersection_fraction, _, end_intersection_point = intersections[0]
 
                         end_final = start_point + edge_diff * intersection_fraction
                     else:
                         end_final = end_point
                         end_intersection_point = None
 
-                        intersection_fraction, start_intersection_point = intersections[0]
+                        intersection_fraction, _, start_intersection_point = intersections[0]
                         start_final = start_point + edge_diff * intersection_fraction
                 else:
                     # There are two or more intersections.
@@ -123,8 +124,8 @@ def find_beam_edge_map(interactors, parent,
                     # If there are more than two, that means the edge hits a corner.
                     # In this case multiple intersections will be equal, and it does not matter.
 
-                    start_fraction, start_intersection_point = intersections[0]
-                    end_fraction, end_intersection_point = intersections[-1]
+                    start_fraction, _, start_intersection_point = intersections[0]
+                    end_fraction, _, end_intersection_point = intersections[-1]
 
                     start_final = start_point + edge_diff * start_fraction
                     end_final = start_point + edge_diff * end_fraction
@@ -167,6 +168,10 @@ def find_intersections(interactors: tuple[RayInteractor, ...], beam: BeamLightRa
     right_sink: Vec2 = right_source + beam_dir * beam.right.length
     left_sink: Vec2 = left_source + beam_dir * beam.left.length
     end_width: float = (left_sink - right_sink).mag
+
+    if end_width == 0:
+        return [], {}
+
     end_normal: Vec2 = (left_sink - right_sink) / end_width
 
     edge_to_interactor_map, edge_points = find_beam_edge_map(interactors, parent,
@@ -344,6 +349,8 @@ class FastTestView(LuxView):
         super().__init__(back=back)
         w, h = self.window.center
 
+        w_, h_ = self.window.width, self.window.height
+
         self.renderer = DebugRenderer()
 
         self.offset = Vec2(0.0, 15.0)
@@ -355,16 +362,21 @@ class FastTestView(LuxView):
         )
         self.t = 0.0
 
-        self.filter_red = FilterRayInteractor(Vec2(w+125, h+75), Direction.NORTHWEST(), LuxColour.RED(), (RayInteractorEdge(Vec2(0.0, -50.0), Vec2(0.0, 50.0), True),))
-        self.filter_green = MirrorRayInteractor(400, Vec2(w+400, h+25), Direction.SOUTHWEST(), LuxColour.GREEN())
+        #self.filter_red = FilterRayInteractor(Vec2(w+125, h+75), Direction.NORTHWEST(), LuxColour.RED(), (RayInteractorEdge(Vec2(0.0, -50.0), Vec2(0.0, 50.0), True),))
+        #self.mirror_green = MirrorRayInteractor(400, Vec2(w+400, h+25), Direction.SOUTHWEST(), LuxColour.GREEN())
+        #self.mirror_blue = MirrorRayInteractor(100, Vec2(w+200, h-75), Direction.WEST(), LuxColour.BLUE())
+        #self.filter_cyan_a = FilterRayInteractor(Vec2(w+100, h-35), Direction.NORTHWEST(), LuxColour.CYAN(), (RayInteractorEdge(Vec2(0.0, -25.0), Vec2(0.0, 25.0), False),))
+        #self.filter_cyan_b = FilterRayInteractor(Vec2(w+150, h-125), Direction.EAST(), LuxColour.CYAN(), (RayInteractorEdge(Vec2(0.0, -50.0), Vec2(0.0, 50.0), False),))
+        #self.portal_a = PortalRayInteractor(100, Vec2(w+250, h), Direction.WEST(), LuxColour.WHITE())
+        #self.portal_b = PortalRayInteractor(100, Vec2(w-100, h-50), Direction.EAST(), LuxColour.WHITE())
+        #self.portal_a.set_siblings(self.portal_b)
+        #self.interactors = (self.filter_red, self.mirror_green, self.mirror_blue, self.filter_cyan_a, self.filter_cyan_b, self.portal_a, self.portal_b)
 
-        self.filter_blue = MirrorRayInteractor(100, Vec2(w+200, h-75), Direction.WEST(), LuxColour.BLUE())
-        self.filter_cyan_a = FilterRayInteractor(Vec2(w+100, h-35), Direction.NORTHWEST(), LuxColour.CYAN(), (RayInteractorEdge(Vec2(0.0, -25.0), Vec2(0.0, 25.0), False),))
-        self.filter_cyan_b = FilterRayInteractor(Vec2(w+150, h-125), Direction.EAST(), LuxColour.CYAN(), (RayInteractorEdge(Vec2(0.0, -50.0), Vec2(0.0, 50.0), False),))
-
-        self.interactors = (self.filter_red, self.filter_green, self.filter_blue, self.filter_cyan_a, self.filter_cyan_b)
-
-        self.points = ()
+        self.box_mirror_up = MirrorRayInteractor(w_, Vec2(w_/2.0, h_), Direction.SOUTH(), LuxColour.WHITE())
+        self.box_mirror_lf = MirrorRayInteractor(h_, Vec2(0.0, h_/2.0), Direction.EAST(), LuxColour.WHITE())
+        self.box_mirror_rt = MirrorRayInteractor(h_, Vec2(w_, h_/2.0), Direction.WEST(), LuxColour.WHITE())
+        self.box_mirror_dw = MirrorRayInteractor(w_, Vec2(w_/2.0, 0), Direction.NORTH(), LuxColour.WHITE())
+        self.interactors = (self.box_mirror_up, self.box_mirror_rt, self.box_mirror_dw, self.box_mirror_lf)
 
         self.rerender()
         # t = (timeit(lambda: find_intersections(self.interactors, self.beam), number=10000) / 10000)
@@ -382,24 +394,6 @@ class FastTestView(LuxView):
 
         for interactor in self.interactors:
             self.renderer.append(RayInteractorRenderer(interactor))
-        self.renderer.append(RayInteractorRenderer(self.filter_cyan_a))
-
-        left_source = self.beam.left.source
-        right_source = self.beam.right.source
-        beam_dir = self.beam.left.direction
-        beam_normal = Vec2(self.beam.left.direction.y, -self.beam.left.direction.x)
-        origin_dir = self.beam.direction
-        origin_normal = self.beam.normal
-        right_sink: Vec2 = right_source + beam_dir * self.beam.right.length
-        left_sink: Vec2 = left_source + beam_dir * self.beam.left.length
-
-        _, self.points = find_beam_edge_map(
-            self.interactors, None,
-            left_source, left_sink,
-            right_source, right_sink,
-            beam_dir, beam_normal,
-            origin_dir, origin_normal
-        )
 
         beams = propogate_beam(self.interactors, self.beam)
         def add_beam(beam):
@@ -459,10 +453,3 @@ class FastTestView(LuxView):
     def on_draw(self):
         self.clear()
         self.renderer.draw()
-
-        if self.points:
-            arcade.draw_points(
-                tuple(p[0] for p in self.points),
-                self.beam.colour.to_int_color(),
-                10
-            )
