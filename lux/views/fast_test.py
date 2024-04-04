@@ -28,8 +28,6 @@ class FastTestView(LuxView):
         super().__init__(back=back)
         w, h = self.window.center
 
-        w_, h_ = self.window.width, self.window.height
-
         self.renderer = DebugRenderer()
 
         self.offset = Vec2(0.0, 15.0)
@@ -48,12 +46,8 @@ class FastTestView(LuxView):
         self.filter_cyan_b = FilterRayInteractor(Vec2(w+150, h-125), Direction.EAST, LuxColour.CYAN, (RayInteractorEdge(Vec2(0.0, -50.0), Vec2(0.0, 50.0), False),))
         self.portal_a, self.portal_b = PortalRayInteractor.create_pair(100, LuxColour.WHITE, Vec2(w+250, h), Direction.WEST, Vec2(w-100, h-50), Direction.EAST)
 
-        self.box_mirror_up = MirrorRayInteractor(w_, Vec2(w_/2.0, h_), Direction.SOUTH, LuxColour.WHITE)
-        self.box_mirror_lf = MirrorRayInteractor(h_, Vec2(0.0, h_/2.0), Direction.EAST, LuxColour.WHITE)
-        self.box_mirror_rt = MirrorRayInteractor(h_, Vec2(w_, h_/2.0), Direction.WEST, LuxColour.WHITE)
-        self.box_mirror_dw = MirrorRayInteractor(w_, Vec2(w_/2.0, 0), Direction.NORTH, LuxColour.WHITE)
-        self.interactors = (self.box_mirror_up, self.box_mirror_rt, self.box_mirror_dw, self.box_mirror_lf,
-                            self.filter_cyan_a, self.filter_cyan_b, self.filter_red, self.mirror_blue, self.mirror_green,
+        self.interactors = (self.filter_cyan_a, self.filter_cyan_b, self.filter_red,
+                            self.mirror_blue, self.mirror_green,
                             self.portal_a, self.portal_b)
 
         self.rerender()
