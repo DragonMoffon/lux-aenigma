@@ -27,6 +27,7 @@ class FastTestView(LuxView):
     def __init__(self, back: LuxView):
         super().__init__(back=back)
         w, h = self.window.center
+        ww, wh = self.window.size
 
         self.renderer = DebugRenderer()
 
@@ -38,6 +39,11 @@ class FastTestView(LuxView):
             Ray(self.cen - self.offset.rotate(0.0), Direction.EAST.rotate(0.0), 3500.0, 3500.0)
         )
         self.t = 0.0
+
+        # self.box_mirror_up = MirrorRayInteractor(ww, Vec2(ww/2.0, wh), Direction.SOUTH, LuxColour.WHITE)
+        # self.box_mirror_lf = MirrorRayInteractor(wh, Vec2(0.0, wh/2.0), Direction.EAST, LuxColour.WHITE)
+        # self.box_mirror_rt = MirrorRayInteractor(wh, Vec2(ww, wh/2.0), Direction.WEST, LuxColour.WHITE)
+        # self.box_mirror_dw = MirrorRayInteractor(ww, Vec2(ww/2.0, 0), Direction.NORTH, LuxColour.WHITE)
 
         self.filter_red = FilterRayInteractor(Vec2(w+125, h+75), Direction.NORTHWEST, LuxColour.RED, (RayInteractorEdge(Vec2(0.0, -50.0), Vec2(0.0, 50.0), True),))
         self.mirror_green = MirrorRayInteractor(400, Vec2(w+400, h+25), Direction.SOUTHWEST, LuxColour.GREEN)
