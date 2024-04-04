@@ -1,6 +1,6 @@
 from pyglet.math import Vec2
 
-from lux.engine.interactors.ray_interactor import RayInteractor, RayInteractorEdge
+from lux.engine.interactors import RayInteractor, RayInteractorEdge
 from lux.engine.lights.ray import Ray, LightRay
 from lux.engine.lights.beam_light_ray import BeamLightRay
 from lux.engine.colour import LuxColour

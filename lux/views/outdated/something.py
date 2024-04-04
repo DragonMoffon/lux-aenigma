@@ -6,8 +6,7 @@ from lux.util.maths import Direction
 from lux.engine.colour import LuxColour
 from lux.engine.lights.ray import Ray
 from lux.engine.lights.beam_light_ray import BeamLightRay
-from lux.engine.interactors.interactor_edge import RayInteractorEdge
-from lux.engine.interactors.filter import FilterRayInteractor
+from lux.engine.interactors import RayInteractorEdge, FilterRayInteractor
 from lux.engine.debug import DebugRenderer
 from lux.engine.debug.ray_interactor_renderer import RayInteractorRenderer
 

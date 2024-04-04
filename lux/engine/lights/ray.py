@@ -6,8 +6,7 @@ from pyglet.math import Vec2
 
 from lux.engine.colour import LuxColour
 if TYPE_CHECKING:
-    from lux.engine.interactors.interactor_edge import RayInteractorEdge
-    from lux.engine.interactors.ray_interactor import RayInteractor
+    from lux.engine.interactors import RayInteractor, RayInteractorEdge
 
 logger = getLogger("lux")
 

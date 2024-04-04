@@ -1,18 +1,17 @@
 from logging import getLogger
+# import timeit
 
 import arcade
 from pyglet.math import Vec2
 
-from lux.engine.interactors.filter import FilterRayInteractor
-from lux.engine.interactors.portal import PortalRayInteractor
+from lux.engine.interactors import FilterRayInteractor, PortalRayInteractor, MirrorRayInteractor
 from lux.engine.new import propogate_beam
 from lux.util.view import LuxView
 from lux.util.maths import Direction
 from lux.engine.colour import LuxColour
 from lux.engine.lights.ray import Ray
 from lux.engine.lights.beam_light_ray import BeamLightRay
-from lux.engine.interactors.interactor_edge import RayInteractorEdge
-from lux.engine.interactors.mirror import MirrorRayInteractor
+from lux.engine.interactors import RayInteractorEdge
 from lux.engine.debug import DebugRenderer
 from lux.engine.debug.ray_interactor_renderer import RayInteractorRenderer
 from lux.engine.debug.light_renderer import BeamDebugRenderer
@@ -48,7 +47,6 @@ class FastTestView(LuxView):
         self.filter_cyan_a = FilterRayInteractor(Vec2(w+100, h-35), Direction.NORTHWEST, LuxColour.CYAN, (RayInteractorEdge(Vec2(0.0, -25.0), Vec2(0.0, 25.0), False),))
         self.filter_cyan_b = FilterRayInteractor(Vec2(w+150, h-125), Direction.EAST, LuxColour.CYAN, (RayInteractorEdge(Vec2(0.0, -50.0), Vec2(0.0, 50.0), False),))
         self.portal_a, self.portal_b = PortalRayInteractor.create_pair(100, LuxColour.WHITE, Vec2(w+250, h), Direction.WEST, Vec2(w-100, h-50), Direction.EAST)
-        # self.interactors = (self.filter_red, self.mirror_green, self.mirror_blue, self.filter_cyan_a, self.filter_cyan_b, self.portal_a, self.portal_b)
 
         self.box_mirror_up = MirrorRayInteractor(w_, Vec2(w_/2.0, h_), Direction.SOUTH, LuxColour.WHITE)
         self.box_mirror_lf = MirrorRayInteractor(h_, Vec2(0.0, h_/2.0), Direction.EAST, LuxColour.WHITE)

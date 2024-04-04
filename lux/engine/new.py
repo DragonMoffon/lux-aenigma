@@ -2,8 +2,7 @@ from logging import getLogger
 
 from pyglet.math import Vec2
 
-from lux.engine.interactors.interactor_edge import RayInteractorEdge
-from lux.engine.interactors.ray_interactor import RayInteractor
+from lux.engine.interactors import RayInteractor, RayInteractorEdge
 from lux.engine.lights.beam_light_ray import BeamLightRay
 from lux.engine.lights.ray import Ray
 from lux.util.maths import get_intersection, get_intersection_fraction, get_segment_intersection_fraction
