@@ -16,6 +16,10 @@ from lux.engine.debug import DebugRenderer
 from lux.engine.debug.ray_interactor_renderer import RayInteractorRenderer
 from lux.engine.debug.light_renderer import BeamDebugRenderer
 
+from lux.engine.upscale_renderer import UpscaleBuffer
+from arcade.camera import Camera2D
+from arcade.math import lerp_2d
+
 logger = getLogger("lux")
 
 
@@ -30,6 +34,8 @@ class FastTestView(LuxView):
         w, h = self.window.center
         ww, wh = self.window.size
 
+        self.buf = UpscaleBuffer(640, 320)
+        self.cam = Camera2D()
         self.renderer = DebugRenderer()
 
         self.offset = Vec2(0.0, 15.0)
@@ -132,4 +138,9 @@ class FastTestView(LuxView):
 
     def on_draw(self):
         self.clear()
-        self.renderer.draw()
+        with self.cam.activate():
+            with self.buf.activate() as fbo:
+                fbo.clear()
+                self.renderer.draw()
+
+        self.buf.draw()
