@@ -314,6 +314,8 @@ def find_intersections(interactors: tuple[RayInteractor, ...], beam: BeamLightRa
     return finalised_beams, edge_to_interactor_map
 
 
+# TODO: This obviously needs to be on the BeamLightRay object.
+# How to do that? I have no idea.
 def propogate_beam(interactors: tuple[RayInteractor, ...], beam: BeamLightRay, parent: RayInteractor = None):
     kids = 0
     replacements, edge_map = find_intersections(interactors, beam, parent)
