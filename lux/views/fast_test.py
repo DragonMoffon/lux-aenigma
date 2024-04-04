@@ -20,6 +20,7 @@ logger = getLogger("lux")
 
 
 ONE_FRAME = 1/600
+BEAM_LENGTH = 3500.0
 
 
 class FastTestView(LuxView):
@@ -88,8 +89,8 @@ class FastTestView(LuxView):
         angle = (self.t % 1.0) * 2.0 * 3.1415926
         self.beam = BeamLightRay(
             LuxColour.WHITE,
-            Ray(self.cen + self.offset.rotate(angle), Direction.EAST.rotate(angle), 3500.0, 3500.0),
-            Ray(self.cen - self.offset.rotate(angle), Direction.EAST.rotate(angle), 3500.0, 3500.0)
+            Ray(self.cen + self.offset.rotate(angle), Direction.EAST.rotate(angle), BEAM_LENGTH, BEAM_LENGTH),
+            Ray(self.cen - self.offset.rotate(angle), Direction.EAST.rotate(angle), BEAM_LENGTH, BEAM_LENGTH)
         )
 
         self.rerender()
