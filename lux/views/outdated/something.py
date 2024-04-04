@@ -1,6 +1,6 @@
 from pyglet.math import Vec2
 
-from lux.engine.debug.ray_renderer import BeamDebugRenderer
+from lux.engine.debug.light_renderer import BeamDebugRenderer
 from lux.util.view import LuxView
 from lux.util.maths import Direction
 from lux.engine.colour import LuxColour
@@ -40,9 +40,9 @@ class SomethingView(LuxView):
         self.edge_map = {
             self.filter_red.bounds[0].adjust(self.filter_red.origin, self.filter_red.direction.heading): self.filter_red,
             self.filter_green.bounds[0].adjust(self.filter_green.origin, self.filter_green.direction.heading): self.filter_green,
-            #self.filter_blue.bounds[0].adjust(self.filter_blue.origin, self.filter_blue.direction.heading): self.filter_blue,
-            #self.filter_cyan_a.bounds[0].adjust(self.filter_cyan_a.origin, self.filter_cyan_a.direction.heading): self.filter_cyan_a,
-            #self.filter_cyan_b.bounds[0].adjust(self.filter_cyan_b.origin, self.filter_cyan_b.direction.heading): self.filter_cyan_b,
+            # self.filter_blue.bounds[0].adjust(self.filter_blue.origin, self.filter_blue.direction.heading): self.filter_blue,
+            # self.filter_cyan_a.bounds[0].adjust(self.filter_cyan_a.origin, self.filter_cyan_a.direction.heading): self.filter_cyan_a,
+            # self.filter_cyan_b.bounds[0].adjust(self.filter_cyan_b.origin, self.filter_cyan_b.direction.heading): self.filter_cyan_b,
         }
 
         self.rerender()
@@ -52,9 +52,9 @@ class SomethingView(LuxView):
 
         self.renderer.append(RayInteractorRenderer(self.filter_red))
         self.renderer.append(RayInteractorRenderer(self.filter_green))
-        #self.renderer.append(RayInteractorRenderer(self.filter_blue))
-        #self.renderer.append(RayInteractorRenderer(self.filter_cyan_a))
-        #self.renderer.append(RayInteractorRenderer(self.filter_cyan_b))
+        # self.renderer.append(RayInteractorRenderer(self.filter_blue))
+        # self.renderer.append(RayInteractorRenderer(self.filter_cyan_a))
+        # self.renderer.append(RayInteractorRenderer(self.filter_cyan_b))
         # self.renderer.append(self.beam_renderer)
 
         def make_beam_renderers(beam):
@@ -86,8 +86,6 @@ class SomethingView(LuxView):
 
         self.beam_renderer.update_child(self.beam)
         self.rerender()
-
-
 
     def on_draw(self):
         self.clear()

@@ -4,7 +4,6 @@ from arcade import key
 
 from lux.util.dev_menu import DevMenu
 from lux.util.view import LuxView
-from lux.views.something import SomethingView
 from lux.views.scene import SceneView
 from lux.views.editor import SceneEditorView
 from lux.views.scene_select import SceneSelectView
@@ -17,8 +16,7 @@ class MenuView(LuxView):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.menu = DevMenu({
-            "test": FastTestView(self),
-            "Something": SomethingView(back=self),
+            "Test": FastTestView(self),
             "Scene": SceneView(self),
             "Editor": SceneEditorView(self),
             "Scene Select": SceneSelectView(self)
