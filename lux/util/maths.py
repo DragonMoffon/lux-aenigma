@@ -1,9 +1,10 @@
 from __future__ import annotations
+from logging import getLogger
 import math
 
 from pyglet.math import Vec2
 
-from logging import getLogger
+from lux.util.classproperty import classproperty
 
 logger = getLogger("lux")
 
@@ -48,35 +49,35 @@ class Direction(Vec2):
     def to_normal(self) -> Direction:
         return Direction(-self.y, self.x)
 
-    @classmethod
+    @classproperty
     def NORTH(cls) -> Direction:
         return cls(0, 1)
 
-    @classmethod
+    @classproperty
     def SOUTH(cls) -> Direction:
         return cls(0, -1)
 
-    @classmethod
+    @classproperty
     def EAST(cls) -> Direction:
         return cls(1, 0)
 
-    @classmethod
+    @classproperty
     def WEST(cls) -> Direction:
         return cls(-1, 0)
 
-    @classmethod
+    @classproperty
     def NORTHEAST(cls) -> Direction:
         return cls(1, 1)
 
-    @classmethod
+    @classproperty
     def SOUTHEAST(cls) -> Direction:
         return cls(1, -1)
 
-    @classmethod
+    @classproperty
     def NORTHWEST(cls) -> Direction:
         return cls(-1, 1)
 
-    @classmethod
+    @classproperty
     def SOUTHWEST(cls) -> Direction:
         return cls(-1, -1)
 

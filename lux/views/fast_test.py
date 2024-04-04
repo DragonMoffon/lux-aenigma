@@ -36,26 +36,24 @@ class FastTestView(LuxView):
         self.offset = Vec2(0.0, 15.0)
         self.cen = Vec2(w, h)
         self.beam = BeamLightRay(
-            LuxColour.WHITE(),
-            Ray(self.cen + self.offset.rotate(0.0), Direction.EAST().rotate(0.0), 3500.0, 3500.0),
-            Ray(self.cen - self.offset.rotate(0.0), Direction.EAST().rotate(0.0), 3500.0, 3500.0)
+            LuxColour.WHITE,
+            Ray(self.cen + self.offset.rotate(0.0), Direction.EAST.rotate(0.0), 3500.0, 3500.0),
+            Ray(self.cen - self.offset.rotate(0.0), Direction.EAST.rotate(0.0), 3500.0, 3500.0)
         )
         self.t = 0.0
 
-        self.filter_red = FilterRayInteractor(Vec2(w+125, h+75), Direction.NORTHWEST(), LuxColour.RED(), (RayInteractorEdge(Vec2(0.0, -50.0), Vec2(0.0, 50.0), True),))
-        self.mirror_green = MirrorRayInteractor(400, Vec2(w+400, h+25), Direction.SOUTHWEST(), LuxColour.GREEN())
-        self.mirror_blue = MirrorRayInteractor(100, Vec2(w+200, h-75), Direction.WEST(), LuxColour.BLUE())
-        self.filter_cyan_a = FilterRayInteractor(Vec2(w+100, h-35), Direction.NORTHWEST(), LuxColour.CYAN(), (RayInteractorEdge(Vec2(0.0, -25.0), Vec2(0.0, 25.0), False),))
-        self.filter_cyan_b = FilterRayInteractor(Vec2(w+150, h-125), Direction.EAST(), LuxColour.CYAN(), (RayInteractorEdge(Vec2(0.0, -50.0), Vec2(0.0, 50.0), False),))
-        self.portal_a = PortalRayInteractor(100, Vec2(w+250, h), Direction.WEST(), LuxColour.WHITE())
-        self.portal_b = PortalRayInteractor(100, Vec2(w-100, h-50), Direction.EAST(), LuxColour.WHITE())
-        self.portal_a.set_siblings(self.portal_b)
+        self.filter_red = FilterRayInteractor(Vec2(w+125, h+75), Direction.NORTHWEST, LuxColour.RED, (RayInteractorEdge(Vec2(0.0, -50.0), Vec2(0.0, 50.0), True),))
+        self.mirror_green = MirrorRayInteractor(400, Vec2(w+400, h+25), Direction.SOUTHWEST, LuxColour.GREEN)
+        self.mirror_blue = MirrorRayInteractor(100, Vec2(w+200, h-75), Direction.WEST, LuxColour.BLUE)
+        self.filter_cyan_a = FilterRayInteractor(Vec2(w+100, h-35), Direction.NORTHWEST, LuxColour.CYAN, (RayInteractorEdge(Vec2(0.0, -25.0), Vec2(0.0, 25.0), False),))
+        self.filter_cyan_b = FilterRayInteractor(Vec2(w+150, h-125), Direction.EAST, LuxColour.CYAN, (RayInteractorEdge(Vec2(0.0, -50.0), Vec2(0.0, 50.0), False),))
+        self.portal_a, self.portal_b = PortalRayInteractor.create_pair(100, LuxColour.WHITE, Vec2(w+250, h), Direction.WEST, Vec2(w-100, h-50), Direction.EAST)
         # self.interactors = (self.filter_red, self.mirror_green, self.mirror_blue, self.filter_cyan_a, self.filter_cyan_b, self.portal_a, self.portal_b)
 
-        self.box_mirror_up = MirrorRayInteractor(w_, Vec2(w_/2.0, h_), Direction.SOUTH(), LuxColour.WHITE())
-        self.box_mirror_lf = MirrorRayInteractor(h_, Vec2(0.0, h_/2.0), Direction.EAST(), LuxColour.WHITE())
-        self.box_mirror_rt = MirrorRayInteractor(h_, Vec2(w_, h_/2.0), Direction.WEST(), LuxColour.WHITE())
-        self.box_mirror_dw = MirrorRayInteractor(w_, Vec2(w_/2.0, 0), Direction.NORTH(), LuxColour.WHITE())
+        self.box_mirror_up = MirrorRayInteractor(w_, Vec2(w_/2.0, h_), Direction.SOUTH, LuxColour.WHITE)
+        self.box_mirror_lf = MirrorRayInteractor(h_, Vec2(0.0, h_/2.0), Direction.EAST, LuxColour.WHITE)
+        self.box_mirror_rt = MirrorRayInteractor(h_, Vec2(w_, h_/2.0), Direction.WEST, LuxColour.WHITE)
+        self.box_mirror_dw = MirrorRayInteractor(w_, Vec2(w_/2.0, 0), Direction.NORTH, LuxColour.WHITE)
         self.interactors = (self.box_mirror_up, self.box_mirror_rt, self.box_mirror_dw, self.box_mirror_lf,
                             self.filter_cyan_a, self.filter_cyan_b, self.filter_red, self.mirror_blue, self.mirror_green,
                             self.portal_a, self.portal_b)
@@ -91,9 +89,9 @@ class FastTestView(LuxView):
 
         angle = (self.t % 1.0) * 2.0 * 3.1415926
         self.beam = BeamLightRay(
-            LuxColour.WHITE(),
-            Ray(self.cen + self.offset.rotate(angle), Direction.EAST().rotate(angle), 3500.0, 3500.0),
-            Ray(self.cen - self.offset.rotate(angle), Direction.EAST().rotate(angle), 3500.0, 3500.0)
+            LuxColour.WHITE,
+            Ray(self.cen + self.offset.rotate(angle), Direction.EAST.rotate(angle), 3500.0, 3500.0),
+            Ray(self.cen - self.offset.rotate(angle), Direction.EAST.rotate(angle), 3500.0, 3500.0)
         )
 
         self.rerender()

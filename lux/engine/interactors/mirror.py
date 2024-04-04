@@ -28,7 +28,7 @@ class MirrorRayInteractor(RayInteractor):
                 left_intersection: Vec2, right_intersection: Vec2) -> tuple[LightRay, ...]:
 
         new_colour = self.colour.mask(in_ray.colour)
-        if new_colour == LuxColour.BLACK():
+        if new_colour == LuxColour.BLACK:
             return ()
 
         edge_normal = in_edge.normal

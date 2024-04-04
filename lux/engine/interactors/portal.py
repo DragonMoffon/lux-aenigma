@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from pyglet.math import Vec2
 
 from lux.engine.lights import Ray
@@ -31,13 +33,20 @@ class PortalRayInteractor(RayInteractor):
         sibling._sibling_ratio = self.edge.diff.mag / self._sibling.edge.diff.mag
         print(self._sibling_ratio)
 
+    @classmethod
+    def create_pair(cls, height: float, colour: LuxColour, origin_a: Vec2, direction_a: Vec2, origin_b: Vec2, direction_b: Vec2) -> tuple[PortalRayInteractor]:
+        portal_a = cls(height, origin_a, direction_a, colour)
+        portal_b = cls(height, origin_b, direction_b, colour)
+        portal_a.set_siblings(portal_b)
+        return (portal_a, portal_b)
+
     def ray_hit(self, in_ray: LightRay, in_edge: RayInteractorEdge,
                 left_intersection: Vec2, right_intersection: Vec2) -> tuple[LightRay, ...]:
         if self._sibling is None:
             return ()
 
         new_colour = self.colour.mask(in_ray.colour)
-        if new_colour == LuxColour.BLACK():
+        if new_colour == LuxColour.BLACK:
             return ()
 
         edge_normal = in_edge.normal

@@ -3,6 +3,8 @@ from __future__ import annotations
 from typing import NamedTuple
 from arcade.types import Color, RGBANormalized
 
+from lux.util.classproperty import classproperty
+
 
 class LuxColour(NamedTuple):
     red: bool
@@ -55,34 +57,34 @@ class LuxColour(NamedTuple):
     def __repr__(self) -> str:
         return f"LuxColour({self.name})"
 
-    @classmethod
+    @classproperty
     def WHITE(cls) -> LuxColour:
         return cls(True, True, True)
 
-    @classmethod
+    @classproperty
     def RED(cls) -> LuxColour:
         return cls(True, False, False)
 
-    @classmethod
+    @classproperty
     def GREEN(cls) -> LuxColour:
         return cls(False, True, False)
 
-    @classmethod
+    @classproperty
     def BLUE(cls) -> LuxColour:
         return cls(False, False, True)
 
-    @classmethod
+    @classproperty
     def YELLOW(cls) -> LuxColour:
         return cls(True, True, False)
 
-    @classmethod
+    @classproperty
     def MAGENTA(cls) -> LuxColour:
         return cls(True, False, True)
 
-    @classmethod
+    @classproperty
     def CYAN(cls) -> LuxColour:
         return cls(False, True, True)
 
-    @classmethod
+    @classproperty
     def BLACK(cls) -> LuxColour:
         return cls(False, False, False)
