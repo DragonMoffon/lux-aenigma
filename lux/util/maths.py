@@ -23,7 +23,7 @@ class Direction(Vec2):
         names = ["NORTHEAST", "EAST", "SOUTHEAST", "SOUTH", "SOUTHWEST", "WEST", "NORTHWEST", "NORTH"]
         index = (self.degrees + 22.5) // 45 % 8
         closest_dir = names[index]
-        if self.degrees not in [0.0, 45.0, 90.0, 135.0, 180.0, 225.0, 270.0, 315.0, 360.0]:
+        if self.degrees not in set([0.0, 45.0, 90.0, 135.0, 180.0, 225.0, 270.0, 315.0, 360.0]):
             closest_dir = "~" + closest_dir
         return closest_dir
 
