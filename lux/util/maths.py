@@ -20,23 +20,9 @@ class Direction(Vec2):
 
     @property
     def name(self) -> str:
-        closest_dir = ""
-        if 0 <= self.degrees < 22.5 or 337.5 <= self.degrees < 360:
-            closest_dir = "NORTH"
-        elif 22.5 <= self.degrees < 67.5:
-            closest_dir = "NORTHEAST"
-        elif 67.5 <= self.degrees < 112.5:
-            closest_dir = "EAST"
-        elif 112.5 <= self.degrees < 157.5:
-            closest_dir = "SOUTHEAST"
-        elif 157.5 <= self.degrees < 202.5:
-            closest_dir = "SOUTH"
-        elif 202.5 <= self.degrees < 247.5:
-            closest_dir = "SOUTHWEST"
-        elif 247.5 <= self.degrees < 292.5:
-            closest_dir = "WEST"
-        elif 292.5 <= self.degrees < 337.5:
-            closest_dir = "NORTHWEST"
+        names = ["NORTHEAST", "EAST", "SOUTHEAST", "SOUTH", "SOUTHWEST", "WEST", "NORTHWEST", "NORTH"]
+        index = (self.degrees + 22.5) // 45 % 8
+        closest_dir = names[index]
         if self.degrees not in [0.0, 45.0, 90.0, 135.0, 180.0, 225.0, 270.0, 315.0, 360.0]:
             closest_dir = "~" + closest_dir
         return closest_dir
