@@ -15,7 +15,7 @@ class MirrorRayInteractor(RayInteractor):
             RayInteractorEdge(
                 Vec2(0.0, -height/2.0),
                 Vec2(0.0, height/2.0),
-                False
+                True
             ),
         )
         super().__init__(origin, direction, colour, bounds)

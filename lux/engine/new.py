@@ -34,6 +34,13 @@ def find_beam_edge_map(interactors, parent,
             end_point = origin + original_edge.end.rotate(heading)
             edge_diff = end_point - start_point
 
+            # # TODO: ACTUALLY SOLVE THIS ISSUE. Currently it breaks all the logic for deciding left and right.
+            # if (start_point - left_source).mag < 0.0001 or (start_point - right_source).mag < 0.0001:
+            #     continue
+
+            # if (end_point - left_source).mag < 0.0001 or (end_point - right_source).mag < 0.0001:
+            #     continue
+
             # Pre-calc some diffs that are used for bounds checking.
             start_left = (start_point - left_sink)
             end_left = (end_point - left_sink)
@@ -49,14 +56,14 @@ def find_beam_edge_map(interactors, parent,
                 continue
 
             # Third check if the edge is ahead of the beam. In this case we can ignore it.
-            if start_left.dot(beam_dir) >= 0.0 and end_left.dot(beam_dir) >= 0.0:
+            if start_left.dot(beam_dir) >= -0.0001 and end_left.dot(beam_dir) >= -0.00001:
                 continue
 
-            is_start_in_beam = ((start_right.dot(origin_dir) > 0.0) and (start_left.dot(beam_dir) < 0.0) and
-                                (start_left.dot(beam_normal) > 0.0) == (start_right.dot(beam_normal) < 0.0))
+            is_start_in_beam = ((start_right.dot(origin_dir) >= -0.0001) and (start_left.dot(beam_dir) <= 0.0001) and
+                                (start_left.dot(beam_normal) >= -0.0001) == (start_right.dot(beam_normal) <= 0.0001))
 
-            is_end_in_beam = ((end_right.dot(origin_dir) > 0.0) and (end_left.dot(beam_dir) < 0.0) and
-                              (end_left.dot(beam_normal) > 0.0) == (end_right.dot(beam_normal) < 0.0))
+            is_end_in_beam = ((end_right.dot(origin_dir) >= -0.0001) and (end_left.dot(beam_dir) <= 0.0001) and
+                              (end_left.dot(beam_normal) >= -0.0001) == (end_right.dot(beam_normal) <= 0.0001))
 
             # Both the start and end are in the beam so we can skip all the intersection checks.
             if is_start_in_beam and is_end_in_beam:
@@ -120,7 +127,7 @@ def find_beam_edge_map(interactors, parent,
                     start_final = start_point + edge_diff * start_fraction
                     end_final = start_point + edge_diff * end_fraction
 
-                if start_final == end_final:
+                if (start_final - end_final).dot(start_final - end_final) < 0.0001:
                     continue
 
                 # Make an edge out of the final start and end points
@@ -173,14 +180,15 @@ def find_intersections(interactors: tuple[RayInteractor, ...], beam: BeamLightRa
     back_edge = RayInteractorEdge(right_sink, left_sink, True)
     edge_to_interactor_map[back_edge] = None
     edge_points.append((right_sink, beam.right.length**2, right_source, back_edge))
-    edge_points.append((left_sink, beam.left.length**2, left_source, back_edge))
 
-    if len(edge_points) == 2:
+    if len(edge_points) == 1:
         return [(beam, back_edge, right_sink, left_sink)], edge_to_interactor_map
 
     # Sort every point from left to right, breaking ties by depth
     sorted_points = sorted(edge_points, key=lambda p: ((right_source - p[2]).dot(beam_normal), p[1]))
+    sorted_points.append((left_sink, beam.left.length**2, left_source, back_edge))
 
+    logger.debug(f"{right_source, left_source}")
     logger.info("\n".join(f"{(right_source - p[2]).dot(beam_normal)}: {p}" for p in sorted_points))
 
     end_fraction = get_intersection_fraction(
@@ -199,7 +207,6 @@ def find_intersections(interactors: tuple[RayInteractor, ...], beam: BeamLightRa
     active_edges: set[RayInteractorEdge] = {current_edge}
     incomplete_edges: set[RayInteractorEdge] = set(edge_to_interactor_map.keys())
     finalised_beams: list[tuple[BeamLightRay, RayInteractorEdge, Vec2, Vec2]] = []
-
     for end, length_sqr, start, edge in sorted_points[1:]:
         logger.info(f"Next Point: {start} : {end}")
         left_ray = None
@@ -295,15 +302,16 @@ def find_intersections(interactors: tuple[RayInteractor, ...], beam: BeamLightRa
         logger.debug(next_current_edge)
         if left_ray is not None:
             logger.debug("making a new beam")
-            new_beam = BeamLightRay(
-                beam_colour,
-                left_ray,
-                right_ray
-            )
-            left_intersection = left_ray.source + beam_dir * left_ray.length
-            right_intersection = right_ray.source + beam_dir * right_ray.length
+            if left_ray.source != right_ray.source:
+                new_beam = BeamLightRay(
+                    beam_colour,
+                    left_ray,
+                    right_ray
+                )
+                left_intersection = left_ray.source + beam_dir * left_ray.length
+                right_intersection = right_ray.source + beam_dir * right_ray.length
 
-            finalised_beams.append((new_beam, current_edge, left_intersection, right_intersection))
+                finalised_beams.append((new_beam, current_edge, left_intersection, right_intersection))
 
             right_ray = next_right_ray
             current_edge = next_current_edge

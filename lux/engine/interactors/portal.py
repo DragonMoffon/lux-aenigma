@@ -34,7 +34,7 @@ class PortalRayInteractor(RayInteractor):
         print(self._sibling_ratio)
 
     @classmethod
-    def create_pair(cls, height: float, colour: LuxColour, origin_a: Vec2, direction_a: Vec2, origin_b: Vec2, direction_b: Vec2) -> tuple[PortalRayInteractor]:
+    def create_pair(cls, height: float, colour: LuxColour, origin_a: Vec2, direction_a: Vec2, origin_b: Vec2, direction_b: Vec2) -> tuple[PortalRayInteractor, PortalRayInteractor]:
         portal_a = cls(height, origin_a, direction_a, colour)
         portal_b = cls(height, origin_b, direction_b, colour)
         portal_a.set_siblings(portal_b)
