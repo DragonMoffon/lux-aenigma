@@ -70,6 +70,7 @@ class FastTestView(LuxView):
 
         self.rev = False
         self.paused = False
+        self.pixelate = True
 
         self.speed = 0.01
         self.turbo = False
@@ -130,6 +131,10 @@ class FastTestView(LuxView):
                 self.t = 0
                 if self.paused:
                     self.shift_beam(0.0)
+            case arcade.key.P:
+                self.pixelate = not self.pixelate
+                with self.buf.activate() as fbo:
+                    fbo.clear()
 
     def on_key_release(self, symbol: int, modifiers: int):
         match symbol:
@@ -139,8 +144,11 @@ class FastTestView(LuxView):
     def on_draw(self):
         self.clear()
         with self.cam.activate():
-            with self.buf.activate() as fbo:
-                fbo.clear()
+            if self.pixelate:
+                with self.buf.activate() as fbo:
+                    fbo.clear()
+                    self.renderer.draw()
+            else:
                 self.renderer.draw()
 
         self.buf.draw()
