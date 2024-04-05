@@ -47,10 +47,10 @@ class FastTestView(LuxView):
         )
         self.t = 0.0
 
-        # self.box_mirror_up = MirrorRayInteractor(ww, Vec2(ww/2.0, wh), Direction.SOUTH, LuxColour.WHITE)
-        # self.box_mirror_lf = MirrorRayInteractor(wh, Vec2(0.0, wh/2.0), Direction.EAST, LuxColour.WHITE)
-        # self.box_mirror_rt = MirrorRayInteractor(wh, Vec2(ww, wh/2.0), Direction.WEST, LuxColour.WHITE)
-        # self.box_mirror_dw = MirrorRayInteractor(ww, Vec2(ww/2.0, 0), Direction.NORTH, LuxColour.WHITE)
+        self.box_mirror_up = MirrorRayInteractor(ww, Vec2(ww/2.0, wh), Direction.SOUTH, LuxColour.WHITE)
+        self.box_mirror_lf = MirrorRayInteractor(wh, Vec2(0.0, wh/2.0), Direction.EAST, LuxColour.WHITE)
+        self.box_mirror_rt = MirrorRayInteractor(wh, Vec2(ww, wh/2.0), Direction.WEST, LuxColour.WHITE)
+        self.box_mirror_dw = MirrorRayInteractor(ww, Vec2(ww/2.0, 0), Direction.NORTH, LuxColour.WHITE)
 
         self.filter_red = FilterRayInteractor(Vec2(w+125, h+75), Direction.NORTHWEST, LuxColour.RED, (RayInteractorEdge(Vec2(0.0, -50.0), Vec2(0.0, 50.0), True),))
         self.mirror_green = MirrorRayInteractor(400, Vec2(w+400, h+25), Direction.SOUTHWEST, LuxColour.GREEN)
@@ -59,9 +59,10 @@ class FastTestView(LuxView):
         self.filter_cyan_b = FilterRayInteractor(Vec2(w+150, h-125), Direction.EAST, LuxColour.CYAN, (RayInteractorEdge(Vec2(0.0, -50.0), Vec2(0.0, 50.0), False),))
         self.portal_a, self.portal_b = PortalRayInteractor.create_pair(100, LuxColour.WHITE, Vec2(w+250, h), Direction.WEST, Vec2(w-100, h-50), Direction.EAST)
 
-        self.interactors = (self.filter_cyan_a, self.filter_cyan_b, self.filter_red,
+        self.interactors = [self.filter_cyan_a, self.filter_cyan_b, self.filter_red,
                             self.mirror_blue, self.mirror_green,
-                            self.portal_a, self.portal_b)
+                            self.portal_a, self.portal_b,
+                            self.box_mirror_dw, self.box_mirror_lf, self.box_mirror_rt, self.box_mirror_up]
 
         self.rerender()
         # t = (timeit(lambda: find_intersections(self.interactors, self.beam), number=10000) / 10000)
@@ -70,7 +71,8 @@ class FastTestView(LuxView):
 
         self.rev = False
         self.paused = False
-        self.pixelate = True
+        self.pixelate = False
+        self.mirrors = False
 
         self.speed = 0.01
         self.turbo = False
@@ -89,6 +91,18 @@ class FastTestView(LuxView):
                 add_beam(child)
         for beam in beams:
             add_beam(beam)
+
+    def toggle_mirror_box(self):
+        return
+
+        # THIS DOES NOT WORK
+        # YOU CAN'T REMOVE INTERACTORS MID GAME, IT BREAKS
+        mirrors = [self.box_mirror_dw, self.box_mirror_lf, self.box_mirror_rt, self.box_mirror_up]
+
+        if self.mirrors:
+            self.interactors.extend(mirrors)
+        else:
+            [self.interactors.remove(m) for m in mirrors]
 
     def shift_beam(self, delta_time: float):
         self.t += delta_time * self.speed * (-1 if self.rev else 1.0) * (10 if self.turbo else 1)
@@ -135,6 +149,9 @@ class FastTestView(LuxView):
                 self.pixelate = not self.pixelate
                 with self.buf.activate() as fbo:
                     fbo.clear()
+            case arcade.key.M:
+                self.mirrors = not self.mirrors
+                self.toggle_mirror_box()
 
     def on_key_release(self, symbol: int, modifiers: int):
         match symbol:
