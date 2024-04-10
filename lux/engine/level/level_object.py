@@ -1,12 +1,12 @@
-from typing import Protocol
+from typing import Protocol, runtime_checkable
 
 from pyglet.math import Vec2
 
 from lux.engine.colour import LuxColour
-from lux.util.maths import Direction
 
 
+@runtime_checkable
 class LevelObject(Protocol):
     colour: LuxColour
     origin: Vec2
-    direction: Direction
+    direction: Vec2

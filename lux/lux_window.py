@@ -12,6 +12,7 @@ SCREEN_HEIGHT = 720
 class LuxWindow(Window):
     def __init__(self):
         super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, update_rate = 1 / FPS_CAP, title = "Lux Aenigma")
+        self.register_event_type("on_action")
         self.show_view(MenuView())
 
         self.fps_queue = deque(maxlen = FPS_QUEUE)
@@ -20,6 +21,9 @@ class LuxWindow(Window):
         self.fps_text = Text("???.? FPS", SCREEN_WIDTH - 5, SCREEN_HEIGHT - 5,
                              anchor_x = "right", anchor_y = "top",
                              font_name = "GohuFont 11 Nerd Font Mono", font_size = 11)
+
+    def on_action(self, action: str, action_state):
+        pass
 
     def on_update(self, delta_time: float):
         self.frame_count += 1
