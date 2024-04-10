@@ -5,7 +5,7 @@ from typing import List, Set, Union
 
 from typing_extensions import TypedDict
 
-from arcade.input import inputs
+from lux.engine.input import inputs
 
 RawActionMapping = TypedDict(
     "RawActionMapping",
