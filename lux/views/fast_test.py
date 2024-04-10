@@ -3,6 +3,7 @@ from logging import getLogger
 
 import arcade
 from pyglet.math import Vec2
+from arcade.experimental.bloom_filter import BloomFilter
 
 from lux.engine.interactors import FilterRayInteractor, PortalRayInteractor, MirrorRayInteractor
 from lux.engine.new import propogate_beam
@@ -37,6 +38,9 @@ class FastTestView(LuxView):
         self.buf = UpscaleBuffer(640, 320)
         self.cam = Camera2D()
         self.renderer = DebugRenderer()
+        self.beam_renderer = DebugRenderer()
+
+        self.bloom = BloomFilter(self.window.width, self.window.height, 50.0)
 
         self.offset = Vec2(0.0, 15.0)
         self.cen = Vec2(w, h)
@@ -64,6 +68,9 @@ class FastTestView(LuxView):
                             self.portal_a, self.portal_b,
                             self.box_mirror_dw, self.box_mirror_lf, self.box_mirror_rt, self.box_mirror_up]
 
+        for interactor in self.interactors:
+            self.renderer.append(RayInteractorRenderer(interactor))
+
         self.rerender()
         # t = (timeit(lambda: find_intersections(self.interactors, self.beam), number=10000) / 10000)
         # print(1 / t)
@@ -78,15 +85,12 @@ class FastTestView(LuxView):
         self.turbo = False
 
     def rerender(self):
-        self.renderer.clear()
-
-        for interactor in self.interactors:
-            self.renderer.append(RayInteractorRenderer(interactor))
-
         beams = propogate_beam(self.interactors, self.beam)
 
+        self.beam_renderer.clear()
+
         def add_beam(beam):
-            self.renderer.append(BeamDebugRenderer(beam))
+            self.beam_renderer.append(BeamDebugRenderer(beam))
             for child in beam.children:
                 add_beam(child)
         for beam in beams:
@@ -152,6 +156,8 @@ class FastTestView(LuxView):
             case arcade.key.M:
                 self.mirrors = not self.mirrors
                 self.toggle_mirror_box()
+            case arcade.key.Z:
+                self.cam.zoom = 0.5
 
     def on_key_release(self, symbol: int, modifiers: int):
         match symbol:
@@ -159,13 +165,24 @@ class FastTestView(LuxView):
                 self.turbo = False
 
     def on_draw(self):
-        self.clear()
-        with self.cam.activate():
-            if self.pixelate:
+        if self.pixelate:
+            with self.cam.activate():
                 with self.buf.activate() as fbo:
                     fbo.clear()
                     self.renderer.draw()
-            else:
+                    self.beam_renderer.draw()
+        else:
+            with self.cam.activate():
+                self.bloom.use()
+                self.bloom.clear()
+                self.beam_renderer.draw()
+
+        self.clear()
+        if self.pixelate:
+            self.buf.draw()
+        else:
+            self.bloom.draw()
+            with self.cam.activate():
+                self.beam_renderer.draw()
                 self.renderer.draw()
 
-        self.buf.draw()
