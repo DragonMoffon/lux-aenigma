@@ -1,8 +1,6 @@
 from __future__ import annotations
 
-from enum import Enum
 from typing import List, Set, Union
-
 from typing_extensions import TypedDict
 
 from lux.engine.input import inputs
