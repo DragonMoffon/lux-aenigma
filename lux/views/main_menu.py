@@ -10,6 +10,7 @@ from lux.views.editor import SceneEditorView
 from lux.views.scene_select import SceneSelectView
 from lux.views.fast_test import FastTestView
 from lux.views.player import PlayerTestView
+from lux.views.sevensegtest import SevenSegTestView
 
 logger = logging.getLogger("lux")
 
@@ -23,7 +24,8 @@ class MenuView(LuxView):
             # "Scene": SceneView(back = self),
             # "Editor": SceneEditorView(back = self),
             # "Scene Select": SceneSelectView(back = self),
-            "Music Mixer": MusicMixerView(back = self)
+            "Music Mixer": MusicMixerView(back = self),
+            "Seven Segment Display": SevenSegTestView(back = self)
         })
 
     def on_key_press(self, symbol: int, modifiers: int):
