@@ -10,6 +10,7 @@ from pyglet.math import Vec2
 
 from lux.engine.player.player_object import PlayerData
 from lux.engine.colour import LuxColour
+from lux.util.procedural_animator import SecondOrderAnimator
 
 from arcade import draw_line
 
@@ -19,6 +20,9 @@ OFFSET = 6.0
 RADIUS = 16.0
 
 LOCUS_COUNT = 2
+LOCUS_POS_FREQ = 1.0
+LOCUS_POS_DAMP = 0.5
+LOCUS_POS_RESP = 2.0
 
 SCRIBBLE_LEN = 16
 SCRIBBLE_WIDTH = 2
@@ -62,7 +66,13 @@ class PlayerRenderer:
         self._player: PlayerData = player
 
         self.locus_a: Vec2 = Vec2()
+        self.locus_da: Vec2 = Vec2()
         self.locus_b: Vec2 = Vec2()
+
+        self.locus_animator: SecondOrderAnimator = SecondOrderAnimator(
+            LOCUS_POS_FREQ, LOCUS_POS_DAMP, LOCUS_POS_RESP,
+            self.locus_a, self.locus_b, Vec2()
+        )
 
         self.scribbles: tuple[Scribble, ...] = tuple(Scribble((self.locus_a, self.locus_b)) for _ in range(SCRIBBLE_COUNT))
 
@@ -78,8 +88,12 @@ class PlayerRenderer:
             yield x * RADIUS
 
     def update(self, delta_time: float):
-        self.locus_a = self._player.origin
-        self.locus_b = Vec2(*lerp_2d(self.locus_b, self.locus_a, delta_time * PLAYER_SPEED))
+        new_a = self._player.origin
+
+        self.locus_da = (new_a - self.locus_a)
+
+        self.locus_a = new_a
+        self.locus_b = self.locus_animator.update(delta_time, new_a, self.locus_da)
 
         for scribble in self.scribbles:
             scribble.update(delta_time)
