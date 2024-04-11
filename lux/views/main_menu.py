@@ -20,9 +20,9 @@ class MenuView(LuxView):
         self.menu = DevMenu({
             "Test": FastTestView(back = self),
             "Player": PlayerTestView(back = self),
-            "Scene": SceneView(back = self),
-            "Editor": SceneEditorView(back = self),
-            "Scene Select": SceneSelectView(back = self),
+            # "Scene": SceneView(back = self),
+            # "Editor": SceneEditorView(back = self),
+            # "Scene Select": SceneSelectView(back = self),
             "Music Mixer": MusicMixerView(back = self)
         })
 
