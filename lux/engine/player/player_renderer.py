@@ -20,7 +20,7 @@ OFFSET = 6.0
 RADIUS = 16.0
 
 LOCUS_COUNT = 2
-LOCUS_POS_FREQ = 1.0
+LOCUS_POS_FREQ = 3.0
 LOCUS_POS_DAMP = 0.5
 LOCUS_POS_RESP = 2.0
 
@@ -49,7 +49,7 @@ class Scribble:
 
     def _new_points(self):
         self.points = tuple(Vec2(RADIUS * random(), 0.0).rotate(2.0 * pi * random()) for _ in range(SCRIBBLE_LEN))
-        self.locus_idx = tuple(choice((0, 1)) for _ in range(SCRIBBLE_LEN))
+        self.locus_idx = tuple(choice((0, 0, 0, 0, 1)) for _ in range(SCRIBBLE_LEN))
 
     def update(self, dt):
         self.t += dt
