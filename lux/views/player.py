@@ -28,4 +28,5 @@ class PlayerTestView(LuxView):
 
     def on_draw(self):
         self.clear()
+        self.test_level.draw_level()
         self.test_level.debug_draw_level()
