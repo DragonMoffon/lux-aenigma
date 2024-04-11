@@ -149,3 +149,8 @@ def get_intersection_fraction(o1: Vec2, d1: Vec2, o2: Vec2, d2: Vec2) -> float |
     t = cross_2d(o2 - o1, d2) / direction_interaction
 
     return t
+
+
+def clamp(minv, val, maxv):
+    """Clamp a `val` to be no lower than `minv`, and no higher than `maxv`."""
+    return max(minv, min(maxv, val))
