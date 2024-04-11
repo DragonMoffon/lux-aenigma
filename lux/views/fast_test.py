@@ -155,6 +155,8 @@ class FastTestView(LuxView):
             case arcade.key.B:
                 self.bloom_toggle = not self.bloom_toggle
 
+        super().on_key_press(symbol, modifiers)
+
     def on_key_release(self, symbol: int, modifiers: int):
         match symbol:
             case arcade.key.NUM_MULTIPLY:
