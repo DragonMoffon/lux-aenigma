@@ -8,6 +8,7 @@ from lux.views.musicmixer import MusicMixerView
 from lux.views.scene import SceneView
 from lux.views.editor import SceneEditorView
 from lux.views.scene_select import SceneSelectView
+from lux.views.tri_test import TriTestView
 from lux.views.fast_test import FastTestView
 from lux.views.player import PlayerTestView
 from lux.views.sevensegtest import SevenSegTestView
@@ -21,6 +22,7 @@ class MenuView(LuxView):
         self.menu = DevMenu({
             "Test": FastTestView(back = self),
             "Player": PlayerTestView(back = self),
+            "Triangle": TriTestView(back = self),
             # "Scene": SceneView(back = self),
             # "Editor": SceneEditorView(back = self),
             # "Scene Select": SceneSelectView(back = self),
