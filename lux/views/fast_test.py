@@ -19,7 +19,6 @@ from lux.engine.debug.light_renderer import BeamDebugRenderer
 
 from lux.engine.upscale_renderer import UpscaleBuffer
 from arcade.camera import Camera2D
-from arcade.math import lerp_2d
 
 logger = getLogger("lux")
 
@@ -35,12 +34,11 @@ class FastTestView(LuxView):
         w, h = self.window.center
         ww, wh = self.window.size
 
-        self.buf = UpscaleBuffer(640, 320)
         self.cam = Camera2D()
         self.renderer = DebugRenderer()
         self.beam_renderer = DebugRenderer()
 
-        self.bloom = BloomFilter(self.window.width, self.window.height, 50.0)
+        self.bloom = BloomFilter(self.window.width, self.window.height, 20.0)
 
         self.offset = Vec2(0.0, 15.0)
         self.cen = Vec2(w, h)
@@ -78,7 +76,7 @@ class FastTestView(LuxView):
 
         self.rev = False
         self.paused = False
-        self.pixelate = False
+        self.bloom_toggle = True
         self.mirrors = False
 
         self.speed = 0.01
@@ -149,15 +147,13 @@ class FastTestView(LuxView):
                 self.t = 0
                 if self.paused:
                     self.shift_beam(0.0)
-            case arcade.key.P:
-                self.pixelate = not self.pixelate
-                with self.buf.activate() as fbo:
-                    fbo.clear()
             case arcade.key.M:
                 self.mirrors = not self.mirrors
                 self.toggle_mirror_box()
             case arcade.key.Z:
                 self.cam.zoom = 0.5
+            case arcade.key.B:
+                self.bloom_toggle = not self.bloom_toggle
 
     def on_key_release(self, symbol: int, modifiers: int):
         match symbol:
@@ -165,24 +161,17 @@ class FastTestView(LuxView):
                 self.turbo = False
 
     def on_draw(self):
-        if self.pixelate:
-            with self.cam.activate():
-                with self.buf.activate() as fbo:
-                    fbo.clear()
-                    self.renderer.draw()
-                    self.beam_renderer.draw()
-        else:
-            with self.cam.activate():
-                self.bloom.use()
-                self.bloom.clear()
-                self.beam_renderer.draw()
-
         self.clear()
-        if self.pixelate:
-            self.buf.draw()
-        else:
-            self.bloom.draw()
-            with self.cam.activate():
-                self.beam_renderer.draw()
-                self.renderer.draw()
 
+        if self.bloom_toggle:
+            self.bloom.use()
+            self.bloom.clear()
+            self.beam_renderer.draw()
+
+            self.window.use()
+            self.bloom.draw()
+            self.renderer.draw()
+        else:
+            self.window.use()
+            self.beam_renderer.draw()
+            self.renderer.draw()
