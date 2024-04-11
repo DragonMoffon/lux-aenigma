@@ -42,3 +42,4 @@ class PlayerController:
         player_move_dir = Vec2(self.input_manager.axis("h"), self.input_manager.axis("v")).normalize()
 
         self._player.origin += player_move_dir * delta_time * PLAYER_SPEED * (1.0 - 0.6 * self._is_crouching)
+        self._player.direction = player_move_dir

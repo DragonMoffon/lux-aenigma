@@ -1,6 +1,6 @@
 from array import array
 from random import random, choice
-from math import pi, cos, sin
+from math import pi, tau, cos, sin
 
 from arcade.math import lerp_2d
 from arcade.gl import BufferDescription
@@ -10,7 +10,7 @@ from pyglet.math import Vec2
 
 from lux.engine.player.player_object import PlayerData
 from lux.engine.colour import LuxColour
-from lux.util.procedural_animator import SecondOrderAnimator
+from lux.util.procedural_animator import ProceduralAnimator
 
 from arcade import draw_line
 
@@ -24,14 +24,14 @@ LOCUS_POS_FREQ = 3.0
 LOCUS_POS_DAMP = 0.5
 LOCUS_POS_RESP = 2.0
 
+BUBBLE_COUNT = 16
+
 SCRIBBLE_LEN = 16
 SCRIBBLE_WIDTH = 2
 SCRIBBLE_MAX_T_OFFSET = 0.5
 SCRIBBLE_MAX_T_VARIATION = 0.05
 SCRIBBLE_BASE_T = 0.1
 SCRIBBLE_COUNT = 4
-
-PLAYER_SPEED = 10.0
 
 
 class Scribble:
@@ -58,6 +58,43 @@ class Scribble:
             self._new_points()
 
 
+class BubblePoint:
+
+    def __init__(self, angle, locus):
+        self.original_dir = Vec2.from_polar(1.0, angle)
+        self.original_offset = self.original_dir * RADIUS
+        pos = locus + self.original_offset
+
+        self.animator = ProceduralAnimator(
+            LOCUS_POS_FREQ, LOCUS_POS_DAMP, LOCUS_POS_RESP,
+            pos, pos, Vec2()
+        )
+
+    def update(self, dt, new_locus, new_dir):
+        target = new_locus + self.original_offset
+        dot = new_dir.dot(self.original_dir)
+        self.animator.update_values(new_frequency=3.0*(0.5*dot + 0.5) + 3.0, new_response=dot)
+
+        return self.animator.update(dt, target)
+
+    @property
+    def pos(self):
+        return self.animator.y
+
+
+class Bubble:
+
+    def __init__(self, locus):
+        self.bubble_points = tuple(BubblePoint(tau * idx/BUBBLE_COUNT, locus) for idx in range(BUBBLE_COUNT))
+        self.points = tuple(p.pos for p in self.bubble_points)
+
+    def update(self, dt, locus, direction):
+        self.points = tuple(p.update(dt, locus, direction) for p in self.bubble_points)
+
+    def draw(self, colour):
+        draw_line_strip(self.points, colour, SCRIBBLE_WIDTH)
+
+
 class PlayerRenderer:
 
     def __init__(self, player: PlayerData):
@@ -69,12 +106,17 @@ class PlayerRenderer:
         self.locus_da: Vec2 = Vec2()
         self.locus_b: Vec2 = Vec2()
 
-        self.locus_animator: SecondOrderAnimator = SecondOrderAnimator(
+        self.locus_animator: ProceduralAnimator = ProceduralAnimator(
             LOCUS_POS_FREQ, LOCUS_POS_DAMP, LOCUS_POS_RESP,
             self.locus_a, self.locus_b, Vec2()
         )
 
+        # Find some way to get the scribble effect, but only have one draw_lines call.
+        # It doesn't look as good with only one scribble it really requires at least 2
+        # However just simply doing the for loop loses a load of frames.
         self.scribbles: tuple[Scribble, ...] = tuple(Scribble((self.locus_a, self.locus_b)) for _ in range(SCRIBBLE_COUNT))
+
+        self.bubble = Bubble(self.locus_a)
 
     def _gen_initial(self):
         for _ in range(12):
@@ -95,15 +137,19 @@ class PlayerRenderer:
         self.locus_a = new_a
         self.locus_b = self.locus_animator.update(delta_time, new_a, self.locus_da)
 
-        for scribble in self.scribbles:
-            scribble.update(delta_time)
+        #for scribble in self.scribbles:
+        #    scribble.update(delta_time)
+
+        self.bubble.update(delta_time, self.locus_a, self._player.direction)
 
     def draw(self):
         self._ctx.point_size = 6
 
         c = self._player.colour.to_int_color()
-        for scribble in self.scribbles:
-            scribble.draw(c, (self.locus_a, self.locus_b))
+        # for scribble in self.scribbles:
+        #     scribble.draw(c, (self.locus_a, self.locus_b))
+
+        self.bubble.draw(c)
 
         c = LuxColour.RED.to_int_color()
         o = self.locus_a
