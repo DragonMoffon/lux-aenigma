@@ -2,13 +2,12 @@ from logging import getLogger
 # import timeit
 
 import arcade
-from pyglet.math import Vec2
+from arcade.camera import Camera2D
 from arcade.experimental.bloom_filter import BloomFilter
+from pyglet.math import Vec2
 
 from lux.engine.interactors import FilterRayInteractor, PortalRayInteractor, MirrorRayInteractor
 from lux.engine.new import propogate_beam
-from lux.util.view import LuxView
-from lux.util.maths import Direction
 from lux.engine.colour import LuxColour
 from lux.engine.lights.ray import Ray
 from lux.engine.lights.beam_light_ray import BeamLightRay
@@ -16,9 +15,8 @@ from lux.engine.interactors import RayInteractorEdge
 from lux.engine.debug import DebugRenderer
 from lux.engine.debug.ray_interactor_renderer import RayInteractorRenderer
 from lux.engine.debug.light_renderer import BeamDebugRenderer
-
-from lux.engine.upscale_renderer import UpscaleBuffer
-from arcade.camera import Camera2D
+from lux.util.view import LuxView
+from lux.util.maths import Direction
 
 logger = getLogger("lux")
 

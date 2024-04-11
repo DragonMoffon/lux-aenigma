@@ -1,14 +1,11 @@
-from typing import TypedDict
+from pyglet.math import Vec2
 
-from lux.util.view import LuxView
-
-from lux.engine.level.level import Level
-from lux.engine.player.player_object import PlayerData
+from lux.engine.colour import LuxColour
 from lux.engine.debug.debug_renderer import DebugRenderer
 from lux.engine.debug.player_renderer import PlayerDebugRenderer
-
-from pyglet.math import Vec2
-from lux.engine.colour import LuxColour
+from lux.engine.level.level import Level
+from lux.engine.player.player_object import PlayerData
+from lux.util.view import LuxView
 
 
 class PlayerTestView(LuxView):
