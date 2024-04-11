@@ -27,7 +27,7 @@ class SevenSegTestView(LuxView):
             case arcade.key.DOWN:
                 self.num -= 1
                 self.num = clamp(0, self.num, 15)
-            case arcade.key.PERIOD:
+            case arcade.key.PERIOD | arcade.key.NUM_DECIMAL:
                 self.dot = not self.dot
         self.display.set_char(f"{self.num:x}")
         self.display.dot = self.dot

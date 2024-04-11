@@ -12,6 +12,8 @@ from lux.engine.colour import LuxColour
 
 from arcade import draw_line
 
+from lux.util.shader import get_shader
+
 OFFSET = 6.0
 RADIUS = 6.0
 PLAYER_SPEED = 10.0
@@ -31,89 +33,17 @@ class PlayerRenderer:
         self.orbit_points_a_2 = None
 
         self.points_program = self._ctx.program(
-            vertex_shader="""
-            #version 330
-            uniform WindowBlock {
-                mat4 projection;
-                mat4 view;
-            } window;
-
-            
-            in vec2 in_pos;
-            out vec3 color;
-            void main() {
-                // Let's just give them a "random" color based on the vertex id
-                color = vec3(
-                    mod(float(gl_VertexID * 100 % 11) / 10.0, 1.0),
-                    mod(float(gl_VertexID * 100 % 27) / 10.0, 1.0),
-                    mod(float(gl_VertexID * 100 % 71) / 10.0, 1.0));
-                // Pass the point position to primitive assembly
-                mat4 mvp = window.projection * window.view;
-                gl_Position = vec4((mvp * vec4(in_pos, 0.0, 1.0)).xy, 0.0, 1.0);
-            }
-            """,
-            fragment_shader="""
-            #version 330
-
-            // Color passed in from the vertex shader
-            in vec3 color;
-            // The pixel we are writing to in the framebuffer
-            out vec4 fragColor;
-
-            void main() {
-                // Fill the point
-                fragColor = vec4(color, 1.0);
-            }
-            """,
+            vertex_shader = get_shader("points_vertex"),
+            fragment_shader = get_shader("points_fragment"),
         )
 
         # TODO: Add random bursts of velocity. Also is it really worth doing this on the GPU?
         # The main argument for it is the fact that we can keep it all on the GPU it is not
         # the stripes actually mean anything beyond personalization.
         self.orbit_program = self._ctx.program(
-            vertex_shader="""
-            #version 330
-            // Update Delta Time
-            uniform float dt;
-            // Min and Max speeds to limit crazy behavior, and gravity and decay consts
-            uniform vec4 consts;
-            // The points to orbit around
-            uniform vec4 locus;
-            // The velocity of the points
-            uniform vec4 locus_vel;
-            // The value at which to switch locus;
-            uniform int count;
-            
-            // The position and velocity in
-            in vec2 in_pos;
-            in vec2 in_vel;
-            // The position and velocity out    
-            out vec2 out_pos;
-            out vec2 out_vel;
-            
-            void main() {
-                // Choose which locus to focus on.
-                vec2 target = gl_VertexID < count ? locus.xy : locus.zw;
-                vec2 target_vel = gl_VertexID < count ? locus_vel.xy : locus_vel.zw;
-                
-                // Calc new acceleration and velocity;
-                vec2 pos_diff = target - in_pos;
-                float sqr_dist = dot(pos_diff, pos_diff);
-                float acc = dt * consts.z / sqr_dist;
-                vec2 vel = in_vel + normalize(pos_diff) * acc;
-                
-                // Take speed and decay it. We will then clamp the speed.
-                // This makes no sense physically, but go with it.
-                float speed = consts.w * length(vel);
-                vec2 vel_dir = normalize(vel);
-                vec2 final_vel = vel_dir * clamp(speed, consts.x, consts.y);
-                
-                // Output the results to the next buffer. These will be used in the next call.
-                out_vel = final_vel;
-                out_pos = in_pos + final_vel * dt;
-            }
-            """
+            vertex_shader = get_shader("orbit_vertex")
         )
+
         self.orbit_program["consts"] = (0.1, 100.0, 1000000.0, 1.0)  # Min, Max, Gravity, Decay
         self.orbit_program["count"] = 6  # There are 6 points per locus.
 
@@ -185,5 +115,3 @@ class PlayerRenderer:
             c,
             2.0
         )
-
-
