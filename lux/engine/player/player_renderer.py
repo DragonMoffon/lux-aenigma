@@ -1,9 +1,6 @@
-from array import array
 from random import random, choice
 from math import pi, tau, cos, sin
 
-from arcade.math import lerp_2d
-from arcade.gl import BufferDescription
 from arcade.draw_commands import draw_line_strip
 from arcade.window_commands import get_window
 from pyglet.math import Vec2
@@ -13,8 +10,6 @@ from lux.engine.colour import LuxColour
 from lux.util.procedural_animator import ProceduralAnimator
 
 from arcade import draw_line
-
-from lux.util.shader import get_shader
 
 OFFSET = 6.0
 RADIUS = 16.0
@@ -30,7 +25,7 @@ SCRIBBLE_LEN = 16
 SCRIBBLE_WIDTH = 2
 SCRIBBLE_MAX_T_OFFSET = 0.5
 SCRIBBLE_MAX_T_VARIATION = 0.05
-SCRIBBLE_BASE_T = 0.1
+SCRIBBLE_BASE_T = 1.0/100.0
 SCRIBBLE_COUNT = 4
 
 
@@ -87,12 +82,23 @@ class Bubble:
     def __init__(self, locus):
         self.bubble_points = tuple(BubblePoint(tau * idx/BUBBLE_COUNT, locus) for idx in range(BUBBLE_COUNT))
         self.points = tuple(p.pos for p in self.bubble_points)
+        self.triangles = tuple((a - locus, b - locus) for a, b in zip(self.points[0:-1], self.points[1:]))
 
     def update(self, dt, locus, direction):
         self.points = tuple(p.update(dt, locus, direction) for p in self.bubble_points)
+        self.triangles = tuple((a - locus, b - locus) for a, b in zip(self.points[0:-1], self.points[1:]))
 
     def draw(self, colour):
         draw_line_strip(self.points, colour, SCRIBBLE_WIDTH)
+
+    def get_scribble_points(self):
+        for _ in range(SCRIBBLE_LEN):
+            t_a, t_b = choice(self.triangles)
+            r_a, r_b = random(), random()
+            if r_a + r_b > 1.0:
+                r_a, r_b = 1.0 - r_a, 1.0 - r_b
+
+            yield t_a * r_a + t_b * r_b
 
 
 class PlayerRenderer:
@@ -117,6 +123,12 @@ class PlayerRenderer:
         self.scribbles: tuple[Scribble, ...] = tuple(Scribble((self.locus_a, self.locus_b)) for _ in range(SCRIBBLE_COUNT))
 
         self.bubble = Bubble(self.locus_a)
+        self.scribble_points_a = tuple(self.bubble.get_scribble_points())
+        self.scribble_points_b = tuple(self.bubble.get_scribble_points())
+
+        self.scribble_t_a = SCRIBBLE_MAX_T_OFFSET * random()
+        self.scribble_t_b = SCRIBBLE_MAX_T_OFFSET * random()
+
 
     def _gen_initial(self):
         for _ in range(12):
@@ -141,6 +153,15 @@ class PlayerRenderer:
         #    scribble.update(delta_time)
 
         self.bubble.update(delta_time, self.locus_a, self._player.direction)
+        self.scribble_t_a += delta_time
+        if self.scribble_t_a >= SCRIBBLE_BASE_T:
+            self.scribble_t_a -= SCRIBBLE_BASE_T
+            self.scribble_points_a = tuple(self.bubble.get_scribble_points())
+
+        self.scribble_t_b += delta_time
+        if self.scribble_t_b >= SCRIBBLE_BASE_T:
+            self.scribble_t_b -= SCRIBBLE_BASE_T
+            self.scribble_points_b = tuple(self.bubble.get_scribble_points())
 
     def draw(self):
         self._ctx.point_size = 6
@@ -149,74 +170,40 @@ class PlayerRenderer:
         # for scribble in self.scribbles:
         #     scribble.draw(c, (self.locus_a, self.locus_b))
 
-        self.bubble.draw(c)
+        if self.scribble_points_a:
+            points = tuple(self.locus_a + p for p in self.scribble_points_a)
+            draw_line_strip(points, c, SCRIBBLE_WIDTH)
+
+        if self.scribble_points_b:
+            points = tuple(self.locus_a + p for p in self.scribble_points_b)
+            draw_line_strip(points, c, SCRIBBLE_WIDTH)
+
+        # self.bubble.draw(c)
 
         c = LuxColour.RED.to_int_color()
         o = self.locus_a
-        draw_line(
-            o.x - OFFSET, o.y - OFFSET,
-            o.x + OFFSET, o.y + OFFSET,
-            c,
-            2.0
-        )
-        draw_line(
-            o.x + OFFSET, o.y - OFFSET,
-            o.x - OFFSET, o.y + OFFSET,
-            c,
-            2.0
-        )
+        # draw_line(
+        #     o.x - OFFSET, o.y - OFFSET,
+        #     o.x + OFFSET, o.y + OFFSET,
+        #     c,
+        #     2.0
+        # )
+        # draw_line(
+        #     o.x + OFFSET, o.y - OFFSET,
+        #     o.x - OFFSET, o.y + OFFSET,
+        #     c,
+        #     2.0
+        # )
         o = self.locus_b
-        draw_line(
-            o.x - OFFSET, o.y - OFFSET,
-            o.x + OFFSET, o.y + OFFSET,
-            c,
-            2.0
-        )
-        draw_line(
-            o.x + OFFSET, o.y - OFFSET,
-            o.x - OFFSET, o.y + OFFSET,
-            c,
-            2.0
-        )
-
-
-"""self.orbit_points_a_1 = None
-        self.orbit_points_a_2 = None
-
-        self.points_program = self._ctx.program(
-            vertex_shader=get_shader("points_vertex"),
-            fragment_shader=get_shader("points_fragment")
-        )
-
-        # TODO: Add random bursts of velocity. Also is it really worth doing this on the GPU?
-        # The main argument for it is the fact that we can keep it all on the GPU it is not
-        # the stripes actually mean anything beyond personalization.
-        self.orbit_program = self._ctx.program(
-            vertex_shader=get_shader("orbit_vertex")
-        )
-
-        self.orbit_program["consts"] = (0.1, 100.0, 1.0, 1.0)  # Min, Max, Gravity, Decay
-        self.orbit_program["count"] = 6  # There are 6 points per locus.
-
-        # Make two buffers we transform between, so we can work on the previous result
-        self.buffer_1 = self._ctx.buffer(data=array('f', (self._gen_initial())))
-        self.buffer_2 = self._ctx.buffer(reserve=self.buffer_1.size)
-
-        # We also need to be able to visualize both versions (draw to the screen)
-        self.vao_1 = self._ctx.geometry([BufferDescription(self.buffer_1, '2f 2x4', ['in_pos'])])
-        self.vao_2 = self._ctx.geometry([BufferDescription(self.buffer_2, '2f 2x4', ['in_pos'])])
-
-        # We need to be able to transform both buffers (ping-pong)
-        self.gravity_1 = self._ctx.geometry([BufferDescription(self.buffer_1, '2f 2f', ['in_pos', 'in_vel'])])
-        self.gravity_2 = self._ctx.geometry([BufferDescription(self.buffer_2, '2f 2f', ['in_pos', 'in_vel'])])"""
-
-
-"""self.orbit_program["dt"] = delta_time
-self.orbit_program["locus"] = (self.locus_a.x, self.locus_a.y, self.locus_b.x, self.locus_b.y)
-
-self.gravity_1.transform(self.orbit_program, self.buffer_2)
-self.gravity_1, self.gravity_2 = self.gravity_2, self.gravity_1
-self.vao_1, self.vao_2 = self.vao_2, self.vao_1
-self.buffer_1, self.buffer_2 = self.buffer_2, self.buffer_1
-
-print(array('f', self.buffer_1.read()))"""
+        # draw_line(
+        #     o.x - OFFSET, o.y - OFFSET,
+        #     o.x + OFFSET, o.y + OFFSET,
+        #     c,
+        #     2.0
+        # )
+        # draw_line(
+        #     o.x + OFFSET, o.y - OFFSET,
+        #     o.x - OFFSET, o.y + OFFSET,
+        #     c,
+        #     2.0
+        # )
