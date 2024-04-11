@@ -2,7 +2,6 @@ import importlib.resources as pkg_resources
 
 import arcade
 from arcade import Texture, Sprite, SpriteList
-from arcade.types import Color
 from arcade.geometry import is_point_in_box
 from arcade.experimental.bloom_filter import BloomFilter
 
