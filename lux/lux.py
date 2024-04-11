@@ -7,7 +7,6 @@ import lux.data.fonts
 
 from lux import get_window
 
-FPS_CAP = 240
 
 with pkg_resources.path(lux.data.fonts, "gohu.ttf") as p:
     arcade.text.load_font(str(p))
