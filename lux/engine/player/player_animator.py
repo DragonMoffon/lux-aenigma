@@ -15,4 +15,3 @@ class PlayerAnimator:
     def update(self, delta_time: float):
         self.locus_a = self._player.origin
         self.locus_b = lerp_2d(self.locus_b, self.locus_a, delta_time)
-
