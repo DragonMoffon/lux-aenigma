@@ -13,21 +13,44 @@ from lux.views.fast_test import FastTestView
 from lux.views.player import PlayerTestView
 from lux.views.sevensegtest import SevenSegTestView
 
+from time import time
+
 logger = logging.getLogger("lux")
 
 
 class MenuView(LuxView):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        t = time()
+        test = FastTestView(back = self)
+        print(f"test: {time() - t}s")
+
+        t = time()
+        player = PlayerTestView(back = self)
+        print(f"player: {time() - t}s")
+
+        t = time()
+        tri = TriTestView(back = self)
+        print(f"triangle: {time() - t}s")
+
+        t = time()
+        mus = MusicMixerView(back = self)
+        print(f"music: {time() - t}s")
+
+        t = time()
+        seven = SevenSegTestView(back = self)
+        print(f"seven seg: {time() - t}s")
+
         self.menu = DevMenu({
-            "Test": FastTestView(back = self),
-            "Player": PlayerTestView(back = self),
-            "Triangle": TriTestView(back = self),
+            "Test": test,
+            "Player": player,
+            "Triangle": tri,
             # "Scene": SceneView(back = self),
             # "Editor": SceneEditorView(back = self),
             # "Scene Select": SceneSelectView(back = self),
-            "Music Mixer": MusicMixerView(back = self),
-            "Seven Segment Display": SevenSegTestView(back = self)
+            "Music Mixer": mus,
+            "Seven Segment Display": seven
         })
 
     def on_key_press(self, symbol: int, modifiers: int):
