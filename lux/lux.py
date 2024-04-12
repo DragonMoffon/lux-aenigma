@@ -1,3 +1,4 @@
+from pathlib import Path
 import importlib.resources as pkg_resources
 import logging
 
@@ -32,6 +33,7 @@ def setup_logging():
 
 def main():
     setup_logging()
+    arcade.resources.add_resource_handle("textures", (Path() / Path("lux/data/textures").resolve()))
     get_window().run()
 
 

@@ -1,6 +1,7 @@
 from collections import deque
 from arcade import Window, Text
 from lux.views.main_menu import MenuView
+from lux.views.splash_screen import SplashView
 
 FPS_CAP = 24000
 FPS_QUEUE = 10
@@ -13,14 +14,16 @@ class LuxWindow(Window):
     def __init__(self):
         super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, update_rate = 1 / FPS_CAP, title = "Lux Aenigma")
         self.register_event_type("on_action")
-        self.show_view(MenuView())
+        self.show_view(SplashView(MenuView))
+
+        self._begun = False
 
         self.fps_queue = deque(maxlen = FPS_QUEUE)
         self.frame_count = 0
 
         self.fps_text = Text("???.? FPS", SCREEN_WIDTH - 5, SCREEN_HEIGHT - 5,
-                             anchor_x = "right", anchor_y = "top",
-                             font_name = "GohuFont 11 Nerd Font Mono", font_size = 11)
+                             anchor_x="right", anchor_y = "top",
+                             font_name="GohuFont 11 Nerd Font Mono", font_size = 11)
 
     def on_action(self, action: str, action_state):
         pass
@@ -38,3 +41,4 @@ class LuxWindow(Window):
 
     def on_draw(self):
         self.debug_draw()
+
