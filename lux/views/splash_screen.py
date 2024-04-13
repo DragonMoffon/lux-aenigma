@@ -26,7 +26,8 @@ SPLASHES = (
         ":textures:splashes/dragon-bakery-splash.png",
         1.0,
         3.0,
-        False
+        False,
+        True
     ),
     Splash(
         ":textures:splashes/DDHQ.png",
@@ -57,7 +58,7 @@ class SplashView(LuxView):
         self._current_splash = next(self._splashes, None)
 
         if self._current_splash is None:
-            self.leave()
+            return self.leave()
 
         self._splash_timer = 0.0
 
