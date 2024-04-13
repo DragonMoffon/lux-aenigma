@@ -50,13 +50,16 @@ class SplashView(LuxView):
         self._current_splash: Splash = None
         self._splashes: Generator[Splash] = (splash for splash in SPLASHES)
 
+    def leave(self):
+        self._splash_sprite = None
+        self.window.show_view(self._next())
+        return
+
     def _next_splash(self):
         self._current_splash = next(self._splashes, None)
 
         if self._current_splash is None:
-            self._splash_sprite = None
-            self.window.show_view(self._next())
-            return
+            self.leave()
 
         self._splash_timer = 0.0
 
@@ -68,6 +71,10 @@ class SplashView(LuxView):
     def on_show(self):
         self._splash_sprite = Sprite()
         self._next_splash()
+
+    def on_key_press(self, symbol: int, modifiers: int):
+        self.leave()
+        return super().on_key_press(symbol, modifiers)
 
     def on_update(self, delta_time: float):
         if self._current_splash is None:
