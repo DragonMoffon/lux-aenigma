@@ -1,7 +1,7 @@
 from typing import NamedTuple, Generator
 from math import sin, pi
 
-from arcade import View, Sprite, load_texture
+from arcade import Sprite, load_texture
 from lux.util.view import LuxView
 
 
@@ -19,27 +19,27 @@ SPLASHES = (
     Splash(
         ":textures:splashes/arcade-logo-splash.png",
         1.0,
-        6.0,
+        3.0,
         True,
         False
     ),
     Splash(
         ":textures:splashes/dragon-bakery-splash.png",
         1.0,
-        6.0,
+        3.0,
         False
     ),
     Splash(
         ":textures:splashes/DDHQ.png",
         0.1,
-        6.0,
+        3.0,
         False,
         False
     )
 )
 
 
-class SplashView(View):
+class SplashView(LuxView):
 
     def __init__(self, next_view: type):
         super().__init__()
