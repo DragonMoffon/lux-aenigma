@@ -24,7 +24,7 @@ def load_views(unloaded: dict[str, Type[LuxView]], back: Optional[LuxView]) -> d
     for s, v in unloaded.items():
         t = time()
         loaded = v(back = back)
-        print(f"{s}: {time() - t:.3f}s")
+        logger.debug(f"{s}: {time() - t:.3f}s")
         d[s] = loaded
     return d
 
