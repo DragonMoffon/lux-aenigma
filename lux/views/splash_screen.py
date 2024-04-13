@@ -10,7 +10,7 @@ class Splash(NamedTuple):
     scale: float
     duration: float
     is_growing: bool
-    is_pixelated: bool = True
+    is_pixelated: bool = False
     do_fade_in: bool = True
     do_fade_out: bool = True
 
@@ -20,8 +20,7 @@ SPLASHES = (
         ":textures:splashes/arcade-logo-splash.png",
         1.0,
         3.0,
-        True,
-        False
+        True
     ),
     Splash(
         ":textures:splashes/dragon-bakery-splash.png",
@@ -33,7 +32,6 @@ SPLASHES = (
         ":textures:splashes/DDHQ.png",
         0.1,
         3.0,
-        False,
         False
     )
 )
