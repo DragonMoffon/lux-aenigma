@@ -7,12 +7,12 @@ from lux.engine.control_points.control_point import ControlPoint
 
 
 class PlayerState(Enum):
-    idle = 0
-    moving = 1
-    crouched = 2
-    crawling = 3
-    grabbing = 4
-    pulling = 5
+    IDLE = 0
+    MOVING = 1
+    CROUCHED = 2
+    CRAWLING = 3
+    GRABBING = 4
+    PULLING = 5
 
 
 class PlayerConsts:
@@ -41,7 +41,7 @@ class PlayerData:
         self.direction: Vec2 = direction
 
         # State
-        self.state: PlayerState = PlayerState.idle
+        self.state: PlayerState = PlayerState.IDLE
 
         # movement variables
         self.is_crouching: bool = True
