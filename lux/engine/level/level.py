@@ -14,6 +14,8 @@ class Level:
         self._player_controller: PlayerController = PlayerController(self._player)
         self._player_renderer: PlayerRenderer = PlayerRenderer(self._player)
 
+        self._control_point_manager: object  # TODO
+
         self._objects: set[LevelObject] = objects or {self._player}
         self._object_renderers: set = renderer or {self._player_renderer}
         self._object_debug_renderers: set = debug or set()

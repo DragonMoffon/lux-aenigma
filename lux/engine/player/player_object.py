@@ -3,6 +3,7 @@ from enum import Enum
 from pyglet.math import Vec2
 
 from lux.engine.colour import LuxColour
+from lux.engine.control_points.control_point import ControlPoint
 
 
 class PlayerState(Enum):
@@ -11,6 +12,11 @@ class PlayerState(Enum):
     crouched = 2
     crawling = 3
     grabbing = 4
+    pulling = 5
+
+
+class PlayerConsts:
+    GRAB_RADIUS: float = 20.0**2.0
 
 
 class PlayerData:
@@ -20,6 +26,7 @@ class PlayerData:
         "direction",
         "state",
         "is_crouching",
+        "grabbed_control_point"
     )
 
     def __init__(
@@ -40,3 +47,6 @@ class PlayerData:
         self.is_crouching: bool = True
 
         # Animation variables
+
+        # Control point Variable
+        self.grabbed_control_point: ControlPoint = None

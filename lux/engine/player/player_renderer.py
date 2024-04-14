@@ -25,8 +25,8 @@ SCRIBBLE_LEN = 16
 SCRIBBLE_WIDTH = 2
 SCRIBBLE_MAX_T_OFFSET = 0.5
 SCRIBBLE_MAX_T_VARIATION = 0.05
-SCRIBBLE_BASE_T = 1.0/100.0
-SCRIBBLE_COUNT = 4
+SCRIBBLE_BASE_T = 1.0/10.0
+SCRIBBLE_COUNT = 2
 
 
 class Scribble:
@@ -170,15 +170,15 @@ class PlayerRenderer:
         # for scribble in self.scribbles:
         #     scribble.draw(c, (self.locus_a, self.locus_b))
 
-        if self.scribble_points_a:
-            points = tuple(self.locus_a + p for p in self.scribble_points_a)
-            draw_line_strip(points, c, SCRIBBLE_WIDTH)
+        # if self.scribble_points_a:
+        #     points = tuple(self.locus_a + p for p in self.scribble_points_a)
+        #     draw_line_strip(points, c, SCRIBBLE_WIDTH)
 
-        if self.scribble_points_b:
-            points = tuple(self.locus_a + p for p in self.scribble_points_b)
-            draw_line_strip(points, c, SCRIBBLE_WIDTH)
+        # if self.scribble_points_b:
+        #     points = tuple(self.locus_a + p for p in self.scribble_points_b)
+        #     draw_line_strip(points, c, SCRIBBLE_WIDTH)
 
-        # self.bubble.draw(c)
+        self.bubble.draw(c)
 
         c = LuxColour.RED.to_int_color()
         o = self.locus_a
