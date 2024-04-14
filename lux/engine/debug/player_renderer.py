@@ -1,9 +1,5 @@
-from arcade import draw_line
-
 from lux.engine.player.player_object import PlayerData
-
-
-OFFSET = 7.5
+from lux.util.draw import draw_cross
 
 
 class PlayerDebugRenderer:
@@ -14,17 +10,6 @@ class PlayerDebugRenderer:
         self.child = new_child
 
     def draw(self):
-        c = self.child.colour.to_int_color()
+        c = self.child.colour
         o = self.child.origin
-        draw_line(
-            o.x - OFFSET, o.y - OFFSET,
-            o.x + OFFSET, o.y + OFFSET,
-            c,
-            2.0
-        )
-        draw_line(
-            o.x + OFFSET, o.y - OFFSET,
-            o.x - OFFSET, o.y + OFFSET,
-            c,
-            2.0
-        )
+        draw_cross(o, 7.5, c, 2)
