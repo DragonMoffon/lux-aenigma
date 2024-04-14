@@ -1,6 +1,5 @@
-from arcade.draw_commands import draw_point
-
 from lux.engine.control_points.control_point import ControlPoint
+from lux.util.draw import draw_cross
 
 
 class ControlPointRenderer:
@@ -12,4 +11,4 @@ class ControlPointRenderer:
 
     def draw(self):
         a_p = self.child.absolute_position
-        draw_point(a_p.x, a_p.y, self.child.colour.to_int_color(), 5.0)
+        draw_cross(a_p, 4, self.child.colour, 1)
