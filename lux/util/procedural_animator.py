@@ -169,10 +169,10 @@ class SecondOrderAnimatorPoleZero(SecondOrderAnimatorBase):
             k2_stable = max(self.k2, dt*dt/2.0 + dt*k1_stable/2.0, dt*k1_stable)
         else:
             t1 = exp(-self._damp * self._w * dt)
-            alpha = 2.0 * t1 * (cos(dt * self._d) if self._damp <= 1.0 else cosh(dt * self._d))
-            beta = t1 * t1
-            t2 = dt / (1 + beta - alpha)
-            k1_stable = (1 - beta) * t2
+            α = 2.0 * t1 * (cos(dt * self._d) if self._damp <= 1.0 else cosh(dt * self._d))
+            β = t1 * t1
+            t2 = dt / (1 + β - α)
+            k1_stable = (1 - β) * t2
             k2_stable = dt * t2
 
         self.y = self.y + self.dy * dt
