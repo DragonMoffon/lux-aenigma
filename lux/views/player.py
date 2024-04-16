@@ -1,3 +1,5 @@
+import arcade.key
+from arcade import Text
 from pyglet.math import Vec2
 
 from lux.engine.colour import LuxColour
@@ -33,6 +35,9 @@ class PlayerTestView(LuxView):
             player=self.player_object
         )
 
+        self.mouse_look = False
+        self.mouse_label = Text(f"MOUSE: {self.mouse_look}", 5, self.window.height - 5, anchor_y = "top")
+
     def on_update(self, delta_time: float):
         self.test_level.on_update(delta_time)
 
@@ -41,7 +46,18 @@ class PlayerTestView(LuxView):
         if dist <= PlayerConsts.GRAB_RADIUS:
             self.player_object.grabbed_control_point = self.debug_control_point
 
+    def on_key_press(self, symbol: int, modifiers: int):
+        if symbol == arcade.key.SPACE:
+            self.mouse_look = not self.mouse_look
+            self.mouse_label.text = f"MOUSE: {self.mouse_look}"
+        return super().on_key_press(symbol, modifiers)
+
+    def on_mouse_motion(self, x: int, y: int, dx: int, dy: int):
+        if self.mouse_look:
+            self.player_object.origin = Vec2(x, y)
+
     def on_draw(self):
         self.clear()
         self.test_level.draw_level()
         self.test_level.debug_draw_level()
+        self.mouse_label.draw()
