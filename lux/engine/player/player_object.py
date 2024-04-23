@@ -25,7 +25,9 @@ class PlayerData:
         "origin",
         "direction",
         "state",
+        "velocity",
         "is_crouching",
+        "is_grabbing",
         "grabbed_control_point"
     )
 
@@ -44,9 +46,9 @@ class PlayerData:
         self.state: PlayerState = PlayerState.IDLE
 
         # movement variables
-        self.is_crouching: bool = True
-
-        # Animation variables
+        self.velocity: Vec2 = Vec2()
+        self.is_crouching: bool = False
 
         # Control point Variable
-        self.grabbed_control_point: ControlPoint = None
+        self.is_grabbing: bool = False
+        self.grabbed_control_point: ControlPoint | None = None
