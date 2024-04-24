@@ -18,6 +18,10 @@ from lux.engine.debug.light_renderer import BeamDebugRenderer
 from lux.util.view import LuxView
 from lux.util.maths import Direction
 
+from lux.engine.control_points.control_point import ControlPoint
+from lux.engine.control_points.dof import RotationDOF
+from lux.engine.debug.control_point_renderer import ControlPointRenderer
+
 logger = getLogger("lux")
 
 
@@ -67,6 +71,10 @@ class FastTestView(LuxView):
         for interactor in self.interactors:
             self.renderer.append(RayInteractorRenderer(interactor))
 
+        self._rot_dof = RotationDOF(self.portal_a)
+        self._control_point = ControlPoint(self.portal_a, Vec2(-15.0, 0.0), LuxColour.WHITE, (self._rot_dof,))
+        self.renderer.append(ControlPointRenderer(self._control_point))
+
         self.rerender()
         # t = (timeit(lambda: find_intersections(self.interactors, self.beam), number=10000) / 10000)
         # print(1 / t)
@@ -79,6 +87,8 @@ class FastTestView(LuxView):
 
         self.speed = 0.01
         self.turbo = False
+
+        self._mouse_debug = Vec2(0.0, 0.0)
 
     def rerender(self):
         beams = propogate_beam(self.interactors, self.beam)
@@ -119,6 +129,7 @@ class FastTestView(LuxView):
     def on_update(self, delta_time: float):
         # return
         if self.paused:
+            self._control_point.pull(self._mouse_debug, 250.0 * delta_time)
             return
 
         self.shift_beam(delta_time)
@@ -159,6 +170,9 @@ class FastTestView(LuxView):
         match symbol:
             case arcade.key.NUM_MULTIPLY:
                 self.turbo = False
+
+    def on_mouse_motion(self, x: int, y: int, dx: int, dy: int):
+        self._mouse_debug = Vec2(x, y)
 
     def on_draw(self):
         self.clear()
