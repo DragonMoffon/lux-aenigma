@@ -9,6 +9,7 @@ from lux.engine.level.level import Level
 from lux.engine.player.player_object import PlayerData, PlayerConsts
 from lux.engine.level.level_object import DebugLevelObject
 from lux.engine.control_points.control_point import ControlPoint
+from lux.engine.control_points.dof import RotationDOF
 from lux.util.view import LuxView
 from lux.util.maths import Direction
 
@@ -24,7 +25,10 @@ class PlayerTestView(LuxView):
         self.player_object: PlayerData = PlayerData(LuxColour.WHITE, Vec2(0.0, 0.0), Vec2(1.0, 0.0))
         x, y = self.window.center
         self.debug_object: DebugLevelObject = DebugLevelObject(LuxColour.WHITE, Vec2(x, y), Vec2(1.0, 0.0))
-        self.debug_control_point: ControlPoint = ControlPoint(self.debug_object, Vec2(10.0, 10.0), LuxColour.GREEN)
+
+        self._rotation_dof: RotationDOF = RotationDOF(self.debug_object)
+
+        self.debug_control_point: ControlPoint = ControlPoint(self.debug_object, Vec2(15.0, 15.0), LuxColour.GREEN, dof=(self._rotation_dof,))
 
         self.debug_renderer.append(PlayerDebugRenderer(self.player_object))
         self.debug_renderer.append(BaseChildRenderer(self.debug_object))
@@ -36,32 +40,20 @@ class PlayerTestView(LuxView):
             player=self.player_object
         )
 
-        self.mouse_look = False
-        self._mouse_debug = (0.0, 0.0)
-        self.mouse_label = Text(f"MOUSE: {self.mouse_look}", 5, self.window.height - 5, anchor_y = "top")
+        self._mouse_debug = Vec2(0.0, 0.0)
 
     def on_update(self, delta_time: float):
         self.test_level.on_update(delta_time)
-
-        self.player_object.grabbed_control_point = None
-        dist = self.debug_control_point.test_grab(self.player_object.origin, self.player_object.colour)
-        if dist <= PlayerConsts.GRAB_RADIUS:
-            self.player_object.grabbed_control_point = self.debug_control_point
+        if self.player_object.is_grabbing:
+            self.debug_control_point.pull(self._mouse_debug, 100.0 * delta_time)
 
     def on_key_press(self, symbol: int, modifiers: int):
-        if symbol == arcade.key.SPACE:
-            self.mouse_look = not self.mouse_look
-            self.mouse_label.text = f"MOUSE: {self.mouse_look}"
         return super().on_key_press(symbol, modifiers)
 
     def on_mouse_motion(self, x: int, y: int, dx: int, dy: int):
-        if self.mouse_look:
-            self.player_object.origin = Vec2(x, y)
-            self.player_object.direction = Direction(dx, dy)
-            self._mouse_debug = (dx, dy)
+        self._mouse_debug = Vec2(x, y)
 
     def on_draw(self):
         self.clear()
         self.test_level.draw_level()
         self.test_level.debug_draw_level()
-        self.mouse_label.draw()
