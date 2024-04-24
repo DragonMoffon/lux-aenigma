@@ -18,31 +18,24 @@ LOCUS_POS_RESP = 2.0
 BUBBLE_COUNT = 16
 BUBBLE_WIDTH = 6
 
-
-def get_locus_sdf(origin: Vec2, locus: Vec2, radius: float) -> Vec2:
-    diff = (origin - locus)
-    length = diff.mag - radius
-    x, y = diff.normalize()
-    return Vec2(x * length, y * length)
+NORMAL_TEST = 0.0001
 
 
-def smin(a: Vec2, b: Vec2, k) -> Vec2:
+def get_locus_sdf(origin: Vec2, locus: Vec2, radius: float) -> float:
+    return (origin - locus).mag - radius
+
+
+def smin(a: float, b: float, k) -> float:
     # A smoothing function which uses a cubic polynomial similar to smooth-step
 
     # We want 6x the distance we start smoothing at.
     k *= 6.0
 
-    # Pull the x and y values out because Vec2 operations are slow
-    a_x, a_y = a.x, a.y
-    b_x, b_y = b.x, b.y
+    h = max(k - abs(a - b), 0.0) / k
 
-    h_x = max(k - abs(a_x - b_x), 0.0) / k
-    h_y = max(k - abs(a_y - b_y), 0.0) / k
+    x = min(a, b) - h * h * h * k * (1.0 / 6.0)
 
-    x = min(a_x, b_x) - h_x * h_x * h_x * k * (1.0 / 6.0)
-    y = min(a_y, b_y) - h_y * h_y * h_y * k * (1.0 / 6.0)
-
-    return Vec2(x, y)
+    return x
 
 
 class SDFBubble:
@@ -63,12 +56,20 @@ class SDFBubble:
     def draw(self, colour):
         draw_line_strip(self._points + (self._points[0],), colour, BUBBLE_WIDTH)
 
-    def get_sdf(self, origin: Vec2) -> Vec2:
+    def get_sdf(self, origin: Vec2) -> float:
         primary = get_locus_sdf(origin, self._primary_locus, self._primary_radius)
         control = get_locus_sdf(origin, self._control_locus, self._control_radius)
         anim = get_locus_sdf(origin, self._anim_locus, self._anim_radius)
 
         return smin(smin(primary, control, self._primary_smoothing), anim, self._secondary_smoothing)
+
+    def get_sdf_normal(self, origin: Vec2) -> Vec2:
+        left = self.get_sdf(origin + Vec2(-NORMAL_TEST, 0.0))
+        right = self.get_sdf(origin + Vec2(NORMAL_TEST, 0.0))
+        bottom = self.get_sdf(origin + Vec2(0.0, -NORMAL_TEST))
+        top = self.get_sdf(origin + Vec2(0.0, NORMAL_TEST))
+
+        return Vec2(right - left, top - bottom).normalize()
 
 
 class BubblePoint:
