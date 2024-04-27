@@ -1,0 +1,523 @@
+# The Default Input Mapping Data, see active_input.toml for the mapping used in Lux
+
+controller_deadzone = 0.1
+
+[[actions]]
+name = "gui_up"
+
+[[actions.mappings]]
+input = 65362
+input_type = 0
+mod_shift = false
+mod_ctrl = false
+mod_alt = false
+
+[[actions.mappings]]
+input = "dpup"
+input_type = 3
+mod_shift = false
+mod_ctrl = false
+mod_alt = false
+
+[[actions.mappings]]
+input = "rightypositive"
+input_type = 4
+mod_shift = false
+mod_ctrl = false
+mod_alt = false
+
+[[actions.mappings]]
+input = "leftypositive"
+input_type = 4
+mod_shift = false
+mod_ctrl = false
+mod_alt = false
+
+[[actions.mappings]]
+input = 119
+input_type = 0
+mod_shift = false
+mod_ctrl = false
+mod_alt = false
+
+[[actions]]
+name = "gui_down"
+
+[[actions.mappings]]
+input = 115
+input_type = 0
+mod_shift = false
+mod_ctrl = false
+mod_alt = false
+
+[[actions.mappings]]
+input = 65364
+input_type = 0
+mod_shift = false
+mod_ctrl = false
+mod_alt = false
+
+[[actions.mappings]]
+input = "dpdown"
+input_type = 3
+mod_shift = false
+mod_ctrl = false
+mod_alt = false
+
+[[actions.mappings]]
+input = "rightynegative"
+input_type = 4
+mod_shift = false
+mod_ctrl = false
+mod_alt = false
+
+[[actions.mappings]]
+input = "leftynegative"
+input_type = 4
+mod_shift = false
+mod_ctrl = false
+mod_alt = false
+
+[[actions]]
+name = "gui_left"
+
+[[actions.mappings]]
+input = 97
+input_type = 0
+mod_shift = false
+mod_ctrl = false
+mod_alt = false
+
+[[actions.mappings]]
+input = 65361
+input_type = 0
+mod_shift = false
+mod_ctrl = false
+mod_alt = false
+
+[[actions.mappings]]
+input = "dpleft"
+input_type = 3
+mod_shift = false
+mod_ctrl = false
+mod_alt = false
+
+[[actions.mappings]]
+input = "rightxnegative"
+input_type = 4
+mod_shift = false
+mod_ctrl = false
+mod_alt = false
+
+[[actions.mappings]]
+input = "leftxnegative"
+input_type = 4
+mod_shift = false
+mod_ctrl = false
+mod_alt = false
+
+[[actions]]
+name = "gui_right"
+
+[[actions.mappings]]
+input = "leftypositive"
+input_type = 4
+mod_shift = false
+mod_ctrl = false
+mod_alt = false
+
+[[actions.mappings]]
+input = 100
+input_type = 0
+mod_shift = false
+mod_ctrl = false
+mod_alt = false
+
+[[actions.mappings]]
+input = 65363
+input_type = 0
+mod_shift = false
+mod_ctrl = false
+mod_alt = false
+
+[[actions.mappings]]
+input = "dpright"
+input_type = 3
+mod_shift = false
+mod_ctrl = false
+mod_alt = false
+
+[[actions.mappings]]
+input = "rightxpositive"
+input_type = 4
+mod_shift = false
+mod_ctrl = false
+mod_alt = false
+
+[[actions]]
+name = "gui_next"
+
+[[actions.mappings]]
+input = "rightshoulder"
+input_type = 3
+mod_shift = false
+mod_ctrl = false
+mod_alt = false
+
+[[actions.mappings]]
+input = 65289
+input_type = 0
+mod_shift = false
+mod_ctrl = false
+mod_alt = false
+
+[[actions]]
+name = "gui_prev"
+
+[[actions.mappings]]
+input = 65289
+input_type = 0
+mod_shift = true
+mod_ctrl = false
+mod_alt = false
+
+[[actions.mappings]]
+input = "leftshoulder"
+input_type = 3
+mod_shift = false
+mod_ctrl = false
+mod_alt = false
+
+[[actions]]
+name = "gui_back"
+
+[[actions.mappings]]
+input = 65288
+input_type = 0
+mod_shift = false
+mod_ctrl = false
+mod_alt = false
+
+[[actions.mappings]]
+input = "b"
+input_type = 3
+mod_shift = false
+mod_ctrl = false
+mod_alt = false
+
+[[actions]]
+name = "gui_select"
+
+[[actions.mappings]]
+input = "rightstick"
+input_type = 3
+mod_shift = false
+mod_ctrl = false
+mod_alt = false
+
+[[actions.mappings]]
+input = 65293
+input_type = 0
+mod_shift = false
+mod_ctrl = false
+mod_alt = false
+
+[[actions.mappings]]
+input = 32
+input_type = 0
+mod_shift = false
+mod_ctrl = false
+mod_alt = false
+
+[[actions.mappings]]
+input = "leftstick"
+input_type = 3
+mod_shift = false
+mod_ctrl = false
+mod_alt = false
+
+[[actions.mappings]]
+input = "a"
+input_type = 3
+mod_shift = false
+mod_ctrl = false
+mod_alt = false
+
+[[actions.mappings]]
+input = 1
+input_type = 1
+mod_shift = false
+mod_ctrl = false
+mod_alt = false
+
+[[actions]]
+name = "gui_deselect"
+
+[[actions.mappings]]
+input = "b"
+input_type = 3
+mod_shift = false
+mod_ctrl = false
+mod_alt = false
+
+[[actions.mappings]]
+input = 4
+input_type = 1
+mod_shift = false
+mod_ctrl = false
+mod_alt = false
+
+[[actions.mappings]]
+input = 65288
+input_type = 0
+mod_shift = false
+mod_ctrl = false
+mod_alt = false
+
+[[actions]]
+name = "gui_clear"
+
+[[actions.mappings]]
+input = "b"
+input_type = 3
+mod_shift = false
+mod_ctrl = false
+mod_alt = false
+
+[[actions.mappings]]
+input = 65535
+input_type = 0
+mod_shift = false
+mod_ctrl = false
+mod_alt = false
+
+[[actions]]
+name = "gui_pause"
+
+[[actions.mappings]]
+input = "start"
+input_type = 3
+mod_shift = false
+mod_ctrl = false
+mod_alt = false
+
+[[actions.mappings]]
+input = 65307
+input_type = 0
+mod_shift = false
+mod_ctrl = false
+mod_alt = false
+
+[[actions.mappings]]
+input = 65299
+input_type = 0
+mod_shift = false
+mod_ctrl = false
+mod_alt = false
+
+[[actions]]
+name = "gui_save"
+
+[[actions.mappings]]
+input = 115
+input_type = 0
+mod_shift = false
+mod_ctrl = false
+mod_alt = false
+
+[[actions]]
+name = "player_grab"
+
+[[actions.mappings]]
+input = "leftshoulder"
+input_type = 3
+mod_shift = false
+mod_ctrl = false
+mod_alt = false
+
+[[actions.mappings]]
+input = "a"
+input_type = 3
+mod_shift = false
+mod_ctrl = false
+mod_alt = false
+
+[[actions.mappings]]
+input = "b"
+input_type = 3
+mod_shift = false
+mod_ctrl = false
+mod_alt = false
+
+[[actions.mappings]]
+input = 32
+input_type = 0
+mod_shift = false
+mod_ctrl = false
+mod_alt = false
+
+[[actions]]
+name = "player_crouch"
+
+[[actions.mappings]]
+input = "rightshoulder"
+input_type = 3
+mod_shift = false
+mod_ctrl = false
+mod_alt = false
+
+[[actions.mappings]]
+input = 65505
+input_type = 0
+mod_shift = false
+mod_ctrl = false
+mod_alt = false
+
+[[actions.mappings]]
+input = 65506
+input_type = 0
+mod_shift = false
+mod_ctrl = false
+mod_alt = false
+
+[[actions.mappings]]
+input = "x"
+input_type = 3
+mod_shift = false
+mod_ctrl = false
+mod_alt = false
+
+[[actions.mappings]]
+input = "y"
+input_type = 3
+mod_shift = false
+mod_ctrl = false
+mod_alt = false
+
+[[actions]]
+name = "editor_rotate_right"
+
+[[actions.mappings]]
+input = 65363
+input_type = 0
+mod_shift = false
+mod_ctrl = false
+mod_alt = false
+
+[[actions.mappings]]
+input = 100
+input_type = 0
+mod_shift = false
+mod_ctrl = false
+mod_alt = false
+
+[[actions.mappings]]
+input = "rightshoulder"
+input_type = 3
+mod_shift = false
+mod_ctrl = false
+mod_alt = false
+
+[[actions.mappings]]
+input = 43
+input_type = 0
+mod_shift = false
+mod_ctrl = false
+mod_alt = false
+
+[[actions]]
+name = "editor_rotate_left"
+
+[[actions.mappings]]
+input = 43
+input_type = 0
+mod_shift = false
+mod_ctrl = false
+mod_alt = false
+
+[[actions.mappings]]
+input = 65363
+input_type = 0
+mod_shift = false
+mod_ctrl = false
+mod_alt = false
+
+[[actions.mappings]]
+input = 100
+input_type = 0
+mod_shift = false
+mod_ctrl = false
+mod_alt = false
+
+[[actions.mappings]]
+input = "leftshoulder"
+input_type = 3
+mod_shift = false
+mod_ctrl = false
+mod_alt = false
+
+[[axes]]
+name = "player_v"
+
+[[axes.mappings]]
+input = 119
+input_type = 0
+scale = 1.0
+
+[[axes.mappings]]
+input = 115
+input_type = 0
+scale = -1.0
+
+[[axes.mappings]]
+input = 65362
+input_type = 0
+scale = 1.0
+
+[[axes.mappings]]
+input = 65364
+input_type = 0
+scale = -1.0
+
+[[axes.mappings]]
+input = "lefty"
+input_type = 4
+scale = 1.0
+
+[[axes.mappings]]
+input = "righty"
+input_type = 4
+scale = 1.0
+
+[[axes]]
+name = "player_h"
+
+[[axes.mappings]]
+input = 65361
+input_type = 0
+scale = -1.0
+
+[[axes.mappings]]
+input = "leftx"
+input_type = 4
+scale = 1.0
+
+[[axes.mappings]]
+input = "rightx"
+input_type = 4
+scale = 1.0
+
+[[axes.mappings]]
+input = 100
+input_type = 0
+scale = 1.0
+
+[[axes.mappings]]
+input = 97
+input_type = 0
+scale = -1.0
+
+[[axes.mappings]]
+input = 65363
+input_type = 0
+scale = 1.0

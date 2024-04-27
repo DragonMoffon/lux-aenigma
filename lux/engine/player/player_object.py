@@ -2,7 +2,7 @@ from enum import Enum
 
 from pyglet.math import Vec2
 
-from lux.engine.colour import LuxColour
+from lux.util.colour import LuxColour
 from lux.engine.control_points.control_point import ControlPoint
 
 

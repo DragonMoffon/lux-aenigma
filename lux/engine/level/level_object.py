@@ -2,7 +2,7 @@ from typing import Protocol, runtime_checkable
 
 from pyglet.math import Vec2
 
-from lux.engine.colour import LuxColour
+from lux.util.colour import LuxColour
 
 
 @runtime_checkable

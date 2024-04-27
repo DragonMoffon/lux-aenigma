@@ -2,6 +2,7 @@ import logging
 from typing import Optional, Type
 
 from arcade import key
+from arcade.experimental.input import ActionState
 
 from lux.util.dev_menu import DevMenu
 from lux.util.view import LuxView
@@ -9,7 +10,6 @@ from lux.views.musicmixer import MusicMixerView
 # from lux.views.scene import SceneView
 # from lux.views.editor import SceneEditorView
 # from lux.views.scene_select import SceneSelectView
-from lux.views.tri_test import TriTestView
 from lux.views.fast_test import FastTestView
 from lux.views.player import PlayerTestView
 from lux.views.sevensegtest import SevenSegTestView
@@ -23,7 +23,7 @@ def load_views(unloaded: dict[str, Type[LuxView]], back: Optional[LuxView]) -> d
     d = {}
     for s, v in unloaded.items():
         t = time()
-        loaded = v(back = back)
+        loaded = v(back=back)
         logger.debug(f"{s}: {time() - t:.3f}s")
         d[s] = loaded
     return d
@@ -36,7 +36,6 @@ class MenuView(LuxView):
         views: dict[str, Type[LuxView]] = {
             "Test": FastTestView,
             "Player": PlayerTestView,
-            "Triangle": TriTestView,
             "Music": MusicMixerView,
             "Seven Segment Display": SevenSegTestView
         }
@@ -44,13 +43,20 @@ class MenuView(LuxView):
         loaded = load_views(views, self)
         self.menu = DevMenu(loaded)
 
-    def on_key_press(self, symbol: int, modifiers: int):
-        match symbol:
-            case key.UP:
-                self.menu.selected -= 1
-            case key.DOWN:
+    def on_action(self, action, state):
+        if state == ActionState.RELEASED:
+            return
+
+        match action:
+            case "gui_down":
                 self.menu.selected += 1
-            case key.ENTER:
+            case "gui_prev":
+                self.menu.selected -= 1
+            case "gui_up":
+                self.menu.selected -= 1
+            case "gui_next":
+                self.menu.selected += 1
+            case "gui_select":
                 self.window.show_view(self.menu.current_view)
 
     def on_draw(self):

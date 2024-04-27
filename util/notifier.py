@@ -37,10 +37,6 @@ in `gate` mode the notifications will be stored in a stack and then the Notifier
 them. For example this mode allows you to call all notifications at the start of on_update. `Async` mode
 forces emitted Notifications into a thread safe queue to be called atomically. [Note I don't know how possible this is]
 """
-from typing import TypedDict
-from weakref import WeakSet
-
-
 class _NotificationSignature:
     pass
 

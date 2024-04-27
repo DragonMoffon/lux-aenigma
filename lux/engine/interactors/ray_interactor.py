@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pyglet.math import Vec2
 
-from lux.engine.colour import LuxColour
+from lux.util.colour import LuxColour
 from lux.engine.lights.ray import LightRay
 
 

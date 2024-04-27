@@ -1,7 +1,10 @@
 from __future__ import annotations
-
+from logging import getLogger
 from arcade import View, Window
-import arcade
+from arcade.experimental.input import ActionState
+
+
+logger = getLogger("lux")
 
 
 class LuxView(View):
@@ -13,10 +16,16 @@ class LuxView(View):
     def rerender(self):
         pass
 
-    def on_key_press(self, symbol: int, modifiers: int):
-        if symbol == arcade.key.BACKSPACE:
+    def go_back(self, state):
+        if state == ActionState.RELEASED and self.back:
+            logger.warning("forcefully going back. Improve this behavior later")
             self.window.show_view(self.back)
-        return super().on_key_press(symbol, modifiers)
+
+    def on_show_view(self):
+        self.window.input_manager.subscribe_to_action("gui_back", self.go_back)
+
+    def on_hide_view(self):
+        self.window.input_manager.action_subscribers["gui_back"].discard(self.go_back)
 
     def on_update(self, delta_time: float):
         if self.dirty:

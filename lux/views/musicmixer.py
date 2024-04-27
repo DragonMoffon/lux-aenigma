@@ -5,7 +5,7 @@ from arcade import Texture, Sprite, SpriteList
 from arcade.geometry import is_point_in_box
 from arcade.experimental.bloom_filter import BloomFilter
 
-from lux.engine.colour import LuxColour
+from lux.util.colour import LuxColour
 from lux.util.music_mixer import RGBMusicMixer
 from lux.util.view import LuxView
 
@@ -29,7 +29,7 @@ class MusicMixerView(LuxView):
         self.color_square = (0, 0, 0, 0)
 
         self.tex = Texture.create_empty("rgbmusic", (1280, 720))
-        self.sprite = Sprite(self.tex, center_x = self.window.width // 2, center_y = self.window.height // 2)
+        self.sprite = Sprite(self.tex, center_x=self.window.width // 2, center_y=self.window.height // 2)
         self.sprite_list = SpriteList()
         self.sprite_list.append(self.sprite)
 
@@ -39,11 +39,13 @@ class MusicMixerView(LuxView):
         self.calc_pos()
 
     def on_show_view(self):
+        super().on_show_view()
         self.rgbmusic.play()
         self.bloom_level = 5.0
         self.bloom_filter = BloomFilter(1280, 720, 5.0)
 
     def on_hide_view(self):
+        super().on_hide_view()
         self.rgbmusic.pause()
         self.rgbmusic.seek(0)
 

@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import NamedTuple
 from arcade.types import Color, RGBANormalized
 
-from lux.util.classproperty import classproperty
+from util.classproperty import classproperty
 
 
 class LuxColour(NamedTuple):

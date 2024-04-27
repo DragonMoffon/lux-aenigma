@@ -4,15 +4,22 @@ import math
 
 from pyglet.math import Vec2
 
-from lux.util.classproperty import classproperty
+from util.classproperty import classproperty
 
 logger = getLogger("lux")
 
 
 class Direction(Vec2):
-    def __init__(self, x: float = 0, y: float = 0):
-        mag = (x**2.0 + y**2.0) ** 0.5
-        super().__init__(x / mag, y / mag)
+
+    def __init__(self, x: float, y: float):
+        ...
+
+    def __new__(cls, x: float, y: float) -> Direction:
+        mag = (x**2 + y**2)**0.5
+        if mag == 0.0:
+            raise ValueError("Direction can't have zero length")
+
+        return Vec2.__new__(cls, x / mag, y / mag)
 
     @property
     def degrees(self) -> float:

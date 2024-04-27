@@ -1,7 +1,10 @@
 from typing import NamedTuple, Generator
 from math import sin, pi
 
-from arcade import Sprite, load_texture
+from arcade import Sprite
+from arcade.experimental.input import ActionState
+
+from lux.data import get_texture
 from lux.util.view import LuxView
 
 
@@ -17,20 +20,20 @@ class Splash(NamedTuple):
 
 SPLASHES = (
     Splash(
-        ":textures:splashes/arcade-logo-splash.png",
+        "splash_arcade",
         1.0,
         3.0,
         True
     ),
     Splash(
-        ":textures:splashes/dragon-bakery-splash.png",
+        "splash_dragon",
         1.0,
         3.0,
         False,
         True
     ),
     Splash(
-        ":textures:splashes/DDHQ.png",
+        "splash_digi",
         0.1,
         3.0,
         False
@@ -63,13 +66,18 @@ class SplashView(LuxView):
         self._splash_timer = 0.0
 
         self._splash_sprite.scale = self._current_splash.scale
-        self._splash_sprite.texture = load_texture(self._current_splash.src)
+        self._splash_sprite.texture = get_texture(self._current_splash.src)
         self._splash_sprite.scale = self._current_splash.scale
         self._splash_sprite.alpha = 255 * (not self._current_splash.do_fade_in)
 
-    def on_show(self):
+    def on_show_view(self):
+        super().on_show_view()
         self._splash_sprite = Sprite()
         self._next_splash()
+
+    def on_action(self, action, state):
+        if state == ActionState.PRESSED:
+            self.leave()
 
     def on_key_press(self, symbol: int, modifiers: int):
         self._current_splash = None

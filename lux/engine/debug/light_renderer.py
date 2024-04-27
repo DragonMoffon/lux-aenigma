@@ -3,7 +3,7 @@ from arcade import draw_line, draw_point, draw_polygon_filled
 
 from lux.engine.lights import Ray
 from lux.engine.lights.beam_light_ray import BeamLightRay
-from lux.engine.colour import LuxColour
+from lux.util.colour import LuxColour
 
 
 _NORMAL_RAY_DIST = 15.0

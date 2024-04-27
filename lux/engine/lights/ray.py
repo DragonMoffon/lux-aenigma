@@ -5,7 +5,7 @@ from typing import NamedTuple, TYPE_CHECKING
 
 from pyglet.math import Vec2
 
-from lux.engine.colour import LuxColour
+from lux.util.colour import LuxColour
 from lux.util.maths import get_segment_intersection
 if TYPE_CHECKING:
     from lux.engine.interactors import RayInteractor, RayInteractorEdge

@@ -2,7 +2,7 @@ import arcade.key
 from arcade import Text
 from pyglet.math import Vec2
 
-from lux.engine.colour import LuxColour
+from lux.util.colour import LuxColour
 from lux.engine.debug.debug_renderer import DebugRenderer
 from lux.engine.debug.player_renderer import PlayerDebugRenderer
 from lux.engine.level.level import Level

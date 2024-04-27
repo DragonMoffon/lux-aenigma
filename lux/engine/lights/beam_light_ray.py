@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Generator
 from pyglet.math import Vec2
 
 from lux.engine.lights.ray import Ray, LightRay
-from lux.engine.colour import LuxColour
+from lux.util.colour import LuxColour
 from lux.util.maths import get_intersection, get_intersection_fraction
 from lux.engine.interactors import RayInteractorEdge
 
@@ -52,29 +52,23 @@ class BeamLightRay(LightRay):
             end_point = edge.end
 
             if (start_point - left_source).dot(beam_dir) <= 0.0 and (end_point - left_source).dot(beam_dir) <= 0.0:
-                logger.info(f"{self}: behind beam")
                 continue
 
             if (start_point - left_sink).dot(beam_dir) >= 0.0 and (end_point - left_sink).dot(beam_dir) >= 0.0:
-                logger.info(f"{self}: ahead beam")
                 continue
 
             in_beam = False
 
             if ((start_point - left_source).dot(beam_normal) > 0.0) == ((start_point - right_source).dot(beam_normal) < 0.0):
-                logger.info(f"{self}: start in beam")
                 in_beam = True
 
             if ((end_point - left_source).dot(beam_normal) > 0.0) == ((end_point - right_source).dot(beam_normal) < 0.0):
-                logger.info(f"{self}: end in beam")
                 in_beam = True
 
             if ((start_point - left_source).dot(beam_normal) > 0.0) != ((end_point - left_source).dot(beam_normal) > 0.0):
-                logger.info(f"{self}: edge crossed beam")
                 in_beam = True
 
             if not in_beam:
-                logger.info(f"{self}: edge not in beam")
                 continue
 
             start_intersection = get_intersection(left_source, self.normal, start_point, beam_dir)
@@ -100,7 +94,6 @@ class BeamLightRay(LightRay):
         beam_dir = self.right.direction
         beam_normal = Vec2(-beam_dir.y, beam_dir.x)
         end_normal = (self.left.source - self.right.source).normalize()
-        logger.debug(f"{self.left.source}, {self.right.source}")
 
         right_sink = right_source + beam_dir * self.right.length
         left_sink = left_source + beam_dir * self.left.length
@@ -130,8 +123,6 @@ class BeamLightRay(LightRay):
         collecting_rays: bool = points_sorted[0][0] == right_sink
 
         for end, start, edge in points_sorted[1:]:
-            logger.debug(f"{self}: checking: ({round(end.x, 3)}, {round(end.y, 3)})")
-            logger.info(edge_to_interactor_map.get(edge))
 
             left_ray = None
             next_right_ray = None

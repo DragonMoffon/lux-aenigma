@@ -2,7 +2,7 @@ from pyglet.math import Vec2
 
 from lux.engine.lights import Ray
 from lux.engine.interactors import RayInteractorEdge, RayInteractor
-from lux.engine.colour import LuxColour
+from lux.util.colour import LuxColour
 from lux.util.maths import Direction
 
 from lux.engine.lights.beam_light_ray import LightRay, BeamLightRay

@@ -5,7 +5,7 @@ from arcade.window_commands import get_window
 from pyglet.math import Vec2
 
 from lux.engine.player.player_object import PlayerData
-from lux.util.procedural_animator import ProceduralAnimator
+from util.procedural_animator import ProceduralAnimator
 
 OFFSET = 6.0
 RADIUS = 16.0

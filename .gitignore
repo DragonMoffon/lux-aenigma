@@ -162,3 +162,5 @@ cython_debug/
 
 # A scratch directory for experiments and quick tests
 .scratch
+/.compile-libs
+/.dev-libs

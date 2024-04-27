@@ -4,7 +4,7 @@ import arcade
 from arcade.types import Color
 import pyglet.media as media
 
-from lux.engine.colour import LuxColour
+from lux.util.colour import LuxColour
 
 logger = logging.getLogger("lux")
 

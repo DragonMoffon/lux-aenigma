@@ -1,5 +1,4 @@
 from logging import getLogger
-# import timeit
 
 import arcade
 from arcade.camera import Camera2D
@@ -8,7 +7,7 @@ from pyglet.math import Vec2
 
 from lux.engine.interactors import FilterRayInteractor, PortalRayInteractor, MirrorRayInteractor
 from lux.engine.new import propogate_beam
-from lux.engine.colour import LuxColour
+from lux.util.colour import LuxColour
 from lux.engine.lights.ray import Ray
 from lux.engine.lights.beam_light_ray import BeamLightRay
 from lux.engine.interactors import RayInteractorEdge

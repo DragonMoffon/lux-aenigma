@@ -7,7 +7,8 @@ version="26.03.2024.0"
 dependencies=[
     "arcade@ git+https://github.com/pythonarcade/arcade#egg=development",
     "imgui[pyglet]",
-    "digiformatter"
+    "digiformatter",
+    "tomlkit"
 ]
 requires-python= ">= 3.11"
 authors =  [
