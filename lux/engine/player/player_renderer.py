@@ -1,6 +1,6 @@
 from math import tau
 
-from arcade.draw_commands import draw_line_strip, draw_point
+from arcade.draw_commands import draw_line_strip, draw_polygon_filled
 from arcade.window_commands import get_window
 from pyglet.math import Vec2
 
@@ -107,6 +107,7 @@ class Bubble:
 
     def draw(self, colour):
         draw_line_strip(self.points + (self.points[0],), colour, BUBBLE_WIDTH)
+        draw_polygon_filled(self.points + (self.points[0],), colour)
 
 
 class PlayerRenderer:
