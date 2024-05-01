@@ -75,11 +75,7 @@ class SplashView(LuxView):
         self._splash_sprite = Sprite()
         self._next_splash()
 
-    def on_action(self, action, state):
-        if state == ActionState.PRESSED:
-            self.leave()
-
-    def on_key_press(self, symbol: int, modifiers: int):
+    def on_key_release(self, symbol: int, modifiers: int):
         self._current_splash = None
         self.leave()
         return super().on_key_press(symbol, modifiers)
