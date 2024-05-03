@@ -12,7 +12,7 @@ from lux.data import get_shader
 logger = getLogger("lux")
 
 
-SPHERE_RADII = (40.0, 20.0, 6.0)
+SPHERE_RADII = (16.0, 6.0, 6.0)
 SPHERE_COUNT = len(SPHERE_RADII)
 
 PLAYER_COUNT = 1

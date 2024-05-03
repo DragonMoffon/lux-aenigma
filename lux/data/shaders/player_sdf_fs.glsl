@@ -39,7 +39,7 @@ float world_sdf(vec2 origin){
 
 void main() {
     // Using frag coord stinks hella bad
-    float w = 1 - world_sdf(gl_FragCoord.xy);
+    float w = world_sdf(gl_FragCoord.xy) < 1.0 ? 1.0 : 0.0;
 
     fs_colour = vec4(w, w, w, 1.0);
 }
