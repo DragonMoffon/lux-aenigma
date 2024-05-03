@@ -4,8 +4,8 @@ from typing import Optional, Type
 from arcade import key
 from arcade.experimental.input import ActionState
 
-from lux.util.dev_menu import DevMenu
-from lux.util.view import LuxView
+from util.dev_menu import DevMenu
+from lux.util import LuxView
 from lux.views.musicmixer import MusicMixerView
 # from lux.views.scene import SceneView
 # from lux.views.editor import SceneEditorView

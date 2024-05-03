@@ -7,6 +7,8 @@ from pyglet.math import Vec2
 from lux.engine.player.player_object import PlayerData
 from util.procedural_animator import ProceduralAnimator
 
+from lux.rendering.player_sdf_shader import PlayerSDFRenderer
+
 OFFSET = 6.0
 RADIUS = 16.0
 
@@ -127,6 +129,8 @@ class PlayerRenderer:
 
         self.bubble = Bubble(self.locus_a)
 
+        self._player_sdf = PlayerSDFRenderer()
+
     def update(self, delta_time: float):
         new_a = self._player.origin
 
@@ -135,10 +139,17 @@ class PlayerRenderer:
         self.locus_a = new_a
         self.locus_b = self.locus_animator.update(delta_time, new_a, self.locus_da)
 
-        self.bubble.update(delta_time, self.locus_a, self._player.velocity.normalize())
+        # self.bubble.update(delta_time, self.locus_a, self._player.velocity.normalize())
+
+        self._player_sdf.set_spheres(0, self.locus_a, self.locus_b, self.locus_a)
+        self._player_sdf.set_pos(0, self._player.origin)
+        self._player_sdf.set_dir(0, self._player.direction)
+        self._player_sdf.set_colour(0, self._player.colour.to_float_color()[0:3])
 
     def draw(self):
         self._ctx.point_size = 6
 
         c = self._player.colour.to_int_color()
-        self.bubble.draw(c)
+        # self.bubble.draw(c)
+
+        self._player_sdf.draw()
