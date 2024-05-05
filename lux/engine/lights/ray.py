@@ -119,12 +119,11 @@ class LightRay:
         raise NotImplementedError()
 
     def propagate_ray(self, edge_to_interactor_map: dict[RayInteractorEdge, RayInteractor]) -> tuple[LightRay, ...]:
-        logger.debug(f"{self}: Propogating!")
+        # logger.debug(f"{self}: Propogating!")
         self.propagate_kill()
         kids = 0
         replacements = self._propagate(edge_to_interactor_map)
         for child, edge, left_intersection, right_intersection in replacements:
-            logger.info(f"{kids}")
             kids += 1
             interactor = edge_to_interactor_map.get(edge)
             if interactor is None:
@@ -132,7 +131,7 @@ class LightRay:
 
             sub_children = interactor.ray_hit(child, edge, left_intersection, right_intersection)
             for sub_child in sub_children:
-                logger.debug(sub_child.colour)
+                # logger.debug(sub_child.colour)
                 # child.add_child(sub_child)
                 child.add_children(sub_child.propagate_ray(edge_to_interactor_map))
 

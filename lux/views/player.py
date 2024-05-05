@@ -1,5 +1,3 @@
-import arcade.key
-from arcade import Text
 from pyglet.math import Vec2
 
 from lux.util.colour import LuxColour
@@ -11,7 +9,6 @@ from lux.engine.level.level_object import DebugLevelObject
 from lux.engine.control_points.control_point import ControlPoint
 from lux.engine.control_points.dof import RotationDOF
 from lux.util.view import LuxView
-from lux.util.maths import Direction
 
 from lux.engine.debug.control_point_renderer import ControlPointRenderer
 from lux.engine.debug.debug_renderer import BaseChildRenderer

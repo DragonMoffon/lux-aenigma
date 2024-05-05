@@ -46,9 +46,6 @@ class LuxWindow(Window):
     def input_manager(self) -> input.InputManager:
         return self._input_manager
 
-    def on_action(self, action_name: str, state):
-        logger.info(f"dispatched: {action_name} -> {state}")
-
     def _dispatch_updates(self, delta_time: float):
         self._input_manager.update()
 
@@ -63,7 +60,8 @@ class LuxWindow(Window):
         super()._dispatch_updates(delta_time)
 
     def debug_draw(self):
-        self.fps_text.draw()
+        with self.default_camera.activate():
+            self.fps_text.draw()
 
     def on_draw(self):
         self.debug_draw()

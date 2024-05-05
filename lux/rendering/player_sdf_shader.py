@@ -12,14 +12,13 @@ from lux.data import get_shader
 logger = getLogger("lux")
 
 
-SPHERE_RADII = (16.0, 6.0, 6.0)
+SPHERE_RADII = (16.0, 12.0, 6.0)
 SPHERE_COUNT = len(SPHERE_RADII)
 
 PLAYER_COUNT = 1
 PLAYER_PADDING = SPHERE_RADII[0] * 4.0
 
 SMOOTHING_CONST = 1.2
-
 class PlayerSDFRenderer:
 
     def __init__(self):

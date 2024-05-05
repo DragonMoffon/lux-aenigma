@@ -150,7 +150,6 @@ def find_beam_edge_map(interactors, parent,
 
 
 def find_intersections(interactors: tuple[RayInteractor, ...], beam: BeamLightRay, parent: RayInteractor = None):
-    logger.info("Getting intersections")
     beam_colour = beam.colour
 
     left_source = beam.left.source
@@ -188,9 +187,6 @@ def find_intersections(interactors: tuple[RayInteractor, ...], beam: BeamLightRa
     sorted_points = sorted(edge_points, key=lambda p: ((right_source - p[2]).dot(beam_normal), p[1]))
     sorted_points.append((left_sink, beam.left.length**2, left_source, back_edge))
 
-    logger.debug(f"{right_source, left_source}")
-    logger.info("\n".join(f"{(right_source - p[2]).dot(beam_normal)}: {p}" for p in sorted_points))
-
     end_fraction = get_intersection_fraction(
         right_sink, end_normal,
         sorted_points[0][2], beam_dir
@@ -208,7 +204,6 @@ def find_intersections(interactors: tuple[RayInteractor, ...], beam: BeamLightRa
     incomplete_edges: set[RayInteractorEdge] = set(edge_to_interactor_map.keys())
     finalised_beams: list[tuple[BeamLightRay, RayInteractorEdge, Vec2, Vec2]] = []
     for end, length_sqr, start, edge in sorted_points[1:]:
-        logger.info(f"Next Point: {start} : {end}")
         left_ray = None
         next_right_ray = None
         next_current_edge = None
@@ -224,9 +219,9 @@ def find_intersections(interactors: tuple[RayInteractor, ...], beam: BeamLightRa
             active_edges.add(edge)
             starting = True
 
-        logger.debug(f"{edge}")
-        logger.debug(f"{current_edge}")
-        logger.debug(f"{active_edges}")
+        # logger.debug(f"{edge}")
+        # logger.debug(f"{current_edge}")
+        # logger.debug(f"{active_edges}")
 
         # Since the current edge is unlikely to be perpendicular to the beam
         # We need to find the distance from the current edge to do comparisons
@@ -299,9 +294,9 @@ def find_intersections(interactors: tuple[RayInteractor, ...], beam: BeamLightRa
                     end_strength
                 )
 
-        logger.debug(next_current_edge)
+        # logger.debug(next_current_edge)
         if left_ray is not None:
-            logger.debug("making a new beam")
+            # logger.debug("making a new beam")
             if left_ray.source != right_ray.source:
                 new_beam = BeamLightRay(
                     beam_colour,
