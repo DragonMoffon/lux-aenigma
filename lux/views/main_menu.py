@@ -1,15 +1,12 @@
 import logging
 from typing import Optional, Type
 
-from arcade import key
 from arcade.experimental.input import ActionState
 
 from util.dev_menu import DevMenu
 from lux.util import LuxView
+from lux.views.march_square_view import SquareView
 from lux.views.musicmixer import MusicMixerView
-# from lux.views.scene import SceneView
-# from lux.views.editor import SceneEditorView
-# from lux.views.scene_select import SceneSelectView
 from lux.views.fast_test import FastTestView
 from lux.views.player import PlayerTestView
 from lux.views.sevensegtest import SevenSegTestView
@@ -36,7 +33,8 @@ class MenuView(LuxView):
         views: dict[str, Type[LuxView]] = {
             "Test": FastTestView,
             "Player": PlayerTestView,
-            "Music": MusicMixerView,
+            "Square": SquareView,
+            # "Music": MusicMixerView,
             "Seven Segment Display": SevenSegTestView
         }
 
