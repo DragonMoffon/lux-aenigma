@@ -51,8 +51,19 @@ class MarchGrid:
         i_x = int(round(s_x))
         i_y = int(round(s_y))
 
-        if 0 <= i_x < GRID_WIDTH-1 and 0 <= i_y < GRID_HEIGHT-1:
-            self[i_x, i_y] = -self[i_x, i_y]
+        return i_x, i_y
+
+    def set_closest_point(self, x: float, y: float, value: float):
+        i_x, i_y = self.closest_point(x, y)
+
+        if 0 <= i_x < GRID_WIDTH and 0 <= i_y < GRID_HEIGHT:
+            self[i_x, i_y] = value
+
+    def get_closest_point(self, x, y):
+        i_x, i_y = self.closest_point(x, y)
+        if 0 <= i_x < GRID_WIDTH and 0 <= i_y < GRID_HEIGHT:
+            return self[i_x, i_y]
+        return None
 
     def triangulate_point(self, x: int, y: int):
         a = self.grid[y][x]
@@ -77,17 +88,18 @@ class MarchGrid:
         return (tuple(points[i] for i in tri) for tri in triangulation)
 
     def draw(self):
-        for y, row in enumerate(self.grid[:-1]):
-            for x, val in enumerate(row[:-1]):
-                triangles = self.triangulate_point(x, y)
-                for tri in triangles:
-                    a, b, c = tri
-                    draw_triangle_filled(
-                        a[0]*SQUARE_SIZE, a[1]*SQUARE_SIZE,
-                        b[0]*SQUARE_SIZE, b[1]*SQUARE_SIZE,
-                        c[0]*SQUARE_SIZE, c[1]*SQUARE_SIZE,
-                        (255, 255, 255, 255)# , 2
-                    )
+        for y, row in enumerate(self.grid[:]):
+            for x, val in enumerate(row[:]):
+                if x < GRID_WIDTH-1 and y < GRID_HEIGHT-1:
+                    triangles = self.triangulate_point(x, y)
+                    for tri in triangles:
+                        a, b, c = tri
+                        draw_triangle_filled(
+                            a[0]*SQUARE_SIZE, a[1]*SQUARE_SIZE,
+                            b[0]*SQUARE_SIZE, b[1]*SQUARE_SIZE,
+                            c[0]*SQUARE_SIZE, c[1]*SQUARE_SIZE,
+                            (255, 255, 255, 255)# , 2
+                        )
                 c = (255 * (val < 0), 255 * (val > 0),  255, 255)
                 arcade.draw_point(x * SQUARE_SIZE, y * SQUARE_SIZE, c, 5)
 
@@ -107,23 +119,32 @@ class SquareView(LuxView):
         self.grid.triangulate_point(0, 0)
         self.grid.triangulate_point(0, 1)
 
-        self.last_dragged_point: tuple[int, int] = (None, None)
-
     def on_mouse_drag(self, x: int, y: int, dx: int, dy: int, _buttons: int, _modifiers: int):
-        button = MouseButtons(_buttons)
+        try:
+            button = MouseButtons(_buttons)
+        except ValueError:
+            return 
 
         if button == MouseButtons.MIDDLE:
             o_pos = self.cam.position
             self.cam.position = int(o_pos[0] - dx), int(o_pos[1] - dy)
         elif button == MouseButtons.LEFT:
             w_x, w_y, w_z = self.cam.unproject((x, y))
-            if self.last_dragged_point != (w_x, w_y):
-                self.grid.closest_point(w_x, w_y)
-                self.last_dragged_point = (w_x, w_y)
+            self.grid.set_closest_point(w_x, w_y, 1)
+        elif button == MouseButtons.RIGHT:
+            w_x, w_y, w_z = self.cam.unproject((x, y))
+            self.grid.set_closest_point(w_x, w_y, -1)
 
-    def on_mouse_release(self, x: int, y: int, button: int, modifiers: int):
-        if MouseButtons(button) == MouseButtons.LEFT:
-            self.last_dragged_point = (None, None)
+    def on_mouse_press(self, x: int, y: int, button: int, modifiers: int):
+        button = MouseButtons(button)
+
+        if button == MouseButtons.LEFT:
+            w_x, w_y, w_z = self.cam.unproject((x, y))
+            self.grid.set_closest_point(w_x, w_y, 1)
+
+        elif button == MouseButtons.RIGHT:
+            w_x, w_y, w_z = self.cam.unproject((x, y))
+            self.grid.set_closest_point(w_x, w_y, -1)
 
     def on_key_press(self, symbol: int, modifiers: int):
         super().on_key_press(symbol, modifiers)
