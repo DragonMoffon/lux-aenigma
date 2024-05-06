@@ -6,6 +6,7 @@ from arcade.experimental import input
 
 from lux.views.main_menu import MenuView
 from lux.views.splash_screen import SplashView
+from lux.engine.debug.menu import DebugDisplay
 from lux.data import get_config
 
 logger = getLogger('lux')
@@ -42,6 +43,8 @@ class LuxWindow(Window):
                              anchor_x="right", anchor_y="top",
                              font_name="GohuFont 11 Nerd Font Mono", font_size=11)
 
+        self.debug_display = DebugDisplay(self)
+
     @property
     def input_manager(self) -> input.InputManager:
         return self._input_manager
@@ -62,6 +65,7 @@ class LuxWindow(Window):
     def debug_draw(self):
         with self.default_camera.activate():
             self.fps_text.draw()
+            self.debug_display.draw()
 
     def on_draw(self):
         self.debug_draw()

@@ -4,6 +4,8 @@ from lux.engine.player.player_object import PlayerData
 from lux.engine.player.player_controller import PlayerController
 from lux.engine.player.player_renderer import PlayerRenderer
 
+from util.context_perf import LogSection
+
 
 class Level:
     """
@@ -32,6 +34,7 @@ class Level:
 
     def on_update(self, delta_time: float):
         self._player_controller.update(delta_time)
+
         self._player_renderer.update(delta_time)
 
     def debug_draw_level(self):

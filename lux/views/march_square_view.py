@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 import arcade
-from arcade.experimental.input.inputs import MouseButtons
+from arcade.experimental.input.inputs import MouseButtons, Keys
 from arcade.draw_commands import draw_triangle_filled
 
 from util.procedural_animator import ProceduralAnimator
@@ -142,6 +144,13 @@ class SquareView(LuxView):
         self.grid.triangulate_point(0, 0)
         self.grid.triangulate_point(0, 1)
 
+    def on_mouse_scroll(self, x: int, y: int, scroll_x: int, scroll_y: int):
+        w_x, w_y, w_z = self.cam.unproject((x, y))
+        v = self.grid.get_closest_point(w_x, w_y)
+        self.grid.set_closest_point(w_x, w_y, v + scroll_y / 16.0)
+
+        print(self.grid.get_closest_point(w_x, w_y))
+
     def on_mouse_drag(self, x: int, y: int, dx: int, dy: int, _buttons: int, _modifiers: int):
         try:
             button = MouseButtons(_buttons)
@@ -170,14 +179,32 @@ class SquareView(LuxView):
             self.grid.set_closest_point(w_x, w_y, -1)
 
     def on_key_press(self, symbol: int, modifiers: int):
+        print(Keys(symbol))
         super().on_key_press(symbol, modifiers)
 
     def on_update(self, delta_time: float):
         self.grid.update(delta_time)
         return super().on_update(delta_time)
 
+    def on_show_view(self):
+        self.window.debug_display.set_menu(MarchSquareDebug())
+        super().on_show_view()
+
     def on_draw(self):
         self.clear()
         self.cam.use()
 
         self.grid.draw()
+
+import imgui
+
+class MarchSquareDebug:
+
+    def draw(self):
+        imgui.new_frame()
+        imgui.set_next_window_size(150, 350, condition=imgui.FIRST_USE_EVER)
+
+        imgui.begin("March Square Debug Menu", False)
+
+        imgui.end()
+        imgui.end_frame()

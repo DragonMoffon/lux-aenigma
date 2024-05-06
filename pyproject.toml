@@ -5,10 +5,10 @@ license = {text = "MIT License"}
 readme="README.md"
 version="26.03.2024.0"
 dependencies=[
-    "arcade@ git+https://github.com/pythonarcade/arcade#egg=development",
     "imgui[pyglet]",
     "digiformatter",
-    "tomlkit"
+    "tomlkit",
+    "arcade@ git+https://github.com/pythonarcade/arcade#egg=development"
 ]
 requires-python= ">= 3.11"
 authors =  [

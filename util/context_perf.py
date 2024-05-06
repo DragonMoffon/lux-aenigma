@@ -3,8 +3,8 @@ from time import perf_counter_ns
 
 
 class LogSection:
-    def __init__(self, name: str = "perf counter"):
-        self.logger = getLogger("lux")
+    def __init__(self, name: str = "perf counter", logger: str = "lux"):
+        self.logger = getLogger(logger)
         self.name = name
         self.start_time = -1.0
 
