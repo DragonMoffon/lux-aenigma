@@ -1,11 +1,13 @@
 import arcade
-from arcade.experimental.input.inputs import MouseButtons, Keys
-from arcade.draw_commands import draw_triangle_outline, draw_triangle_filled
+from arcade.experimental.input.inputs import MouseButtons
+from arcade.draw_commands import draw_triangle_filled
+
+from util.procedural_animator import ProceduralAnimator
 
 from lux.util.view import LuxView
 
-GRID_WIDTH = 11
-GRID_HEIGHT = 11
+GRID_WIDTH = 10
+GRID_HEIGHT = 10
 
 SQUARE_SIZE = 50
 
@@ -36,6 +38,11 @@ class MarchGrid:
             for _ in range(GRID_HEIGHT)
         )
 
+        self.animators: tuple[ProceduralAnimator, ...] = tuple(
+            ProceduralAnimator(1.0, 0.5, 2.0, -1.0, -1.0, 0.0)
+            for _ in range(GRID_WIDTH * GRID_HEIGHT)
+        )
+
     def __getitem__(self, item: tuple[int, int]):
         x, y = item
         return self.grid[y][x]
@@ -43,6 +50,18 @@ class MarchGrid:
     def __setitem__(self, key: tuple[int, int], value: float):
         x, y = key
         self.grid[y][x] = min(1.0, max(-1.0, value))
+
+    def to_point(self, idx: int):
+        return idx % GRID_WIDTH, idx // GRID_WIDTH
+
+    def from_point(self, x, y):
+        return y * GRID_WIDTH + x
+
+    def update(self, dt: float):
+        for idx in range(GRID_WIDTH * GRID_HEIGHT):
+            x, y = self.to_point(idx)
+            val = self[x, y]
+            self.animators[idx].update(dt, val)
 
     def closest_point(self, x: float, y: float):
         s_x = x / SQUARE_SIZE
@@ -65,11 +84,15 @@ class MarchGrid:
             return self[i_x, i_y]
         return None
 
+    def anim_val(self, x, y):
+        idx = self.from_point(x, y)
+        return self.animators[idx].y
+
     def triangulate_point(self, x: int, y: int):
-        a = self.grid[y][x]
-        b = self.grid[y+1][x]
-        c = self.grid[y+1][x+1]
-        d = self.grid[y][x+1]
+        a = self.anim_val(x, y)
+        b = self.anim_val(x, y+1)
+        c = self.anim_val(x+1, y+1)
+        d = self.anim_val(x+1, y)
 
         a_b = (0.5 if a == b else (1.0 if b == 0.0 else -a/(b - a)))
         b_c = (0.5 if b == c else (1.0 if c == 0.0 else -b/(c - b)))
@@ -123,7 +146,7 @@ class SquareView(LuxView):
         try:
             button = MouseButtons(_buttons)
         except ValueError:
-            return 
+            return
 
         if button == MouseButtons.MIDDLE:
             o_pos = self.cam.position
@@ -150,6 +173,7 @@ class SquareView(LuxView):
         super().on_key_press(symbol, modifiers)
 
     def on_update(self, delta_time: float):
+        self.grid.update(delta_time)
         return super().on_update(delta_time)
 
     def on_draw(self):
