@@ -2,6 +2,7 @@ from collections import deque
 from logging import getLogger
 
 from arcade import Window, Text, get_controllers
+from arcade.key import GRAVE
 from arcade.experimental import input
 
 from lux.views.main_menu import MenuView
@@ -48,6 +49,10 @@ class LuxWindow(Window):
     @property
     def input_manager(self) -> input.InputManager:
         return self._input_manager
+
+    def on_key_press(self, symbol: int, modifiers: int):
+        if symbol == GRAVE:
+            self.debug_display.show = not self.debug_display.show
 
     def _dispatch_updates(self, delta_time: float):
         self._input_manager.update()
