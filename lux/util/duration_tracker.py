@@ -1,8 +1,6 @@
 from time import perf_counter_ns
 from typing import Callable
 
-from pyglet.math import Vec2
-
 import imgui
 
 __all__ = (
@@ -34,7 +32,6 @@ class PerfTracker:
         self._func_call_count[func] += 1
 
     def imgui_draw(self, context: str = ""):
-        imgui.separator()
         imgui.text_wrapped(f"Function Timings: {context}")
 
         for func in self._contexts[context]:
@@ -57,7 +54,7 @@ class PerfTracker:
 PERF_TRACKER = PerfTracker()
 
 
-def perf_timed_context(contexts: tuple[str, ...] = ()):
+def perf_timed_context(*contexts):
     def perf_timed(func: Callable):
         PERF_TRACKER.track_function(func, contexts)
 
