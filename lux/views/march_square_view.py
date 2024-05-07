@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import imgui
+
 import arcade
 from arcade.experimental.input.inputs import MouseButtons, Keys
 from arcade.draw_commands import draw_triangle_filled
@@ -40,10 +42,53 @@ class MarchGrid:
             for _ in range(GRID_HEIGHT)
         )
 
+        self._freq = 1.0
+        self._damp = 0.5
+        self._resp = 2.0
+
         self.animators: tuple[ProceduralAnimator, ...] = tuple(
             ProceduralAnimator(1.0, 0.5, 2.0, -1.0, -1.0, 0.0)
             for _ in range(GRID_WIDTH * GRID_HEIGHT)
         )
+
+    @property
+    def frequency(self):
+        return self._freq
+
+    @frequency.setter
+    def frequency(self, new_freq):
+        if new_freq == self._freq:
+            return
+
+        self._freq = new_freq
+        for anim in self.animators:
+            anim.update_frequency(new_freq)
+
+    @property
+    def damping(self):
+        return self._damp
+
+    @damping.setter
+    def damping(self, new_damp):
+        if new_damp == self._damp:
+            return
+
+        self._damp = new_damp
+        for anim in self.animators:
+            anim.update_damping(new_damp)
+
+    @property
+    def response(self):
+        return self._resp
+
+    @response.setter
+    def response(self, new_resp):
+        if new_resp == self._resp:
+            return
+
+        self._resp = new_resp
+        for anim in self.animators:
+            anim.update_response(new_resp)
 
     def __getitem__(self, item: tuple[int, int]):
         x, y = item
@@ -111,6 +156,10 @@ class MarchGrid:
         )
 
         return (tuple(points[i] for i in tri) for tri in triangulation)
+
+    def update_animators(self, new_frequency = None, new_damping = None, new_response = None):
+        for animator in self.animators:
+            animator.update_values(new_frequency, new_damping, new_response)
 
     def draw(self):
         for y, row in enumerate(self.grid[:]):
@@ -187,7 +236,7 @@ class SquareView(LuxView):
         return super().on_update(delta_time)
 
     def on_show_view(self):
-        self.window.debug_display.set_menu(MarchSquareDebug())
+        self.window.debug_display.set_menu(self.draw_debug_menu)
         super().on_show_view()
 
     def on_draw(self):
@@ -196,15 +245,15 @@ class SquareView(LuxView):
 
         self.grid.draw()
 
-import imgui
-
-class MarchSquareDebug:
-
-    def draw(self):
+    def draw_debug_menu(self):
         imgui.new_frame()
         imgui.set_next_window_size(150, 350, condition=imgui.FIRST_USE_EVER)
 
         imgui.begin("March Square Debug Menu", False)
+        _, self.grid.frequency = imgui.slider_float("Frequency", self.grid.frequency, 0.1, 10.0)
+        _, self.grid.damping = imgui.slider_float("Damping", self.grid.damping, 0.1, 10.0)
+        _, self.grid.response = imgui.slider_float("Response", self.grid.response, 0.1, 10.0)
 
         imgui.end()
         imgui.end_frame()
+
