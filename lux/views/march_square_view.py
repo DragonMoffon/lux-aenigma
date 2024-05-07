@@ -9,6 +9,7 @@ from arcade.draw_commands import draw_triangle_filled
 from util.procedural_animator import ProceduralAnimator
 
 from lux.util.view import LuxView
+from lux.util.duration_tracker import PERF_TRACKER, perf_timed
 
 GRID_WIDTH = 10
 GRID_HEIGHT = 10
@@ -104,6 +105,7 @@ class MarchGrid:
     def from_point(self, x, y):
         return y * GRID_WIDTH + x
 
+    @perf_timed
     def update(self, dt: float):
         for idx in range(GRID_WIDTH * GRID_HEIGHT):
             x, y = self.to_point(idx)
@@ -161,6 +163,7 @@ class MarchGrid:
         for animator in self.animators:
             animator.update_values(new_frequency, new_damping, new_response)
 
+    @perf_timed
     def draw(self):
         for y, row in enumerate(self.grid[:]):
             for x, val in enumerate(row[:]):
@@ -253,6 +256,8 @@ class SquareView(LuxView):
         _, self.grid.frequency = imgui.slider_float("Frequency", self.grid.frequency, 0.1, 10.0)
         _, self.grid.damping = imgui.slider_float("Damping", self.grid.damping, 0.1, 10.0)
         _, self.grid.response = imgui.slider_float("Response", self.grid.response, 0.1, 10.0)
+
+        PERF_TRACKER.imgui_draw()
 
         imgui.end()
         imgui.end_frame()
