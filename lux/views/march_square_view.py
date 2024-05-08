@@ -10,6 +10,7 @@ from util.procedural_animator import ProceduralAnimator
 
 from lux.util.view import LuxView
 from lux.util.duration_tracker import PERF_TRACKER, perf_timed, perf_timed_context
+from lux.level import LevelLoader
 
 GRID_WIDTH = 10
 GRID_HEIGHT = 10
@@ -185,7 +186,6 @@ class SquareView(LuxView):
 
     def __init__(self, back: LuxView):
         super().__init__(back=back)
-
         self.cam = arcade.camera.Camera2D(position=(0.0, 0.0))
         self.grid = MarchGrid()
 

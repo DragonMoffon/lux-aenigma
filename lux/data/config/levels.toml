@@ -11,11 +11,11 @@
 
 # Also yes this technically means a player can change the story levels, but if they do I will disable achievements.
 
-test = []
+test = ["test_player"]
 story = []
 challenges = []
 user = []
 
-[[packs]]
-name = ""
-levels = []
+# [[packs]]
+# name = ''
+# levels = []

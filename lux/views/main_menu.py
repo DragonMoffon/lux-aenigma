@@ -6,6 +6,7 @@ from arcade.experimental.input import ActionState
 from util.dev_menu import DevMenu
 from lux.util import LuxView
 from lux.views.march_square_view import SquareView
+from lux.views.level_test import LevelTestView
 from lux.views.musicmixer import MusicMixerView
 from lux.views.fast_test import FastTestView
 from lux.views.player import PlayerTestView
@@ -31,7 +32,8 @@ class MenuView(LuxView):
         super().__init__(*args, **kwargs)
 
         views: dict[str, Type[LuxView]] = {
-            "Test": FastTestView,
+            "Level Test": LevelTestView,
+            "Light Test": FastTestView,
             "Player": PlayerTestView,
             "Square": SquareView,
             # "Music": MusicMixerView,

@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Any, TypedDict
+from typing import TypedDict
 from enum import Enum
 from weakref import ProxyType
 
@@ -29,6 +29,9 @@ PlayerDict = TypedDict(
 )
 
 
+# Currently the player origin etc. are stored as a LevelObject separately, but maybe due to how often they change
+# It should all be rolled into one? Idk yet.
+
 class Player(Component):
 
     def __init__(self, UUID: int, parent: UUIDRef[LevelObject]):
@@ -56,4 +59,7 @@ class Player(Component):
 
     @classmethod
     def deserialise(cls, data: PlayerDict) -> tuple[Player, tuple[Resolvable, ...]]:
-        raise NotImplementedError()
+        UUID = data['UUID']
+        parent_ref = UUIDRef(data['parent'])
+
+        return Player(UUID, parent_ref), (parent_ref,)

@@ -22,10 +22,12 @@ class LuxView(View):
             self.window.show_view(self.back)
 
     def on_show_view(self):
+        self.window.ctx.viewport = (0, 0, self.window.width, self.window.height)
         self.window.default_camera.use()
         self.window.input_manager.subscribe_to_action("gui_back", self.go_back)
 
     def on_hide_view(self):
+        self.window.ctx.viewport = (0, 0, self.window.width, self.window.height)
         self.window.default_camera.use()
         self.window.input_manager.action_subscribers["gui_back"].discard(self.go_back)
 

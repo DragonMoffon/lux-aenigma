@@ -6,7 +6,7 @@ from arcade.key import GRAVE
 from arcade.experimental import input
 
 from lux.views.main_menu import MenuView
-from lux.views.splash_screen import SplashView
+from lux.setup.splash_screen import SplashView
 from lux.engine.debug.menu import DebugDisplay
 from lux.data import get_config
 

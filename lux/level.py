@@ -1,4 +1,5 @@
 from weakref import WeakSet
+from typing import TypedDict
 
 from lux.components.base import Component
 from lux.data import get_config, get_level_data, save_level_data
@@ -8,11 +9,61 @@ from lux.systems.base import System, UpdateLoopSystem, DrawLoopSystem
 import sys
 
 
+PackConfigDict = TypedDict(
+    "PackConfigDict",
+    {
+        'name': str,
+        'levels': list[str]
+    }
+)
+
+LevelConfigDict = TypedDict(
+    "LevelConfigDict",
+    {
+        'test': list[str],
+        'story': list[str],
+        'challenges': list[str],
+        'user': list[str],
+        'packs': list[PackConfigDict]
+    }
+)
+
+
 class LevelLoader:
 
     def __init__(self):
-        pass
+        self.all_levels: set[str] = set()
+        self.test_levels: tuple[str, ...] = ()
+        self.story_levels: tuple[str, ...] = ()
+        self.challenge_levels: tuple[str, ...] = ()
+        self.user_levels: tuple[str, ...] = ()
+        self.packs: dict[str, tuple[str, ...]] = dict()
 
+    def load_level_names(self):
+        level_config: LevelConfigDict = get_config('levels').unwrap()
+
+        # We use a set because we don't want duplicates.
+        self.all_levels: set[str] = set()
+
+        self.test_levels: tuple[str, ...] = tuple(level_config['test'])
+        self.all_levels.update(self.test_levels)
+
+        self.story_levels: tuple[str, ...] = tuple(level_config['story'])
+        self.all_levels.update(self.story_levels)
+
+        self.challenge_levels: tuple[str, ...] = tuple(level_config['challenges'])
+        self.all_levels.update(self.challenge_levels)
+
+        self.user_levels: tuple[str, ...] = tuple(level_config['user'])
+        self.all_levels.update(self.user_levels)
+
+        self.packs: dict[str, tuple[str, ...]] = dict()
+        for pack in level_config.get('packs', ()):
+            if pack['name'] in self.packs:
+                raise ValueError("Two level packs have the same name")  # Should probably get caught
+            levels = tuple(pack['levels'])
+            self.all_levels.update(levels)
+            self.packs[pack['name']] = levels
 
 class Level:
 

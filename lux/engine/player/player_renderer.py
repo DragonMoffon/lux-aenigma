@@ -7,7 +7,7 @@ from pyglet.math import Vec2
 from lux.engine.player.player_object import PlayerData
 from util.procedural_animator import ProceduralAnimator
 
-from lux.rendering.player_sdf_shader import PlayerSDFRenderer
+from lux.util.player_sdf_shader import PlayerSDFRenderer
 
 from logging import getLogger
 
