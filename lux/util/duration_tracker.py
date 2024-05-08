@@ -31,22 +31,24 @@ class PerfTracker:
         self._func_timings[func].append(elapsed_time)
         self._func_call_count[func] += 1
 
-    def imgui_draw(self, context: str = ""):
-        imgui.text_wrapped(f"Function Timings: {context}")
+    def imgui_draw(self, *contexts):
+        for context in contexts:
+            expanded, visible = imgui.collapsing_header(f"Function Timings: {context}")
 
-        for func in self._contexts[context]:
-            count = self._func_call_count[func]
-            if not count:
-                imgui.text(f"{func.__qualname__} - avg: N/A - count: {count}")
-                if imgui.is_item_hovered():
-                    imgui.set_tooltip(f"{func}")
-            timings = self._func_timings[func]
-            avg_count = min(count, 10)
-            avg_timing = sum(timings[-avg_count:]) / avg_count
+            if expanded:
+                for func in self._contexts[context]:
+                    count = self._func_call_count[func]
+                    if not count:
+                        imgui.text(f"{func.__qualname__} - avg: N/A - count: {count}")
+                        if imgui.is_item_hovered():
+                            imgui.set_tooltip(f"{func}")
+                    timings = self._func_timings[func]
+                    avg_count = min(count, 10)
+                    avg_timing = sum(timings[-avg_count:]) / avg_count
 
-            imgui.text(f"{func.__qualname__} - avg: {avg_timing * 1e-6 :.3f}ms - count: {count}")
-            if imgui.is_item_hovered():
-                imgui.set_tooltip(f"{func}")
+                    imgui.text(f"{func.__qualname__} - avg: {avg_timing * 1e-6 :.3f}ms - count: {count}")
+                    if imgui.is_item_hovered():
+                        imgui.set_tooltip(f"{func}")
 
         imgui.separator()
 

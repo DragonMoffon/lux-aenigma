@@ -257,7 +257,7 @@ class SquareView(LuxView):
         _, self.grid.damping = imgui.slider_float("Damping", self.grid.damping, 0.1, 10.0)
         _, self.grid.response = imgui.slider_float("Response", self.grid.response, 0.1, 10.0)
         imgui.separator()
-        PERF_TRACKER.imgui_draw()
+        PERF_TRACKER.imgui_draw("updates", "")
 
         imgui.end()
         imgui.end_frame()
