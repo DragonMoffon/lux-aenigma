@@ -1,27 +1,51 @@
+from __future__ import annotations
 from typing import Union, Any, TypedDict
 
 from pyglet.math import Vec2
 
-from components.base import Resolvable
 from lux.util import LuxColour
 
-from lux.components.base import Component
+from lux.components.base import Component, Resolvable
 
 from util.uuid_ref import UUIDRef
 
-class RotationDOF:
+
+class DegreeOfFreedom:
+
+    def pull(self, parent: Component, control_point_pos: Vec2, lux_pos: Vec2, lux_velocity: Vec2, control_point_weight: float):
+        raise NotImplementedError()
+
+    @classmethod
+    def serialise(cls) -> dict:
+        raise NotImplementedError()
+
+    @classmethod
+    def deserialise(cls, data) -> DegreeOfFreedom:
+        raise NotImplementedError()
+
+
+class RotationDOF(DegreeOfFreedom):
     pass
 
 
 class AxisDOF:
-    pass
 
+    def __init__(self, axis: Vec2, origin: Vec2, min_offset: float = -float('inf'), max_offset: float = float('inf')):
+        self.axis: Vec2 = axis
+        self.origin: Vec2 = origin
+        self.min_offset: float = min_offset
+        self.max_offset: float = max_offset
+
+    def pull(self, parent: Component, control_point_pos: Vec2, lux_pos: Vec2, lux_velocity: Vec2, control_point_weight: float):
+        """
+        I HATE this function
+        """
 
 class ToggleDOF:
     pass
 
-
-DegreeOfFreedom = Union[RotationDOF, AxisDOF, ToggleDOF]
+# Vomiting everywhere
+_DOF_MAP: dict[str, type[DegreeOfFreedom]] = {dof.__name__: dof for dof in DegreeOfFreedom.__subclasses__()}
 
 ControlPointDict = TypedDict(
     'ControlPointDict',
@@ -47,5 +71,5 @@ class ControlPoint(Component):
         raise NotImplementedError()
 
     @classmethod
-    def deserialise(cls, data: ControlPointDict) -> tuple[Any, tuple[Resolvable, ...]]:
+    def deserialise(cls, data: ControlPointDict) -> tuple[ControlPoint, tuple[Resolvable, ...]]:
         raise NotImplementedError()

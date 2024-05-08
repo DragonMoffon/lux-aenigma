@@ -1,0 +1,23 @@
+# The template which gets loaded and filled before being saved (In the case of a new save)
+
+# Any key, value pair or table that is commented out is unused.
+
+# ----- Per Save Data -----
+
+# cloud_saved = False
+# story_completed = False
+# play time = 0.0
+
+# [[achievements]]
+
+# I don't know how steam achievements work, but yeah here are all the flags used to determine if an achievement was
+# gotten on this save. NOTE this isn't used to give the player achievements >:( no cheating allowed.
+
+# ----- Per Level Data -----
+# [[level]]
+# name = "" # -> becomes the key in dict of all levels. The name will be split by the first `_` in the name.
+# tries = 0
+# successes = 0
+# best_time = 0.0
+# times = []
+

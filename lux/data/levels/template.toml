@@ -1,0 +1,19 @@
+name = "TEMPLATE"
+
+
+[[components.LevelObject]]
+UUID = 0
+
+[[components.ControlPoint]]
+UUID = 1
+
+[[components.Sprites]]
+UUID = 2
+
+[[components.PointLights]]
+UUID = 3
+
+[[component.LightInteractors]]
+UUID = 1
+
+# ... Any other components that appear in the level, these also impact what systems will get loaded for the particular level

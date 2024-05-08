@@ -1,0 +1,21 @@
+# This file contains the data used to determine the order that levels are completed
+# The UserPack list of tables allows the user to collate a set of levels to share
+# with friends (steam workshop????)
+# This file does not actually store the save data for a player
+# User levels are stored independent of save
+
+# The hope is to eventually hook into the steam api so user levels have the player_id suffix to protect against
+# name clashes.
+
+# Each list becomes an option in the level select menu with packs getting their own sub select screen.
+
+# Also yes this technically means a player can change the story levels, but if they do I will disable achievements.
+
+test = []
+story = []
+challenges = []
+user = []
+
+[[packs]]
+name = ""
+levels = []

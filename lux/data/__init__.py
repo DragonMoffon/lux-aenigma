@@ -65,5 +65,14 @@ def get_texture(name: str, *, file_type: str = "png",
         return load_texture(path, x=x, y=y, width=width, height=height, hit_box_algorithm=hit_box_alg)
 
 
-def get_level(name: str):
-    raise NotImplementedError()
+def get_level_data(name: str) -> TOMLDocument:
+    level_name = f"{name}.toml"
+    s = pkg_resources.read_text(levels, level_name)
+    return parse(s)
+
+
+def save_level_data(name: str, data: TOMLDocument):
+    level_name = f"{name}.toml"
+    with pkg_resources.path(levels, level_name) as path:
+        with open(path, 'w') as level_file:
+            level_file.write(dumps(data))

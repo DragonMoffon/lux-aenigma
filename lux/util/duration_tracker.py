@@ -5,6 +5,7 @@ import imgui
 
 __all__ = (
     "perf_timed",
+    "perf_timed_context",
     "PERF_TRACKER"
 )
 

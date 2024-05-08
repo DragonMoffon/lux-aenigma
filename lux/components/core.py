@@ -1,33 +1,55 @@
-from typing import Any
+from typing import Any, TypedDict
 
 from pyglet.math import Vec2
+
 from lux.util import LuxColour
 
-from lux.components.base import Component
+from lux.components.base import Component, Resolvable
+
+
+LevelObjectDict = TypedDict(
+    "LevelObjectDict",
+    {
+        "UUID": int,
+        "origin": tuple[float, float],
+        "direction": tuple[float, float],
+        "colour": tuple[bool, bool, bool]
+    }
+)
+
 
 class LevelObject(Component):
     __slots__ = (
         "UUID",
+        "_change_listeners"
         "origin",
         "_direction",
         "_normal",
         "colour"
     )
 
-    def __init__(self, UUID: int, origin: tuple[float, float], direction: tuple[float, float], colour: LuxColour):
+    def __init__(self, UUID: int, origin: Vec2, direction: Vec2, colour: LuxColour):
         super().__init__(UUID)
-        self.origin: Vec2 = Vec2(origin[0],origin[1])
-        self._direction: Vec2 = Vec2(direction[0], direction[1])
-        self._normal: Vec2 = Vec2(-direction[1], direction[0])
+        self.origin: Vec2 = origin
+        self._direction: Vec2 = direction
+        self._normal: Vec2 = Vec2(-direction.y, direction.x)
         self.colour: LuxColour = colour
 
-    def serialise(self) -> dict[str, Any]:
+    def serialise(self) -> LevelObjectDict:
         return {
             "UUID": self.UUID,
             "origin": (self.origin.x, self.origin.y),
             "direction": (self.direction.x, self.direction.y),
             "colour": (self.colour.red, self.colour.green, self.colour.blue)
         }
+
+    @classmethod
+    def deserialise(cls, data: LevelObjectDict) -> tuple[Any, tuple[Resolvable, ...]]:
+        o_x, o_y = data["origin"]
+        d_x, d_y = data["direction"]
+        r, g, b = data["colour"]
+
+        return cls(data["UUID"], Vec2(o_x, o_y), Vec2(d_x, d_y), LuxColour(r, g, b)), ()
 
     @property
     def direction(self):
