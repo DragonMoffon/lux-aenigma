@@ -1,11 +1,15 @@
 from lux.systems.base import System, UpdateLoopSystem, DrawLoopSystem
 from lux.components import Component
 
+from lux.systems.player import PlayerInputSystem, PlayerStateSystem
+
 
 # Due to how get_system_requirement_map works we don't actually need to have any systems in this system, but eh.
 __all__ = (
     'get_systems',
-    'get_system_requirement_map'
+    'get_system_requirement_map',
+    'PlayerInputSystem',
+    'PlayerStateSystem'
 )
 
 def get_systems() -> tuple[type[System], ...]:
@@ -16,7 +20,7 @@ def get_systems() -> tuple[type[System], ...]:
     return tuple(System.__subclasses__())
 
 
-def get_system_requirement_map(systems: tuple[type[System]]) -> dict[type[Component], tuple[type[System], ...]]:
+def get_system_requirement_map(systems: tuple[type[System], ...]) -> dict[type[Component], tuple[type[System], ...]]:
     """
     AAAAAAAAAAHHHHHHHHHHHHHHHHHHHHHHHHHHHH
     """

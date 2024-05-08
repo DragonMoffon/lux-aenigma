@@ -12,9 +12,9 @@ from lux.components.control import ControlPoint
 from util.uuid_ref import UUIDRef
 
 class PlayerState(Enum):
-    IDLE = 0
+    IDLING = 0
     MOVING = 1
-    CROUCHED = 2
+    CROUCHING = 2
     CRAWLING = 3
     GRABBING = 4
     PULLING = 5
@@ -39,7 +39,7 @@ class Player(Component):
         self.parent: UUIDRef[LevelObject] = parent
 
         # State
-        self.state: PlayerState = PlayerState.IDLE
+        self.state: PlayerState = PlayerState.IDLING
 
         # movement variables
         self.velocity: Vec2 = Vec2()

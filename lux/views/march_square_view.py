@@ -242,6 +242,10 @@ class SquareView(LuxView):
         self.window.debug_display.set_menu(self.draw_debug_menu)
         super().on_show_view()
 
+    def on_hide_view(self):
+        self.window.debug_display.set_menu(None)
+        super().on_hide_view()
+
     def on_draw(self):
         self.clear()
         self.cam.use()

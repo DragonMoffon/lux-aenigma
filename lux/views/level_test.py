@@ -15,6 +15,7 @@ class LevelTestView(LuxView):
 
     def __init__(self, back: LuxView):
         super().__init__(back=back)
+
         self._level_loader = LevelLoader()
         self._level_loader.load_level_names()
         self._packs = {

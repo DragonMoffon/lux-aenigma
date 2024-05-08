@@ -4,12 +4,14 @@ from weakref import WeakSet
 from lux.components.base import Component
 
 class UpdateLoopSystem(Protocol):
+    update_priority: int
 
     def update(self, dt: float):
         ...
 
 
 class DrawLoopSystem(Protocol):
+    draw_priority: int
 
     def draw(self):
         ...
@@ -17,7 +19,7 @@ class DrawLoopSystem(Protocol):
 
 class _ComponentSource(Protocol):
 
-    def get_components_of_name(self, name: str) -> WeakSet[Component]:
+    def get_components(self, components: type[Component]) -> WeakSet[Component]:
         pass
 
 
