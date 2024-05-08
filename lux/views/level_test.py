@@ -96,37 +96,52 @@ class LevelTestView(LuxView):
         if self._is_selecting_level:
             if not self._levels:
                 return
+            old = self.level_selected
             self.level_selected = (self.level_selected - 1) % len(self._levels)
+            new = self.level_selected
             y = self._level_text[self.level_selected].y
             self._level_selector_left.y = y
             self._level_selector_right.y = y
         else:
+            old = self.pack_selected
             self.pack_selected = (self.pack_selected - 1) % len(self._pack_names)
+            new = self.pack_selected
             y = self._pack_text[self.pack_selected].y
             self._pack_selector_left.y = y
             self._pack_selector_right.y = y
 
-            self.calc_level_text()
+            if old != new:
+                self.level_selected = 0
+                self.calc_level_text()
 
+        if old == new:
+            self._pack_sound.play()
         self._move_sound.play()
 
     def select_next(self):
         if self._is_selecting_level:
             if not self._levels:
                 return
+            old = self.level_selected
             self.level_selected = (self.level_selected + 1) % len(self._levels)
-            y = self._level_text[self.pack_selected].y
+            new = self.level_selected
+            y = self._level_text[self.level_selected].y
             self._level_selector_left.y = y
             self._level_selector_right.y = y
         else:
+            old = self.pack_selected
             self.pack_selected = (self.pack_selected + 1) % len(self._pack_names)
+            new = self.pack_selected
             y = self._pack_text[self.pack_selected].y
             self._pack_selector_left.y = y
             self._pack_selector_right.y = y
 
-            self.calc_level_text()
+            if old != new:
+                self.level_selected = 0
+                self.calc_level_text()
 
-
+        if old == new:
+            self._pack_sound.play()
         self._move_sound.play()
 
     def toggle(self):
