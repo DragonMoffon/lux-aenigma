@@ -70,7 +70,9 @@ class PlayerInputSystem(System):
 
         self._player_data.velocity = player_move_dir * CONSTS['PLAYER_SPEED'] * (1.0 - 0.6 * self._player_data.is_crouching)
         self._player_object.origin += self._player_data.velocity * dt
-        self._player_object.direction = player_move_dir
+
+        if player_move_dir.dot(player_move_dir) > 0:
+            self._player_object.direction = player_move_dir
 
 
 class PlayerStateSystem(System):

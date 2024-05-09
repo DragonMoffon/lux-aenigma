@@ -67,7 +67,6 @@ class DebugRenderer(System):
         self._sprite_list.clear(deep=True)
 
     def update_origin(self, component: LevelObject, attr: str, value: Vec2):
-        print("hmmmmm")
         self._component_core_map[component].position = value
         self._component_direction_map[component].position = value + component.direction * CONSTS['DEBUG_POINT_RADIUS']
 

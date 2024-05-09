@@ -10,7 +10,7 @@ class Resolvable(Protocol):
 
 class Component:
     def __init__(self, UUID: int):
-        self._change_listeners: dict[str, WeakSet[Callable[[Component, str, Any], None]]] = {}
+        self._change_listeners: dict[str, set[Callable[[Component, str, Any], None]]] = {} # MAKE SURE THIS ISN'T LEAKING MEMORY ANYWHERE!!!!
         self.UUID: int = UUID
 
     def serialise(self) -> dict[str, Any]:
@@ -24,10 +24,12 @@ class Component:
     # They are attribute specific because idk maybe a system only cares about position?
     # This may make setting values far to slow also does it work with properties? me shall see
     def add_listener(self, attribute: str, callback: Callable):
+        print(id(callback))
         if attribute not in self._change_listeners:
-            self._change_listeners[attribute] = WeakSet()
+            self._change_listeners[attribute] = set()
 
         self._change_listeners[attribute].add(callback)
+        print(self._change_listeners)
 
     def remove_listener(self, attribute: str, callback: Callable):
         self._change_listeners[attribute].discard(callback)
