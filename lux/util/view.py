@@ -16,7 +16,7 @@ class LuxView(View):
     def rerender(self):
         pass
 
-    def go_back(self, state):
+    def go_back(self, state: ActionState = ActionState.RELEASED):
         if state == ActionState.RELEASED and self.back:
             logger.warning("forcefully going back. Improve this behavior later")
             self.window.show_view(self.back)

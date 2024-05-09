@@ -11,7 +11,7 @@
 
 # Also yes this technically means a player can change the story levels, but if they do I will disable achievements.
 
-test = ["test-player", "test-portal", "test-mirror", "test-control-points"]
+test = ["test-player"]
 story = ["welcome-lux", "door-opener", "filter-fun"]
 challenges = ["welcome-lux-doubletime", "door-opener-plus"]
 user = ["mega-ultra-hard", "welcome-lux-hard"]

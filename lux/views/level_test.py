@@ -4,6 +4,7 @@ import pyglet
 from util.procedural_animator import ProceduralAnimator
 
 from lux.util.view import LuxView
+from lux.views.level import LevelView
 from lux.data import get_sfx
 
 from lux.level import LevelLoader
@@ -26,6 +27,8 @@ class LevelTestView(LuxView):
         }
         self._packs.update(self._level_loader.packs)
         self._pack_names = tuple(self._packs.keys())
+
+        self._level_view: LevelView = LevelView(self, self._level_loader)
 
         self._levels = ()
 
@@ -88,7 +91,6 @@ class LevelTestView(LuxView):
 
         self._level_selector_left = arcade.Text(">", int(max_right) - 10, 0, font_name="GohuFont 11 Nerd Font Mono", font_size=22, batch=self._level_batch, anchor_x="right", anchor_y="center")
         self._level_selector_right = arcade.Text("<", 10 - int(max_right), 0, font_name="GohuFont 11 Nerd Font Mono", font_size=22, batch=self._level_batch, anchor_x="left", anchor_y="center")
-
 
     def close(self):
         self.close()
@@ -154,7 +156,28 @@ class LevelTestView(LuxView):
         self._is_selecting_level = not self._is_selecting_level
 
     def select(self):
+        if self._is_selecting_level:
+            self._level_loader.start_pack(self.level_selected)
+
+            self.window.show_view(self._level_view)
+        else:
+            self.load_pack()
+
         self.toggle()
+
+    def load_pack(self):
+        current_pack = self._pack_names[self.pack_selected]
+        match current_pack:
+            case "test":
+                self._level_loader.load_test_levels()
+            case "story":
+                self._level_loader.load_story_levels()
+            case "challenges":
+                self._level_loader.load_challenge_levels()
+            case "user":
+                self._level_loader.load_user_levels()
+            case _:
+                self._level_loader.load_level_pack(current_pack)
 
     # ----- LOOP FUNCTIONS -----
 

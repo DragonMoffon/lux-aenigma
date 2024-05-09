@@ -7,8 +7,12 @@ from arcade.experimental import input
 
 from lux.views.main_menu import MenuView
 from lux.setup.splash_screen import SplashView
-from lux.engine.debug.menu import DebugDisplay
 from lux.data import get_config
+
+try:
+    from lux.engine.debug.menu import DebugDisplay
+except ModuleNotFoundError:
+    DebugDisplay = None
 
 logger = getLogger('lux')
 
@@ -44,7 +48,10 @@ class LuxWindow(Window):
                              anchor_x="right", anchor_y="top",
                              font_name="GohuFont 11 Nerd Font Mono", font_size=11)
 
-        self.debug_display = DebugDisplay(self)
+        if DebugDisplay is not None:
+            self.debug_display = DebugDisplay(self)
+        else:
+            self.debug_display = None
 
     @property
     def input_manager(self) -> input.InputManager:
@@ -70,7 +77,8 @@ class LuxWindow(Window):
     def debug_draw(self):
         with self.default_camera.activate():
             self.fps_text.draw()
-            self.debug_display.draw()
+            if self.debug_display is not None:
+                self.debug_display.draw()
 
     def on_draw(self):
         self.debug_draw()

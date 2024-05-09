@@ -24,6 +24,9 @@ class Component:
     # They are attribute specific because idk maybe a system only cares about position?
     # This may make setting values far to slow also does it work with properties? me shall see
     def add_listener(self, attribute: str, callback: Callable):
+        if attribute not in self._change_listeners:
+            self._change_listeners[attribute] = WeakSet()
+
         self._change_listeners[attribute].add(callback)
 
     def remove_listener(self, attribute: str, callback: Callable):

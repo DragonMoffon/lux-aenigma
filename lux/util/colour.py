@@ -22,7 +22,7 @@ class LuxColour(NamedTuple):
             alpha
         )
 
-    def to_float_color(self, alpha = 1.0) -> RGBANormalized:
+    def to_float_color(self, alpha=1.0) -> RGBANormalized:
         c = self.to_int_color().normalized
         return (c[0], c[1], c[2], alpha)
 

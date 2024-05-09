@@ -5,8 +5,7 @@ from arcade.experimental.input import InputManager, ActionState
 from lux.get_window import get_window
 from lux.engine.player.player_object import PlayerData
 
-
-PLAYER_SPEED = 800.0
+from lux.consts import CONSTS
 
 
 class PlayerController:
@@ -35,6 +34,6 @@ class PlayerController:
     def update(self, delta_time):
         player_move_dir = Vec2(self.input_manager.axis("player_h"), self.input_manager.axis("player_v")).normalize()
 
-        self._player.velocity = player_move_dir * PLAYER_SPEED * (1.0 - 0.6 * self._player.is_crouching)
+        self._player.velocity = player_move_dir * CONSTS['PLAYER_SPEED'] * (1.0 - 0.6 * self._player.is_crouching)
         self._player.origin += self._player.velocity * delta_time
         self._player.direction = player_move_dir

@@ -1,7 +1,8 @@
-from typing import Protocol
+from typing import Protocol, TypeVar
 from weakref import WeakSet
 
 from lux.components.base import Component
+
 
 class UpdateLoopSystem(Protocol):
     update_priority: int
@@ -17,9 +18,12 @@ class DrawLoopSystem(Protocol):
         ...
 
 
+C = TypeVar('C', bound=Component)
+
+
 class _ComponentSource(Protocol):
 
-    def get_components(self, components: type[Component]) -> WeakSet[Component]:
+    def get_components(self, component: type[C]) -> WeakSet[C]:
         pass
 
 
@@ -41,5 +45,11 @@ class System:
     def load(self, source: _ComponentSource):
         """
         Run any final thread-unsafe initialisation, and grab actual level components
+        """
+        pass
+
+    def unload(self):
+        """
+        Remove any connections which may impact other levels operations.
         """
         pass
