@@ -4,7 +4,7 @@ from arcade.draw_commands import draw_line_strip, draw_polygon_filled
 from arcade.window_commands import get_window
 from pyglet.math import Vec2
 
-from lux.engine.player.player_object import PlayerData
+from lux.depreciated.engine.player import PlayerData
 from util.procedural_animator import ProceduralAnimator
 
 from lux.util.player_sdf_shader import PlayerSDFRenderer

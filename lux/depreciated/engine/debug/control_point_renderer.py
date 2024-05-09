@@ -1,4 +1,4 @@
-from lux.engine.control_points.control_point import ControlPoint
+from lux.depreciated.engine.control_points.control_point import ControlPoint
 from lux.util.draw import draw_cross
 
 

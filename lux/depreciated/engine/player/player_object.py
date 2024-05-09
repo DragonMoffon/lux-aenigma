@@ -3,7 +3,7 @@ from enum import Enum
 from pyglet.math import Vec2
 
 from lux.util.colour import LuxColour
-from lux.engine.control_points.control_point import ControlPoint
+from lux.depreciated.engine.control_points.control_point import ControlPoint
 
 
 class PlayerState(Enum):

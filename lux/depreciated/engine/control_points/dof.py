@@ -1,8 +1,8 @@
-from math import degrees, radians
+from math import radians
 
 from pyglet.math import Vec2
 
-from lux.engine.level.level_object import LevelObject
+from lux.depreciated.engine.level.level_object import LevelObject
 
 
 class DegreeOfFreedom:

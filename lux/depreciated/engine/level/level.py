@@ -1,10 +1,8 @@
-from lux.engine.level.level_object import LevelObject
+from lux.depreciated.engine.level.level_object import LevelObject
 
-from lux.engine.player.player_object import PlayerData
-from lux.engine.player.player_controller import PlayerController
-from lux.engine.player.player_renderer import PlayerRenderer
-
-from util.context_perf import LogSection
+from lux.depreciated.engine.player import PlayerData
+from lux.depreciated.engine.player.player_controller import PlayerController
+from lux.depreciated.engine.player import PlayerRenderer
 
 
 class Level:

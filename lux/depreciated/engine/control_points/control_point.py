@@ -1,8 +1,8 @@
 from pyglet.math import Vec2
 
 from lux.util.colour import LuxColour
-from lux.engine.level.level_object import LevelObject
-from lux.engine.control_points.dof import DegreeOfFreedom
+from lux.depreciated.engine.level.level_object import LevelObject
+from lux.depreciated.engine.control_points.dof import DegreeOfFreedom
 
 
 class ControlPoint:

@@ -3,7 +3,7 @@ from pyglet.math import Vec2
 from arcade.experimental.input import InputManager, ActionState
 
 from lux.get_window import get_window
-from lux.engine.player.player_object import PlayerData
+from lux.depreciated.engine.player import PlayerData
 
 from lux.consts import CONSTS
 

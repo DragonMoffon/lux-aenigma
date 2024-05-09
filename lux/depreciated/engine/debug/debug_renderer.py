@@ -2,7 +2,7 @@ from typing import Protocol, Any
 
 from arcade.draw_commands import draw_point
 
-from lux.engine.level.level_object import LevelObject
+from lux.depreciated.engine.level.level_object import LevelObject
 
 class DebugChildRenderer(Protocol):
     child: Any

@@ -7,8 +7,6 @@ from util.dev_menu import DevMenu
 from lux.util import LuxView
 from lux.views.level_test import LevelTestView
 from lux.views.musicmixer import MusicMixerView
-from lux.views.fast_test import FastTestView
-from lux.views.player import PlayerTestView
 from lux.views.sevensegtest import SevenSegTestView
 
 try:
@@ -37,9 +35,7 @@ class MenuView(LuxView):
         super().__init__(*args, **kwargs)
 
         views: dict[str, Type[LuxView]] = {
-            "Level Test": LevelTestView,
-            "Light Test": FastTestView,
-            "Player": PlayerTestView,
+            "Level Select": LevelTestView,
             # "Music": MusicMixerView,
             "Seven Segment Display": SevenSegTestView
         }

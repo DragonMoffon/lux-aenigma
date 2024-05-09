@@ -2,11 +2,11 @@ from __future__ import annotations
 
 from pyglet.math import Vec2
 
-from lux.engine.lights import Ray
-from lux.engine.interactors import RayInteractorEdge, RayInteractor
+from lux.depreciated.engine.lights import Ray
+from lux.depreciated.engine.interactors import RayInteractorEdge, RayInteractor
 from lux.util.colour import LuxColour
 
-from lux.engine.lights.beam_light_ray import LightRay, BeamLightRay
+from lux.depreciated.engine.lights.beam_light_ray import LightRay, BeamLightRay
 
 
 class PortalRayInteractor(RayInteractor):

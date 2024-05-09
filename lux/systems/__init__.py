@@ -2,6 +2,7 @@ from lux.systems.base import System, UpdateLoopSystem, DrawLoopSystem
 from lux.components import Component
 
 from lux.systems.player import PlayerInputSystem, PlayerStateSystem
+from lux.systems.player_renderer import PlayerRenderer
 from lux.systems.debug import DebugRenderer
 
 
@@ -11,6 +12,7 @@ __all__ = (
     'get_system_requirement_map',
     'PlayerInputSystem',
     'PlayerStateSystem',
+    'PlayerRenderer',
     'DebugRenderer'
 )
 

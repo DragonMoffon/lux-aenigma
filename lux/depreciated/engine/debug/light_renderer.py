@@ -1,8 +1,8 @@
 from pyglet.math import Vec2
 from arcade import draw_line, draw_point, draw_polygon_filled
 
-from lux.engine.lights import Ray
-from lux.engine.lights.beam_light_ray import BeamLightRay
+from lux.depreciated.engine.lights import Ray
+from lux.depreciated.engine.lights.beam_light_ray import BeamLightRay
 from lux.util.colour import LuxColour
 
 
