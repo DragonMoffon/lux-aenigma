@@ -244,6 +244,7 @@ class SquareView(LuxView):
         self.window.debug_display.set_menu(None)
         super().on_hide_view()
 
+    @perf_timed
     def on_draw(self):
         self.clear()
         self.cam.use()
@@ -259,7 +260,7 @@ class SquareView(LuxView):
         _, self.grid.damping = imgui.slider_float("Damping", self.grid.damping, 0.1, 10.0)
         _, self.grid.response = imgui.slider_float("Response", self.grid.response, 0.1, 10.0)
         imgui.separator()
-        PERF_TRACKER.imgui_draw("updates", "")
+        PERF_TRACKER.imgui_draw("updates", "on_draw")
 
         imgui.end()
         imgui.end_frame()

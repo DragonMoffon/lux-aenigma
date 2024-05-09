@@ -3,7 +3,7 @@ from typing import TypedDict, TypeVar
 
 from lux.components.base import Component
 from lux.components import get_component_map
-from lux.data import get_config, get_level_data
+from lux.data import get_config, get_level_data, get_texture
 from lux.systems.base import System, UpdateLoopSystem, DrawLoopSystem
 from lux.systems import get_system_requirement_map
 
@@ -79,7 +79,7 @@ class Level:
         required_systems = set()
         for component_name in components:
             component_type = component_map[component_name]
-            required_systems.update(requirement_map[component_type])
+            required_systems.update(requirement_map.get(component_type, ()))
 
         self.systems = tuple(system() for system in required_systems)
         update_systems: list[UpdateLoopSystem] = []
@@ -166,6 +166,9 @@ class Level:
         if self.UUID_map is None:
             raise ValueError("Level has not been initialised yet")
         return self.UUID_map[UUID_]
+
+    def load_texture(self, source: str, rect: tuple[int, int, int, int]):
+        return get_texture(source, x=rect[0], y=rect[1], width=rect[2], height=rect[3])
 
 
 class LevelLoader:

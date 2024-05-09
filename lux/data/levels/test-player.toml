@@ -7,8 +7,30 @@ origin = [0.0, 0.0]
 direction = [1.0, 0.0]
 colour = [true, true, true]
 
+[[components.LevelObject]]
+UUID = 2
+origin = [300.0, 0.0]
+direction = [0.0, -1.0]
+colour = [true, true, true]
+
 [[components.Player]]
 UUID = 1  # While not strictly neccisary I would like to think 1 is always the player's component.
 parent = 0
+
+[[components.Sprite]]
+UUID = 3
+parent = 2
+depth = 0.0
+scale = 1.0
+anchor = [0.5, 0.5]
+source = 'debug_sqr'
+rect = [0, 0, 0, 0]
+
+[[components.ControlPoint]]
+UUID = 4
+parent = 2
+relative = [80.0, 80.0]
+colour = [true, true, true]
+dof = []
 
 # ... Any other components that appear in the level, these also impact what systems will get loaded for the particular level

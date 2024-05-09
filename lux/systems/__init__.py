@@ -4,6 +4,7 @@ from lux.components import Component
 from lux.systems.player import PlayerInputSystem, PlayerStateSystem
 from lux.systems.player_renderer import PlayerRenderer
 from lux.systems.debug import DebugRenderer
+from lux.systems.sprite_renderer import SpriteRenderer
 
 
 # Due to how get_system_requirement_map works we don't actually need to have any systems in this system, but eh.
@@ -13,6 +14,7 @@ __all__ = (
     'PlayerInputSystem',
     'PlayerStateSystem',
     'PlayerRenderer',
+    'SpriteRenderer',
     'DebugRenderer'
 )
 

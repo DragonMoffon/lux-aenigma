@@ -37,9 +37,7 @@ class AxisDOF:
         self.max_offset: float = max_offset
 
     def pull(self, parent: Component, control_point_pos: Vec2, lux_pos: Vec2, lux_velocity: Vec2, control_point_weight: float):
-        """
-        I HATE this function
-        """
+        pass
 
 class ToggleDOF:
     pass
@@ -68,8 +66,18 @@ class ControlPoint(Component):
         self.dof: tuple[DegreeOfFreedom, ...] = dof
 
     def serialise(self) -> ControlPointDict:
-        raise NotImplementedError()
+        return {
+            'UUID': self.UUID,
+            'parent': self.parent.UUID,
+            'relative': (self.relative.x, self.relative.y),
+            'colour': (self.colour.red, self.colour.green, self.colour.blue),
+            'dof': ()
+        }
 
     @classmethod
     def deserialise(cls, data: ControlPointDict) -> tuple[ControlPoint, tuple[Resolvable, ...]]:
-        raise NotImplementedError()
+        parent = UUIDRef(data['parent'])
+        relative = Vec2(*data['relative'])
+        color = LuxColour(*data['colour'])
+
+        return ControlPoint(data['UUID'], parent, relative, color, ()), (parent,)

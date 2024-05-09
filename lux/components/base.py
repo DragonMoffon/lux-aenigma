@@ -29,8 +29,16 @@ class Component:
 
         self._change_listeners[attribute].add(callback)
 
+    def add_listeners(self, attributes: tuple[str, ...], callback: Callable):
+        for attribute in attributes:
+            self.add_listener(attribute, callback)
+
     def remove_listener(self, attribute: str, callback: Callable):
         self._change_listeners[attribute].discard(callback)
+
+    def remove_listeners(self, attributes: tuple[str, ...], callback: Callable):
+        for attribute in attributes:
+            self.remove_listener(attribute, callback)
 
     def __setattr__(self, key, value):
         super().__setattr__(key, value)

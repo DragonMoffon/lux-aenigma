@@ -54,7 +54,7 @@ class Player(Component):
     def serialise(self) -> PlayerDict:
         return {
             'UUID': self.UUID,
-            'parent': self.parent._val
+            'parent': self.parent.UUID
         }
 
     @classmethod

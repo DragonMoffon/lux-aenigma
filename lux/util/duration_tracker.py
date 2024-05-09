@@ -75,7 +75,7 @@ def perf_timed_context(*contexts):
 
 
 def perf_timed(func: Callable):
-    PERF_TRACKER.track_function(func)
+    PERF_TRACKER.track_function(func, (func.__name__,))
 
     def _count(*args, **kwargs):
         start = perf_counter_ns()
