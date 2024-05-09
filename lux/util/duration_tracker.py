@@ -43,6 +43,7 @@ class PerfTracker:
                         imgui.text(f"{func.__qualname__} - avg: N/A - count: {count}")
                         if imgui.is_item_hovered():
                             imgui.set_tooltip(f"{func}")
+                        return
                     timings = self._func_timings[func]
                     avg_count = min(count, 10)
                     avg_timing = sum(timings[-avg_count:]) / avg_count
@@ -63,9 +64,10 @@ def perf_timed_context(*contexts):
 
         def _count(*args, **kwargs):
             start = perf_counter_ns()
-            func(*args, **kwargs)
+            val = func(*args, **kwargs)
             elapsed = (perf_counter_ns() - start)
             PERF_TRACKER[func] = elapsed
+            return val
 
         return _count
 
@@ -77,8 +79,9 @@ def perf_timed(func: Callable):
 
     def _count(*args, **kwargs):
         start = perf_counter_ns()
-        func(*args, **kwargs)
+        val = func(*args, **kwargs)
         elapsed = (perf_counter_ns() - start)
         PERF_TRACKER[func] = elapsed
+        return val
 
     return _count

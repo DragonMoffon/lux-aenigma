@@ -2,7 +2,8 @@ from math import tau
 
 from weakref import proxy, ProxyType
 
-from arcade.draw_commands import draw_line_strip, draw_polygon_filled
+from arcade.draw_commands import draw_polygon_filled
+from pyglet import shapes
 from lux.get_window import get_window
 
 from util.procedural_animator import ProceduralAnimator
@@ -59,13 +60,24 @@ class Bubble:
     def __init__(self, locus):
         self.bubble_points = tuple(BubblePoint(tau * idx/BUBBLE_COUNT, locus) for idx in range(BUBBLE_COUNT))
         self.points = tuple(p.pos for p in self.bubble_points)
+        self._batch = shapes.Batch()
+        self._triangle_indices = tuple((0, i, (i+1)%BUBBLE_COUNT) for i in range(1, BUBBLE_COUNT))
+        self._triangles = tuple(shapes.Triangle(*self.points[a], *self.points[b], *self.points[c], batch=self._batch) for a,b,c in self._triangle_indices)
 
     def update(self, dt, locus, direction):
         self.points = tuple(p.update(dt, locus, direction) for p in self.bubble_points)
 
     def draw(self, colour):
-        draw_line_strip(self.points + (self.points[0],), colour, BUBBLE_WIDTH)
-        draw_polygon_filled(self.points + (self.points[0],), colour)
+        for idx in range(len(self._triangle_indices)):
+            triangle = self._triangles[idx]
+            if triangle.color != colour:
+                triangle.color = colour
+
+            a, b, c = self._triangle_indices[idx]
+            triangle.x, triangle.y = self.points[a]
+            triangle.x2, triangle.y2 = self.points[b]
+            triangle.x3, triangle.y3 = self.points[c]
+        self._batch.draw()
 
 
 class PlayerRenderer(System):

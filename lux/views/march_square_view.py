@@ -10,7 +10,8 @@ from util.procedural_animator import ProceduralAnimator
 
 from lux.util.view import LuxView
 from lux.util.duration_tracker import PERF_TRACKER, perf_timed, perf_timed_context
-from lux.level import LevelLoader
+
+draw_triangle_filled = perf_timed_context("drawcall")(draw_triangle_filled)
 
 GRID_WIDTH = 10
 GRID_HEIGHT = 10
