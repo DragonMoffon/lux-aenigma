@@ -1,7 +1,7 @@
 from arcade import SpriteList
 import arcade.key
 
-from lux.depreciated.engine.sevenseg import SevenSeg
+from lux.util.sevenseg import SevenSeg
 from lux.util.maths import clamp
 from lux.util.view import LuxView
 

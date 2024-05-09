@@ -9,10 +9,7 @@ from lux.views.main_menu import MenuView
 from lux.setup.splash_screen import SplashView
 from lux.data import get_config
 
-try:
-    from lux.engine.debug.menu import DebugDisplay
-except ModuleNotFoundError:
-    DebugDisplay = None
+from lux.util.menu import DebugDisplay
 
 logger = getLogger('lux')
 
@@ -48,10 +45,7 @@ class LuxWindow(Window):
                              anchor_x="right", anchor_y="top",
                              font_name="GohuFont 11 Nerd Font Mono", font_size=11)
 
-        if DebugDisplay is not None:
-            self.debug_display = DebugDisplay(self)
-        else:
-            self.debug_display = None
+        self.debug_display = DebugDisplay(self)
 
     @property
     def input_manager(self) -> input.InputManager:
