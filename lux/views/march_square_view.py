@@ -202,8 +202,6 @@ class SquareView(LuxView):
         v = self.grid.get_closest_point(w_x, w_y)
         self.grid.set_closest_point(w_x, w_y, v + scroll_y / 16.0)
 
-        print(self.grid.get_closest_point(w_x, w_y))
-
     def on_mouse_drag(self, x: int, y: int, dx: int, dy: int, _buttons: int, _modifiers: int):
         try:
             button = MouseButtons(_buttons)
@@ -232,7 +230,6 @@ class SquareView(LuxView):
             self.grid.set_closest_point(w_x, w_y, -1)
 
     def on_key_press(self, symbol: int, modifiers: int):
-        print(Keys(symbol))
         super().on_key_press(symbol, modifiers)
 
     def on_update(self, delta_time: float):

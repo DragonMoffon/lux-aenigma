@@ -151,6 +151,7 @@ class LevelTestView(LuxView):
         if self._is_selecting_level:
             self._level_sound.play()
         else:
+            self.load_pack()
             self._pack_sound.play()
 
         self._is_selecting_level = not self._is_selecting_level
@@ -160,8 +161,6 @@ class LevelTestView(LuxView):
             self._level_loader.start_pack(self.level_selected)
 
             self.window.show_view(self._level_view)
-        else:
-            self.load_pack()
 
         self.toggle()
 

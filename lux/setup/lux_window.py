@@ -20,14 +20,9 @@ SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
 
 
-def action(*args):
-    print(args)
-
-
 class LuxWindow(Window):
     def __init__(self):
         super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, update_rate=1.0 / FPS_CAP, title="Lux Aenigma")
-        print(self.ctx.gl_version)
         self.register_event_type("on_action")
 
         self._input_manager: input.InputManager = input.InputManager.parse(get_config("active_input").unwrap())

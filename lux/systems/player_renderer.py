@@ -2,7 +2,6 @@ from math import tau
 
 from weakref import proxy, ProxyType
 
-from arcade.draw_commands import draw_polygon_filled
 from pyglet import shapes
 from lux.get_window import get_window
 
@@ -12,7 +11,7 @@ from lux.systems.base import System, _ComponentSource
 from lux.components.player import Player, LevelObject
 from util.uuid_ref import UUIDRef
 
-
+from lux.util.duration_tracker import perf_timed_context
 from pyglet.math import Vec2
 
 from logging import getLogger
@@ -137,6 +136,7 @@ class PlayerRenderer(System):
 
         self.bubble = None
 
+    @perf_timed_context()
     def update(self, dt: float):
         new_a = self._player_object.origin
 
@@ -147,6 +147,7 @@ class PlayerRenderer(System):
 
         self.bubble.update(dt, self.locus_a, self._player_data.velocity.normalize())
 
+    @perf_timed_context()
     def draw(self):
         c = self._player_object.colour.to_int_color()
         self.bubble.draw(c)
