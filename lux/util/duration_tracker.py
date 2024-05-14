@@ -1,3 +1,4 @@
+from dataclasses import dataclass, field
 from time import perf_counter_ns
 from typing import Callable
 
@@ -9,28 +10,49 @@ __all__ = (
     "PERF_TRACKER"
 )
 
+@dataclass(slots=True)
+class FuncTracker:
+    timings: list[float] = field(default_factory=list)
+    count: int = 0
+    update_count: int = 0
+    update_elapsed: float = 0.0
+    update_count_history: list[int] = field(default_factory=list)
+    update_elapsed_history: list[float] = field(default_factory=list)
+    contexts: set[str] = field(default_factory=lambda: {""})
+
+
 class PerfTracker:
 
     def __init__(self):
-        self._func_timings: dict[Callable, list] = {}
-        self._func_call_count: dict[Callable, int] = {}
-        self._contexts: dict[str, set[Callable]] = {"":set()}
+        self._funcs: dict[Callable, FuncTracker] = {}
+        self._contexts: dict[str, set[Callable]] = {"": set()}
 
     def track_function(self, func: Callable, contexts: tuple[str, ...] = ()):
-        if func in self._func_timings:
+        if func in self._funcs:
             raise KeyError("This function is already being tracked")
 
-        self._func_timings[func] = []
-        self._func_call_count[func] = 0
+        tracker = FuncTracker()
+        self._funcs[func] = tracker
         self._contexts[""].add(func)
         for context in contexts:
-            context_funcs = self._contexts.get(context, set())
-            context_funcs.add(func)
-            self._contexts[context] = context_funcs
+            tracker.contexts.add(context)
+            context_set = self._contexts.get(context, set())
+            context_set.add(func)
+            self._contexts[context] = context_set
 
     def __setitem__(self, func: Callable, elapsed_time: float):
-        self._func_timings[func].append(elapsed_time)
-        self._func_call_count[func] += 1
+        tracker = self._funcs[func]
+        tracker.timings.append(elapsed_time)
+        tracker.update_elapsed += elapsed_time
+        tracker.count += 1
+        tracker.update_count += 1
+
+    def cache_update(self):
+        for tracker in self._funcs.values():
+            tracker.update_count_history.append(tracker.update_count)
+            tracker.update_elapsed_history.append(tracker.update_elapsed)
+            tracker.update_count = 0
+            tracker.update_elapsed = 0.0
 
     def imgui_draw(self, *contexts):
         for context in contexts:
@@ -38,19 +60,29 @@ class PerfTracker:
 
             if expanded:
                 for func in self._contexts[context]:
-                    count = self._func_call_count[func]
-                    if not count:
-                        imgui.text(f"{func.__qualname__} - avg: N/A - count: {count}")
-                        if imgui.is_item_hovered():
-                            imgui.set_tooltip(f"{func}")
-                        return
-                    timings = self._func_timings[func]
-                    avg_count = min(count, 10)
-                    avg_timing = sum(timings[-avg_count:]) / avg_count
-
-                    imgui.text(f"{func.__qualname__} - avg: {avg_timing * 1e-6 :.3f}ms - count: {count}")
                     if imgui.is_item_hovered():
                         imgui.set_tooltip(f"{func}")
+                    tracker = self._funcs[func]
+                    if not tracker.count:
+                        imgui.text(f"{func.__qualname__} - Uncalled")
+                        return
+                    timings = tracker.timings
+                    avg_count = min(tracker.count, 10)
+                    avg_timing = sum(timings[-avg_count:]) / avg_count
+
+                    update_counts = tracker.update_count_history
+                    update_elapsed = tracker.update_elapsed_history
+                    update_count = min(len(update_counts), 10)
+
+                    if not update_count:
+                        imgui.text(f"{func.__qualname__} - avg: {avg_timing * 1e-6 :.3f}ms - count: {tracker.count}")
+                        return
+
+                    avg_counts = int(sum(update_counts[-update_count:]) / update_count)
+                    avg_elapsed = sum(update_elapsed[-update_count:]) / update_count
+
+                    imgui.text(f"{func.__qualname__} - avg: {avg_timing * 1e-6 :.3f}ms - count: {tracker.count} - avg update elapsed: {avg_elapsed * 1e-6 :.3f} - avg call count: {avg_counts}")
+
 
         imgui.separator()
 

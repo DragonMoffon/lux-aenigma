@@ -10,6 +10,7 @@ from lux.setup.splash_screen import SplashView
 from lux.data import get_config
 
 from lux.util.menu import DebugDisplay
+from lux.util.duration_tracker import PERF_TRACKER
 
 logger = getLogger('lux')
 
@@ -52,6 +53,7 @@ class LuxWindow(Window):
             self.debug_display.show = not self.debug_display.show
 
     def _dispatch_updates(self, delta_time: float):
+        PERF_TRACKER.cache_update()
         self._input_manager.update()
 
         # FPS tracking
