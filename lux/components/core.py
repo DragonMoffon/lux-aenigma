@@ -32,7 +32,7 @@ class LevelObject(Component):
         super().__init__(UUID)
         self.origin: Vec2 = origin
         self._direction: Vec2 = direction
-        self._normal: Vec2 = Vec2(-direction.y, direction.x)
+        self._normal: Vec2 = Vec2(direction.y, -direction.x)
         self.colour: LuxColour = colour
 
     def serialise(self) -> LevelObjectDict:
@@ -58,7 +58,7 @@ class LevelObject(Component):
     @direction.setter
     def direction(self, new_direction: Vec2):
         self._direction = new_direction
-        self._normal = Vec2(-new_direction.y, new_direction.x)
+        self._normal = Vec2(new_direction.y, new_direction.x)
 
     @property
     def normal(self):

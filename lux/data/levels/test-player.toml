@@ -29,8 +29,28 @@ rect = [0, 0, 0, 0]
 [[components.ControlPoint]]
 UUID = 4
 parent = 2
-relative = [80.0, 80.0]
+relative = [90.0, 0.0]
 colour = [true, true, true]
-dof = []
+
+[[components.ControlPoint.dof]]
+type = 'Axis'
+target = 2
+axis = [1.0, 0.0]
+min = -100.0
+max = 100.0
+
+[[components.ControlPoint]]
+UUID = 5
+parent = 2
+relative = [-90.0, 0.0]
+colour = [true, true, true]
+
+[[components.ControlPoint.dof]]
+type = 'Axis'
+target = 2
+axis = [0.0, 1.0]
+min = -100.0
+max = 100.0
+
 
 # ... Any other components that appear in the level, these also impact what systems will get loaded for the particular level

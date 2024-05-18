@@ -32,6 +32,8 @@ class System:
     # It is used to determine if a system should be used for a particular level.
     # As with everything that requires human input it is error-prone so I have an assert in place.
     requires: frozenset[type[Component]] = frozenset()
+    update_priority: int = 0xffffff
+    draw_priority: int = 0xffffff
 
     def __init__(self):
         pass

@@ -42,11 +42,25 @@ class SpriteRenderer(System):
 
             self._sprite_list.append(arcade_sprite)
 
-    def update_sprite(self, sprite: Sprite, *args):
-        pass
+    def update_sprite(self, sprite: Sprite, attr, value):
+        target = self._sprite_map[sprite.UUID]
+        match attr:
+            case 'depth':
+                target.depth = value
+            case 'scale':
+                target.scale_xy = (value, value)
+            case 'anchor_point':
+                raise NotImplementedError()
 
-    def update_level_object(self, level_object: LevelObject, *args):
-        pass
+    def update_level_object(self, level_object: LevelObject, attr, value):
+        target = self._sprite_map[level_object.UUID]
+        match attr:
+            case 'origin':
+                target.position = value.x, value.y
+            case 'direction':
+                target.radians = value.heading
+            case 'colour':
+                target.color = value.to_int_color()
 
     def unload(self):
         if self._sprite_data is None:

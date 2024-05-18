@@ -111,6 +111,8 @@ class Level:
 
         all_resolvers = []
 
+        print(self._raw_data)
+
         for component_name in components:
             component_type = component_map[component_name]
             self.component_map[component_type] = WeakSet()
