@@ -2,7 +2,6 @@ from typing import NamedTuple, Generator
 from math import sin, pi
 
 from arcade import Sprite
-from arcade.experimental.input import ActionState
 
 from lux.data import get_texture
 from lux.util.view import LuxView

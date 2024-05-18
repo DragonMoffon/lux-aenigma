@@ -9,11 +9,6 @@ from lux.views.level_test import LevelTestView
 from lux.views.musicmixer import MusicMixerView
 from lux.views.sevensegtest import SevenSegTestView
 
-try:
-    from lux.views.march_square_view import SquareView
-except ModuleNotFoundError:
-    SquareView = None
-
 
 from time import time
 
@@ -39,9 +34,6 @@ class MenuView(LuxView):
             # "Music": MusicMixerView,
             "Seven Segment Display": SevenSegTestView
         }
-
-        if SquareView is not None:
-            views["Square"] = SquareView
 
         loaded = load_views(views, self)
         self.menu = DevMenu(loaded)
