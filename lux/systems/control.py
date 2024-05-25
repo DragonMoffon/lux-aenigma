@@ -70,7 +70,7 @@ class ControlPointSystem(System):
             dist = diff.dot(diff)
             if dist < CONSTS['PLAYER_GRAB_RADIUS']**2:
                 for dof in control_point.dof:
-                    dof.pull(parent, pos, self._player_object.origin, self._player_data.velocity)
+                    dof.pull(parent, pos, self._player_object.origin, self._player_data.velocity * dt)
                 return
 
             if dist > CONSTS['PLAYER_RELEASE_RADIUS']**2:

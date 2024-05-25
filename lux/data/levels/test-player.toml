@@ -26,31 +26,46 @@ anchor = [0.5, 0.5]
 source = 'debug_sqr'
 rect = [0, 0, 0, 0]
 
+# [[components.ControlPoint]]
+# UUID = 4
+# parent = 2
+# relative = [90.0, 0.0]
+# colour = [true, true, true]
+#
+# [[components.ControlPoint.dof]]
+# type = 'Axis'
+# target = 2
+# axis = [1.0, 0.0]
+# min = -100.0
+# max = 100.0
+#
+# [[components.ControlPoint]]
+# UUID = 5
+# parent = 2
+# relative = [-90.0, 0.0]
+# colour = [true, true, true]
+#
+# [[components.ControlPoint.dof]]
+# type = 'Axis'
+# target = 2
+# axis = [0.0, 1.0]
+# min = -100.0
+# max = 100.0
+
 [[components.ControlPoint]]
-UUID = 4
+UUID = 6
 parent = 2
-relative = [90.0, 0.0]
+relative = [0.0, 90.0]
 colour = [true, true, true]
 
+
 [[components.ControlPoint.dof]]
-type = 'Axis'
+type = 'Rotation'
 target = 2
 axis = [1.0, 0.0]
-min = -100.0
-max = 100.0
-
-[[components.ControlPoint]]
-UUID = 5
-parent = 2
-relative = [-90.0, 0.0]
-colour = [true, true, true]
-
-[[components.ControlPoint.dof]]
-type = 'Axis'
-target = 2
-axis = [0.0, 1.0]
-min = -100.0
-max = 100.0
+radius = 90.0
+min = -180.0
+max = 180.0
 
 
 # ... Any other components that appear in the level, these also impact what systems will get loaded for the particular level

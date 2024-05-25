@@ -1,5 +1,6 @@
 from __future__ import annotations
 from typing import Union, Any, TypedDict
+from math import pi, radians, degrees
 
 from pyglet.math import Vec2
 
@@ -34,8 +35,65 @@ class DegreeOfFreedom[T: Component]:
         raise NotImplementedError()
 
 
+RotationDOFDict = TypedDict(
+    'RotationDOFDict',
+    {
+        'type': str,
+        'target': int,
+        'axis': list[float],
+        'radius': float,
+        'min': float,
+        'max': float
+    }
+)
+
 class Rotation(DegreeOfFreedom):
-    pass
+
+    def __init__(self, target: UUIDRef[LevelObject], axis: Vec2, radius: float, min_angle: float = -pi, max_angle: float = pi):
+        super().__init__(target)
+        self.axis: Vec2 = axis
+        self.radius: float = radius
+        self.min_angle: float = min_angle
+        self.max_angle: float = max_angle
+
+    def pull(self, parent: LevelObject, control_point_pos: Vec2, lux_pos: Vec2, lux_velocity: Vec2):
+        c_d = (control_point_pos - parent.origin)
+        c_norm = c_d.normalize()
+
+        pull_quality = (lux_pos - control_point_pos).dot(lux_velocity)
+        pull_strength = (c_norm.y * lux_velocity.x) - (c_norm.x * lux_velocity.y)
+
+        # If the player is not 'pulling' the control point we don't want to move it.
+        if pull_quality <= 0.0:
+            return
+
+        # Pull strength is equivalent to the 'torque' specifically it is the linear tangent to the circle of radius R.
+        # We use the radius to turn it into an angular velocity.
+        d_theta = pull_strength / self.radius
+
+        theta = self.axis.dot(self._target.direction)
+        n_theta = clamp(self.min_angle, theta + d_theta, self.max_angle)
+
+        print(theta, d_theta, n_theta)
+
+        self._target.direction = self.axis.rotate(theta + d_theta)
+
+
+    def serialise(self) -> RotationDOFDict:
+        return {
+            'type': self.__name__,
+            'target': self._target.UUID,
+            'axis': [self.axis.x, self.axis.y],
+            'radius': self.radius,
+            'min': degrees(self.min_angle),
+            'max': degrees(self.max_angle)
+        }
+
+    @classmethod
+    def deserialise(cls, data: RotationDOFDict) -> tuple[DegreeOfFreedom, Resolvable]:
+        target_ref = UUIDRef(data['target'])
+        axis = Vec2(data['axis'][0], data['axis'][1])
+        return Rotation(target_ref, axis, data['radius'], radians(data['min']), radians(data['max'])), target_ref
 
 
 AxisDOFDict = TypedDict(
@@ -77,18 +135,15 @@ class Axis(DegreeOfFreedom[LevelObject]):
         return Axis(target_ref, axis, data['min'], data['max']), target_ref
 
     def pull(self, parent: LevelObject, control_point_pos: Vec2, lux_pos: Vec2, lux_velocity: Vec2):
-        print()
-        pull_str = self.axis.dot(lux_velocity.normalize())
-        pull_qual = self.axis.dot((lux_pos - control_point_pos).normalize())
+        pull_str = self.axis.dot(lux_velocity.normalize())  # Fraction of player's velocity that is in the correct direction
+        pull_quality = lux_velocity.dot((lux_pos - control_point_pos))  # Fraction of player's position is in the correct direction
 
-        if not pull_qual or pull_str / pull_qual <= 0.0:
+        # If the player is not 'pulling' the control point we don't want to move it.
+        if pull_quality <= 0.0:
             return
 
-        print(pull_str)
         diff = self.axis.dot(self._target.origin - self.origin)
-        print(diff)
         final_pull = clamp(self.min_offset, diff + pull_str, self.max_offset) - diff
-        print(final_pull)
         self._target.origin = self._target.origin + self.axis * final_pull
 
 
@@ -131,5 +186,7 @@ class ControlPoint(Component):
         relative = Vec2(*data['relative'])
         color = LuxColour(*data['colour'])
 
-        dofs, targets = zip(*tuple(_DOF_MAP[dof['type']].deserialise(dof) for dof in data['dof']))
+        dofs, targets = (), ()
+        if 'dof' in data:
+            dofs, targets = zip(*tuple(_DOF_MAP[dof['type']].deserialise(dof) for dof in data['dof']))
         return ControlPoint(data['UUID'], parent, relative, color, dofs), (parent,) + targets
